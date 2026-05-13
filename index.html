@@ -78,6 +78,127 @@ button:disabled{opacity:.38;cursor:not-allowed;filter:grayscale(.3)}
 .br31-buttons button{margin:0;font-size:28px;padding:14px;border-radius:22px;background:linear-gradient(135deg,#93c5fd,#f9a8d4)}
 .elim-msg{font-size:28px;color:#ef4444;text-shadow:2px 2px 0 #fecdd3;margin-top:8px;animation:wrongFlash .8s ease-in-out 1}
 
+
+/* 베스킨라빈스31 수정 */
+.silhouette-wrap{
+  position:relative;
+}
+.silhouette-line{
+  width:100%;
+  justify-content:flex-start;
+  gap:6px;
+}
+.person-box{
+  width:9.2%;
+  min-width:44px;
+  height:120px;
+  border:3px solid transparent;
+  border-radius:4px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  flex:0 0 auto;
+}
+.person-box.first-slot{
+  border-color:#ef4444;
+}
+.person{
+  font-size:58px;
+  line-height:1;
+  filter:brightness(0);
+  display:inline-block;
+  transition:transform .35s ease;
+}
+.person.red{
+  filter:none;
+  color:#ef4444;
+  text-shadow:0 0 0 #ef4444;
+}
+.person.shift{
+  animation:walkShift .42s ease-in-out 1;
+}
+@keyframes walkShift{
+  0%{transform:translateX(18px)}
+  100%{transform:translateX(0)}
+}
+
+/* 햄버거를 만들자 */
+.burger-board{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  margin:8px 0 4px;
+}
+.burger-status{
+  font-size:22px;
+  color:#2563eb;
+  margin:8px 0 4px;
+  text-align:center;
+  white-space:pre-wrap;
+}
+.burger-stage{
+  width:min(520px,96%);
+  height:330px;
+  border:4px dashed #bfdbfe;
+  border-radius:28px;
+  background:linear-gradient(180deg,#eff6ff,#fff);
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  padding:16px;
+  overflow:hidden;
+}
+.burger-stack{
+  width:260px;
+  min-height:40px;
+  display:flex;
+  flex-direction:column-reverse;
+  align-items:center;
+  justify-content:flex-start;
+}
+.burger-piece{
+  width:230px;
+  height:38px;
+  object-fit:contain;
+  margin-top:-6px;
+  animation:dropBurger .42s ease-out 1;
+}
+@keyframes dropBurger{
+  0%{transform:translateY(-220px); opacity:.25}
+  100%{transform:translateY(0); opacity:1}
+}
+.burger-buttons{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  width:min(620px,96%);
+  margin:12px auto 4px;
+}
+.burger-buttons button{
+  margin:0;
+  padding:11px 8px;
+  font-size:16px;
+  border-radius:18px;
+  background:linear-gradient(135deg,#fbbf24,#fb7185,#60a5fa);
+}
+.burger-answer{
+  min-height:24px;
+  margin-top:7px;
+  font-size:15px;
+  color:#475569;
+}
+.burger-answer.wrong{
+  color:#ef4444;
+  animation:wrongFlash .65s ease-in-out 1;
+}
+.burger-answer.correct{
+  color:#2563eb;
+  animation:firstFlash .65s ease-in-out 1;
+}
+
 @media(max-width:1100px){.seat-row{grid-template-columns:repeat(4,1fr)}.room-bubble-chat{width:90%}}
 @media(max-width:760px){.menu-layout,.game-layout{grid-template-columns:1fr}.game-side{min-height:auto}.seat-row{grid-template-columns:repeat(4,1fr)}}
 @media(max-width:600px){h1{font-size:32px}.character-grid{grid-template-columns:repeat(5,1fr)}.seat-row{grid-template-columns:repeat(2,1fr)}.bottom-buttons{grid-template-columns:1fr}.room-bubble-chat{width:100%}.person{font-size:48px}.br31-buttons button{font-size:22px}}
@@ -107,6 +228,7 @@ button:disabled{opacity:.38;cursor:not-allowed;filter:grayscale(.3)}
     <div class="game-grid">
       <button class="game-btn" onclick="enterRoom('typing')"><div class="game-title">루칭방 타자타자</div><div class="game-count" id="typingBtnCount">선수 : 0<br>관전자 : 0</div></button>
       <button class="game-btn" onclick="enterRoom('br31')"><div class="game-title">베스킨라빈스31</div><div class="game-count" id="br31BtnCount">선수 : 0<br>관전자 : 0</div></button>
+      <button class="game-btn" onclick="enterRoom('burger')"><div class="game-title">햄버거를 만들자</div><div class="game-count" id="burgerBtnCount">선수 : 0<br>관전자 : 0</div></button>
       <button class="game-btn" onclick="alert('준비중입니다')"><div class="game-title">준비중</div></button>
       <button class="game-btn" onclick="alert('준비중입니다')"><div class="game-title">준비중</div></button>
       <button class="game-btn" onclick="alert('준비중입니다')"><div class="game-title">준비중</div></button>
@@ -139,6 +261,22 @@ button:disabled{opacity:.38;cursor:not-allowed;filter:grayscale(.3)}
       <div id="br31ElimMsg" class="elim-msg hidden">탈락!</div>
     </div>
 
+    <div id="burgerBoard" class="burger-board hidden">
+      <div class="burger-status" id="burgerStatus">게임 준비중입니다.</div>
+      <div class="burger-stage">
+        <div class="burger-stack" id="burgerStack"></div>
+      </div>
+      <div class="burger-buttons" id="burgerButtons">
+        <button onclick="chooseBurger('bottom')">아래빵</button>
+        <button onclick="chooseBurger('top')">위에빵</button>
+        <button onclick="chooseBurger('cheese')">치즈</button>
+        <button onclick="chooseBurger('tomato')">토마토</button>
+        <button onclick="chooseBurger('meat')">고기</button>
+        <button onclick="chooseBurger('veggie')">야채</button>
+      </div>
+      <div class="burger-answer" id="burgerAnswer">버튼을 순서대로 눌러주세요.</div>
+    </div>
+
     <div class="seat-row" id="seatRow"></div>
     <div class="room-bubble-chat">
       <input id="chatInput" placeholder="말풍선 채팅 입력 40자 이내" maxlength="120" onkeydown="if(event.key==='Enter')sendChatOrAnswer()">
@@ -169,7 +307,10 @@ const seatCount=8, maxRound=10, ROUND_SCORE=10, BR31_CLICK_SCORE=2, BR31_WIN_BON
 const RANK_BONUS=[30,20,10];
 let user=null, selectedChar="", currentGame="typing", roomId="typing_main", isReady=false, myRole="player", currentRoom=null;
 let submittedRound=null, roundStart=0, countTimer=null, subscribed=false, lastChats=[], finishBonusApplied=false, startingCountdown=false, handledWinnerKey="";
-let br31Local=null;
+let br31Local=null;burgerLocal=null;burgerInputSeq=[];
+let burgerLocal=null;
+let burgerInputSeq=[];
+let burgerShowingTimer=null;
 
 const characters=["🐰","🐱","🐶","🐻","🐼","🐥","🦊","🐯","🐵","🐧"];
 
@@ -189,8 +330,16 @@ const sentences=[
 function show(id){["loginScreen","characterScreen","menuScreen","gameScreen","finishScreen"].forEach(x=>document.getElementById(x).classList.add("hidden"));document.getElementById(id).classList.remove("hidden")}
 function togglePin(){const p=document.getElementById("pinInput");p.type=p.type==="password"?"text":"password"}
 function escapeHtml(str){return String(str||"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
-function gameName(g){return g==="br31"?"베스킨라빈스31":"루칭방 타자타자"}
-function getRoomId(g){return g==="br31"?"br31_main":"typing_main"}
+function gameName(g){
+  if(g==="br31") return "베스킨라빈스31";
+  if(g==="burger") return "햄버거를 만들자";
+  return "루칭방 타자타자";
+}
+function getRoomId(g){
+  if(g==="br31") return "br31_main";
+  if(g==="burger") return "burger_main";
+  return "typing_main";
+}
 
 function renderCharacters(){
   const box=document.getElementById("characterGrid");box.innerHTML="";
@@ -252,11 +401,12 @@ async function logout(){
 }
 
 async function loadGameCounts(){
-  const {data}=await sb.from("typing_game_players").select("room_id,role").in("room_id",["typing_main","br31_main"]);
-  const cnt={typing_main:{p:0,v:0},br31_main:{p:0,v:0}};
+  const {data}=await sb.from("typing_game_players").select("room_id,role").in("room_id",["typing_main","br31_main","burger_main"]);
+  const cnt={typing_main:{p:0,v:0},br31_main:{p:0,v:0},burger_main:{p:0,v:0}};
   (data||[]).forEach(x=>{if(!cnt[x.room_id])return;if((x.role||"player")==="viewer")cnt[x.room_id].v++;else cnt[x.room_id].p++});
   document.getElementById("typingBtnCount").innerHTML=`선수 : ${cnt.typing_main.p}<br>관전자 : ${cnt.typing_main.v}`;
   document.getElementById("br31BtnCount").innerHTML=`선수 : ${cnt.br31_main.p}<br>관전자 : ${cnt.br31_main.v}`;
+  document.getElementById("burgerBtnCount").innerHTML=`선수 : ${cnt.burger_main.p}<br>관전자 : ${cnt.burger_main.v}`;
 }
 
 async function loadMenuOnline(){
@@ -266,7 +416,7 @@ async function loadMenuOnline(){
   if(user){const me=rows.filter(p=>p.nickname===user.nickname), others=rows.filter(p=>p.nickname!==user.nickname);rows=[...others,...me]}
   if(!rows.length){box.innerHTML=`<div class="online-item">현재 접속자 없음</div>`;return}
   rows.forEach(p=>{
-    let place=p.current_place||"대기방"; if(p.room_id==="typing_main")place="루칭방 타자타자"; if(p.room_id==="br31_main")place="베스킨라빈스31";
+    let place=p.current_place||"대기방"; if(p.room_id==="typing_main")place="루칭방 타자타자"; if(p.room_id==="br31_main")place="베스킨라빈스31"; if(p.room_id==="burger_main")place="햄버거를 만들자";
     const score=sm[p.nickname]??p.score??0;
     box.innerHTML+=`<div class="online-item">${p.character||"🐰"} ${escapeHtml(p.nickname)} <span class="score-strong">[${score}점]</span><span class="place-line">[${place}]</span></div>`;
   });
@@ -296,7 +446,9 @@ async function enterRoom(game){
     document.getElementById("gameTitle").textContent=gameName(game);
     document.getElementById("typingBoard").classList.toggle("hidden",game!=="typing");
     document.getElementById("br31Board").classList.toggle("hidden",game!=="br31");
-    await sb.from("typing_game_rooms").upsert({id:roomId,status:"waiting",round:0,max_round:game==="typing"?maxRound:31,current_text:null,round_started_at:null,updated_at:new Date().toISOString()},{onConflict:"id"});
+    document.getElementById("burgerBoard").classList.toggle("hidden",game!=="burger");
+    const maxR = game==="typing" ? maxRound : (game==="burger" ? 10 : 31);
+    await sb.from("typing_game_rooms").upsert({id:roomId,status:"waiting",round:0,max_round:maxR,current_text:null,round_started_at:null,updated_at:new Date().toISOString()},{onConflict:"id"});
     await sb.from("typing_game_players").delete().eq("room_id","online").eq("nickname",user.nickname);
     await sb.from("typing_game_chats").delete().eq("room_id",roomId).eq("nickname",user.nickname);
     lastChats=[];
@@ -375,7 +527,8 @@ async function checkReadyStart(){
 async function startCountdownRoom(roundNo){
   let text=null;
   if(currentGame==="typing") text=sentences[Math.floor(Math.random()*sentences.length)];
-  else text=JSON.stringify(await makeBr31InitialState());
+  else if(currentGame==="br31") text=JSON.stringify(await makeBr31InitialState());
+  else text=JSON.stringify(await makeBurgerRoundState(roundNo));
   await sb.from("typing_game_rooms").update({status:"countdown",round:roundNo,current_text:text,round_started_at:null,updated_at:new Date().toISOString()}).eq("id",roomId);
 }
 
@@ -391,14 +544,34 @@ async function loadRoom(){const {data}=await sb.from("typing_game_rooms").select
 function handleRoom(room){
   currentRoom=room;
   if(currentGame==="br31")parseBr31State(room.current_text);
+  if(currentGame==="burger")parseBurgerState(room.current_text);
   if(room.status==="waiting"){
     clearInterval(countTimer);startingCountdown=false;document.getElementById("countOverlay").classList.add("hidden");
     if(currentGame==="typing"){document.getElementById("problemArea").classList.add("hidden");document.getElementById("centerMessage").textContent="곧 메세지가 나올 공간입니다."}
-    else renderBr31Waiting();
+    else if(currentGame==="br31") renderBr31Waiting();
+    else renderBurgerWaiting();
     document.getElementById("chatInput").disabled=false;document.getElementById("chatInput").placeholder="말풍선 채팅 입력 40자 이내";document.getElementById("chatInput").maxLength=40;show("gameScreen");
   }
-  if(room.status==="countdown"){show("gameScreen");if(currentGame==="typing"){document.getElementById("problemArea").classList.add("hidden");document.getElementById("centerMessage").textContent="곧 메세지가 나올 공간입니다."}else renderBr31Board();document.getElementById("chatInput").placeholder="잠시 후 게임이 시작됩니다";startLocalCountdown(room.round)}
-  if(room.status==="playing"){startingCountdown=false;document.getElementById("countOverlay").classList.add("hidden");currentGame==="typing"?startTypingRound(room):startBr31Round(room)}
+  if(room.status==="countdown"){
+    show("gameScreen");
+    if(currentGame==="typing"){
+      document.getElementById("problemArea").classList.add("hidden");
+      document.getElementById("centerMessage").textContent="곧 메세지가 나올 공간입니다.";
+    }else if(currentGame==="br31"){
+      renderBr31Board();
+    }else{
+      renderBurgerBoard(false);
+    }
+    document.getElementById("chatInput").placeholder="잠시 후 게임이 시작됩니다";
+    startLocalCountdown(room.round);
+  }
+  if(room.status==="playing"){
+    startingCountdown=false;
+    document.getElementById("countOverlay").classList.add("hidden");
+    if(currentGame==="typing") startTypingRound(room);
+    else if(currentGame==="br31") startBr31Round(room);
+    else startBurgerRound(room);
+  }
   if(room.status==="finished"){startingCountdown=false;document.getElementById("countOverlay").classList.add("hidden");showFinish()}
 }
 
@@ -418,7 +591,10 @@ function startTypingRound(room){
   loadMyScore();loadPlayers();
 }
 
-async function sendChatOrAnswer(){if(currentGame==="typing"&&currentRoom&&currentRoom.status==="playing")await submitTypingAnswer();else await sendNormalChat()}
+async function sendChatOrAnswer(){
+  if(currentGame==="typing"&&currentRoom&&currentRoom.status==="playing") await submitTypingAnswer();
+  else await sendNormalChat();
+}
 async function sendNormalChat(){
   const input=document.getElementById("chatInput");let message=input.value.trim();if(!message||!user)return;if(message.length>40)message=message.slice(0,40);input.value="";
   await sb.from("typing_game_chats").insert({room_id:roomId,nickname:user.nickname,character:user.mini_character,message});await loadChats();
@@ -465,9 +641,15 @@ function renderBr31Board(){
 }
 function startBr31Round(room){show("gameScreen");parseBr31State(room.current_text);renderBr31Board();updateBr31InputAndButtons();loadPlayers()}
 function renderSilhouettes(count){
-  const line=document.getElementById("silhouetteLine");line.innerHTML="";
-  let start=Math.max(1,Math.min(31,Number(count||0)+1));
-  for(let i=0;i<8;i++){const n=start+i;if(n>31)break;line.innerHTML+=`<span class="person ${n===31?"red":""}">🚶</span>`}
+  const line=document.getElementById("silhouetteLine");
+  line.innerHTML="";
+  let start=Number(count||0)+1;
+  for(let i=0;i<10;i++){
+    const n=start+i;
+    const red = n===31 ? "red" : "";
+    const first = i===0 ? "first-slot" : "";
+    line.innerHTML+=`<span class="person-box ${first}"><span class="person ${red}">🚶</span></span>`;
+  }
 }
 function setBr31Buttons(on){
   [1,2,3].forEach(n=>{const b=document.getElementById("brBtn"+n);b.disabled=!on});
@@ -485,27 +667,217 @@ async function chooseBr31(n){
   await addIntegratedScore(user.nickname,user.mini_character,BR31_CLICK_SCORE);
   const {data:p}=await sb.from("typing_game_players").select("score").eq("room_id",roomId).eq("nickname",user.nickname).single();
   await sb.from("typing_game_players").update({score:Number(p?.score||0)+BR31_CLICK_SCORE}).eq("room_id",roomId).eq("nickname",user.nickname);
-  st.count=Number(st.count||0)+1;st.lastChoice=n;st.moveTick=Number(st.moveTick||0)+1;st.lastEliminated=null;
+  st.count=Number(st.count||0)+Number(n);
+  st.lastChoice=n;
+  st.moveTick=Number(st.moveTick||0)+1;
+  st.lastEliminated=null;
   await insertBubble(String(n),"normal");
+
   if(st.count>=31){
-    const loser=user.nickname;st.lastEliminated=loser;st.eliminated=[...(st.eliminated||[]),loser];st.players=(st.players||[]).filter(x=>x!==loser);
+    const loser=user.nickname;
+    st.lastEliminated=loser;
+    st.eliminated=[...(st.eliminated||[]),loser];
+    st.players=(st.players||[]).filter(x=>x!==loser);
     await insertBubble("탈락","wrong",loser,user.mini_character);
+
     if(st.players.length<=1){
-      st.finished=true;st.winner=st.players[0]||null;
+      st.finished=true;
+      st.winner=st.players[0]||null;
       if(st.winner){
         const {data:wp}=await sb.from("typing_game_players").select("character,score").eq("room_id",roomId).eq("nickname",st.winner).maybeSingle();
         await sb.from("typing_game_players").update({score:Number(wp?.score||0)+BR31_WIN_BONUS}).eq("room_id",roomId).eq("nickname",st.winner);
         await addIntegratedScore(st.winner,wp?.character||"🐰",BR31_WIN_BONUS);
       }
       await sb.from("typing_game_rooms").update({status:"finished",current_text:JSON.stringify(st),updated_at:new Date().toISOString()}).eq("id",roomId);
-      setTimeout(finishAndKickPlayers,900);return;
+      setTimeout(finishAndKickPlayers,900);
+      return;
     }
-    st.count=0;st.turnIndex=0;st.lastChoice=null;
+
+    st.count=0;
+    st.turnIndex=0;
+    st.lastChoice=null;
   }else{
     st.turnIndex=(Number(st.turnIndex||0)+1)%(st.players||[]).length;
   }
+
   await sb.from("typing_game_rooms").update({current_text:JSON.stringify(st),updated_at:new Date().toISOString()}).eq("id",roomId);
 }
+
+
+const BURGER_IMG={
+  bottom:"https://i.ibb.co/9mYTHMWZ/image.png",
+  top:"https://i.ibb.co/rK1FhtnH/image.png",
+  cheese:"https://i.ibb.co/dJ1MGSSg/image.png",
+  veggie:"https://i.ibb.co/ccpxjWr1/image.png",
+  meat:"https://i.ibb.co/Zp9dNNhX/image.png",
+  tomato:"https://i.ibb.co/sMLPj43/image.png"
+};
+const BURGER_LABEL={bottom:"아래빵",top:"위에빵",cheese:"치즈",veggie:"야채",meat:"고기",tomato:"토마토"};
+
+function burgerMiddleCount(roundNo){
+  const r=Number(roundNo||1);
+  if(r<=3) return 4;
+  if(r<=6) return 5;
+  if(r<=9) return 6;
+  return 7;
+}
+
+async function makeBurgerRoundState(roundNo){
+  const middle=["cheese","tomato","meat","veggie"];
+  const midCount=burgerMiddleCount(roundNo);
+  const seq=["bottom"];
+  for(let i=0;i<midCount;i++){
+    seq.push(middle[Math.floor(Math.random()*middle.length)]);
+  }
+  seq.push("top");
+  return {
+    game:"burger",
+    status:"playing",
+    round:Number(roundNo||1),
+    sequence:seq,
+    winner:null,
+    finished:false,
+    started:false,
+    time:Date.now()
+  };
+}
+
+function parseBurgerState(txt){
+  try{burgerLocal=JSON.parse(txt||"{}")}catch(e){burgerLocal=null}
+  return burgerLocal;
+}
+
+function renderBurgerWaiting(){
+  clearTimeout(burgerShowingTimer);
+  burgerInputSeq=[];
+  document.getElementById("burgerStatus").textContent="게임 준비중입니다.";
+  document.getElementById("burgerStack").innerHTML="";
+  document.getElementById("burgerAnswer").textContent="게임이 시작되면 떨어진 순서대로 버튼을 누르세요.";
+  document.getElementById("burgerAnswer").className="burger-answer";
+  setBurgerButtons(false);
+}
+
+function renderBurgerBoard(showAll=true){
+  const st=burgerLocal||{};
+  clearTimeout(burgerShowingTimer);
+  burgerInputSeq=[];
+  document.getElementById("burgerStatus").textContent=`라운드 ${st.round||1} / 10\n햄버거 순서를 기억하세요!`;
+  document.getElementById("burgerStack").innerHTML="";
+  document.getElementById("burgerAnswer").textContent="문제를 보여주는 중입니다.";
+  document.getElementById("burgerAnswer").className="burger-answer";
+  setBurgerButtons(false);
+
+  if(!showAll) return;
+  const seq=st.sequence||[];
+  let i=0;
+  const showNext=()=>{
+    if(i>=seq.length){
+      document.getElementById("burgerAnswer").textContent="이제 순서대로 버튼을 눌러주세요.";
+      updateBurgerButtons();
+      return;
+    }
+    appendBurgerPiece(seq[i]);
+    i++;
+    burgerShowingTimer=setTimeout(showNext, Math.max(180, Math.floor(2000/Math.max(seq.length,1))));
+  };
+  showNext();
+}
+
+function appendBurgerPiece(kind){
+  const stack=document.getElementById("burgerStack");
+  const img=document.createElement("img");
+  img.className="burger-piece";
+  img.src=BURGER_IMG[kind];
+  img.alt=BURGER_LABEL[kind]||kind;
+  stack.appendChild(img);
+}
+
+function setBurgerButtons(on){
+  document.querySelectorAll("#burgerButtons button").forEach(b=>b.disabled=!on);
+}
+
+function updateBurgerButtons(){
+  const st=burgerLocal||{};
+  const can=currentRoom?.status==="playing" && currentGame==="burger" && myRole==="player" && !st.winner;
+  setBurgerButtons(can);
+  const input=document.getElementById("chatInput");
+  input.disabled=true;
+  input.placeholder=can?"햄버거 버튼을 순서대로 누르세요":"햄버거 게임 진행중";
+}
+
+function startBurgerRound(room){
+  show("gameScreen");
+  parseBurgerState(room.current_text);
+  renderBurgerBoard(true);
+  loadPlayers();
+}
+
+async function chooseBurger(kind){
+  if(currentGame!=="burger"||!currentRoom||currentRoom.status!=="playing"||!burgerLocal)return;
+  if(myRole!=="player"||burgerLocal.winner)return;
+
+  burgerInputSeq.push(kind);
+  const answer=document.getElementById("burgerAnswer");
+  answer.textContent=burgerInputSeq.map(x=>BURGER_LABEL[x]).join(" → ");
+  answer.className="burger-answer";
+
+  const seq=burgerLocal.sequence||[];
+  const idx=burgerInputSeq.length-1;
+
+  if(seq[idx]!==kind){
+    answer.textContent="순서가 틀렸습니다!";
+    answer.className="burger-answer wrong";
+    await insertBubble("오답","wrong");
+    setBurgerButtons(false);
+    setTimeout(()=>{
+      burgerInputSeq=[];
+      answer.textContent="다시 처음부터 눌러주세요.";
+      answer.className="burger-answer";
+      updateBurgerButtons();
+    },700);
+    return;
+  }
+
+  if(burgerInputSeq.length===seq.length){
+    await finishBurgerRound(user.nickname);
+  }
+}
+
+async function finishBurgerRound(winner){
+  if(!burgerLocal||burgerLocal.winner)return;
+
+  burgerLocal.winner=winner;
+  burgerLocal.finished=true;
+
+  const {data:p}=await sb.from("typing_game_players").select("score,character").eq("room_id",roomId).eq("nickname",winner).maybeSingle();
+  await sb.from("typing_game_players").update({score:Number(p?.score||0)+3}).eq("room_id",roomId).eq("nickname",winner);
+  await addIntegratedScore(winner,p?.character||"🐰",3);
+  await insertBubble("완성!","first",winner,p?.character||"🐰");
+
+  document.getElementById("burgerStatus").textContent=`${winner} 님 햄버거 완성! +3점`;
+
+  if(Number(currentRoom.round||1)>=10){
+    await applyBurgerFinishBonus();
+    await sb.from("typing_game_rooms").update({status:"finished",current_text:JSON.stringify(burgerLocal),updated_at:new Date().toISOString()}).eq("id",roomId);
+    setTimeout(finishAndKickPlayers,900);
+    return;
+  }
+
+  await sb.from("typing_game_rooms").update({current_text:JSON.stringify(burgerLocal),updated_at:new Date().toISOString()}).eq("id",roomId);
+  setTimeout(()=>startCountdownRoom(Number(currentRoom.round||1)+1),1200);
+}
+
+async function applyBurgerFinishBonus(){
+  if(finishBonusApplied)return;
+  finishBonusApplied=true;
+  const {data}=await sb.from("typing_game_players").select("nickname,score,character,role").eq("room_id",roomId).eq("role","player").order("score",{ascending:false}).limit(1);
+  const top=(data||[])[0];
+  if(top){
+    await sb.from("typing_game_players").update({score:Number(top.score||0)+30}).eq("room_id",roomId).eq("nickname",top.nickname);
+    await addIntegratedScore(top.nickname,top.character||"🐰",30);
+  }
+}
+
 
 async function finishAndKickPlayers(){
   await sb.from("typing_game_rooms").update({status:"finished",updated_at:new Date().toISOString()}).eq("id",roomId);
@@ -539,7 +911,7 @@ async function leaveGame(){
 function subscribe(){
   if(subscribed)return;subscribed=true;
   sb.channel("mini_game_all")
-    .on("postgres_changes",{event:"*",schema:"public",table:"typing_game_players"},async()=>{await loadMenuOnline();await loadTopRanks();await loadGameCounts();if(!document.getElementById("gameScreen").classList.contains("hidden")){await loadPlayers();await loadMyScore();if(currentGame==="br31")updateBr31InputAndButtons()}})
+    .on("postgres_changes",{event:"*",schema:"public",table:"typing_game_players"},async()=>{await loadMenuOnline();await loadTopRanks();await loadGameCounts();if(!document.getElementById("gameScreen").classList.contains("hidden")){await loadPlayers();await loadMyScore();if(currentGame==="br31")updateBr31InputAndButtons(); if(currentGame==="burger")updateBurgerButtons()}})
     .on("postgres_changes",{event:"*",schema:"public",table:"typing_game_rooms"},async()=>{await loadRoom()})
     .on("postgres_changes",{event:"*",schema:"public",table:"typing_game_chats"},async()=>{await loadChats()})
     .on("postgres_changes",{event:"*",schema:"public",table:"typing_game_answers"},async()=>{if(currentGame==="typing"&&currentRoom&&currentRoom.status==="playing")await checkTypingWinner()})
