@@ -425,6 +425,61 @@ button:active{
   .seat-row{grid-template-columns:repeat(2,1fr)}
   .bottom-buttons{grid-template-columns:1fr}
 }
+
+  .room-bubble-chat{
+  display:flex;
+  gap:8px;
+  margin:8px auto 12px;
+  width:70%;
+}
+
+.room-bubble-chat input{
+  margin:0;
+  flex:1;
+  padding:12px;
+  font-size:15px;
+}
+
+.room-bubble-chat button{
+  margin:0;
+  width:85px;
+  padding:10px;
+  font-size:15px;
+}
+
+.seat-chat{
+  position:absolute;
+  top:-42px;
+  left:50%;
+  transform:translateX(-50%);
+  min-width:90px;
+  max-width:150px;
+  background:#ffffff;
+  border:2px solid #f9a8d4;
+  border-radius:16px;
+  padding:7px 9px;
+  font-size:12px;
+  color:#333;
+  word-break:break-all;
+  box-shadow:0 6px 16px rgba(236,72,153,.18);
+  z-index:5;
+}
+
+.seat-chat:after{
+  content:"";
+  position:absolute;
+  bottom:-8px;
+  left:50%;
+  transform:translateX(-50%);
+  border-width:8px 7px 0 7px;
+  border-style:solid;
+  border-color:#f9a8d4 transparent transparent transparent;
+}
+
+.seat{
+  position:relative;
+  overflow:visible;
+}
 </style>
 </head>
 
@@ -467,6 +522,9 @@ button:active{
 
     <div class="menu-center">
       <h1>게임 선택</h1>
+      <button onclick="logout()" style="background:linear-gradient(135deg,#64748b,#ef4444);">
+  로그아웃
+</button>
       <p><span id="menuChar"></span> <span id="menuNick"></span> 님 환영합니다</p>
 
       <div class="game-grid">
@@ -510,6 +568,12 @@ button:active{
         </div>
       </div>
 
+      <div class="room-bubble-chat">
+  <input id="chatInput" placeholder="말풍선 채팅 입력" maxlength="35"
+    onkeydown="if(event.key==='Enter')sendChat()">
+  <button onclick="sendChat()">전송</button>
+</div>
+
       <div id="problemArea" class="hidden">
         <p>라운드 <span id="roundText">1</span> / 10 · 내 점수 <span id="scoreText">0</span>점</p>
         <div class="problem" id="problemText"></div>
@@ -521,13 +585,7 @@ button:active{
 
       <div class="seat-row" id="seatRow"></div>
 
-      <div class="chat-area">
-        <div class="chat-log" id="chatLog"></div>
-        <div class="chat-input-row">
-          <input id="chatInput" placeholder="채팅 입력" maxlength="50" onkeydown="if(event.key==='Enter')sendChat()">
-          <button onclick="sendChat()">전송</button>
-        </div>
-      </div>
+
 
       <div class="bottom-buttons">
         <button id="readyBtn" class="ready-btn" onclick="toggleReady()">준비</button>
@@ -828,6 +886,11 @@ async function loadMenuChat(){
 }
 
 async function enterTypingLobby(){
+await sb.from("typing_game_chats")
+  .delete()
+  .eq("room_id",roomId)
+  .eq("nickname",user.nickname);
+  
   try{
     await sb.from("typing_game_rooms").upsert({
       id:roomId,
@@ -1339,17 +1402,6 @@ async function loadChats(){
 
   lastChats = (data || []).reverse();
 
-  const log = document.getElementById("chatLog");
-  if(!log) return;
-
-  log.innerHTML = "";
-
-  lastChats.forEach(c=>{
-    log.innerHTML += `<div>${c.character || "🐰"} ${escapeHtml(c.nickname)} : ${escapeHtml(c.message)}</div>`;
-  });
-
-  log.scrollTop = log.scrollHeight;
-
   if(!document.getElementById("typingScreen").classList.contains("hidden")){
     await loadTypingPlayers();
   }
@@ -1396,10 +1448,17 @@ async function resetToLobby(){
 }
 
 async function leaveTyping(){
+  await sb.from("typing_game_chats")
+    .delete()
+    .eq("room_id",roomId)
+    .eq("nickname",user.nickname);
+
   await sb.from("typing_game_players")
     .delete()
     .eq("room_id",roomId)
     .eq("nickname",user.nickname);
+
+  lastChats = [];
 
   await markOnline("대기방");
   openMenu();
@@ -1454,6 +1513,28 @@ setInterval(()=>{
     markOnline(isTyping ? "루칭방 타자타자" : "대기방");
   }
 },15000);
+
+  async function logout(){
+  if(user){
+    await sb.from("typing_game_players")
+      .delete()
+      .eq("nickname",user.nickname);
+
+    localStorage.removeItem("mini_login_nickname");
+  }
+
+  user = null;
+  selectedChar = "";
+  isReady = false;
+  myRole = "player";
+  currentRoom = null;
+  lastChats = [];
+
+  document.getElementById("nicknameInput").value = "";
+  document.getElementById("pinInput").value = "";
+
+  show("loginScreen");
+}
 </script>
 
 </body>
