@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>올라타자</title>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
@@ -18,10 +17,9 @@ body{
   align-items:center;
   justify-content:center;
 }
-
 .box{
   width:90%;
-  max-width:520px;
+  max-width:620px;
   background:rgba(255,255,255,.08);
   border:1px solid rgba(255,255,255,.15);
   border-radius:24px;
@@ -29,18 +27,12 @@ body{
   text-align:center;
   box-shadow:0 20px 50px rgba(0,0,0,.35);
 }
-
 h1{
-  margin:0 0 10px;
+  margin:0 0 12px;
   font-size:46px;
   color:#60a5fa;
 }
-
-p{
-  color:#d1d5db;
-  line-height:1.6;
-}
-
+p{color:#d1d5db;line-height:1.6}
 input{
   width:100%;
   box-sizing:border-box;
@@ -53,13 +45,8 @@ input{
   font-size:18px;
   outline:none;
 }
-
-input::placeholder{
-  color:#9ca3af;
-}
-
 button{
-  margin-top:18px;
+  margin-top:16px;
   width:100%;
   padding:16px;
   border:0;
@@ -67,36 +54,45 @@ button{
   background:#2563eb;
   color:white;
   font-size:22px;
-  font-weight:800;
+  font-weight:900;
   cursor:pointer;
 }
-
-button:hover{
-  background:#1d4ed8;
-}
-
-.hidden{
-  display:none;
-}
-
-.msg{
-  margin-top:14px;
-  font-weight:700;
-}
-
-.error{
-  color:#f87171;
-}
-
-.success{
-  color:#4ade80;
-}
-
-.waiting-box{
-  margin-top:20px;
+button:hover{background:#1d4ed8}
+.host-btn{background:#dc2626}
+.host-btn:hover{background:#b91c1c}
+.hidden{display:none}
+.msg{margin-top:14px;font-weight:800}
+.error{color:#f87171}
+.success{color:#4ade80}
+.panel{
+  margin-top:18px;
   padding:18px;
   border-radius:16px;
   background:rgba(0,0,0,.25);
+}
+.big{
+  font-size:46px;
+  font-weight:1000;
+  color:#60a5fa;
+}
+.problem{
+  margin:20px 0;
+  padding:22px;
+  border-radius:16px;
+  background:rgba(0,0,0,.35);
+  font-size:24px;
+  line-height:1.5;
+  font-weight:900;
+  user-select:none;
+  -webkit-user-select:none;
+}
+.rank{
+  text-align:left;
+  margin-top:16px;
+}
+.rank div{
+  padding:8px 10px;
+  border-bottom:1px solid rgba(255,255,255,.12);
 }
 </style>
 </head>
@@ -105,23 +101,16 @@ button:hover{
 
 <div class="box" id="homeBox">
   <h1>올라타자</h1>
-  <p>
-    루칭방 미니게임 사이트입니다.<br>
-    닉네임과 PIN5로 로그인하세요.
-  </p>
-
+  <p>루칭방 미니게임 사이트입니다.</p>
   <button onclick="showLogin()">게임 시작</button>
 </div>
 
 <div class="box hidden" id="loginBox">
   <h1>로그인</h1>
   <p>루칭방에 등록된 닉네임과 PIN5를 입력하세요.</p>
-
   <input id="nicknameInput" placeholder="닉네임 입력">
   <input id="pinInput" placeholder="PIN5 입력" maxlength="5">
-
   <button onclick="loginGame()">입장하기</button>
-
   <div id="loginMsg" class="msg"></div>
 </div>
 
@@ -129,29 +118,90 @@ button:hover{
   <h1>대기실</h1>
   <p><b id="myNickText"></b> 님 입장 완료</p>
 
-  <div class="waiting-box">
+  <div class="panel">
     현재 대기 인원<br>
-    <span id="playerCount" style="font-size:42px;font-weight:900;color:#60a5fa;">1</span>
-    명 / 10명
+    <span id="playerCount" class="big">1</span> 명 / 10명
   </div>
 
-  <p style="margin-top:20px;">
-    10명이 모이면 자동으로 게임이 시작됩니다.
+  <div id="hostArea" class="hidden">
+    <p class="success">방장입니다. 테스트용 강제 시작이 가능합니다.</p>
+    <button class="host-btn" onclick="forceStartGame()">강제 시작</button>
+  </div>
+
+  <p>10명이 모이면 자동 시작됩니다.</p>
+</div>
+
+<div class="box hidden" id="countBox">
+  <h1>게임 시작</h1>
+  <div id="countText" class="big">3</div>
+</div>
+
+<div class="box hidden" id="gameBox">
+  <h1>올라타자</h1>
+  <p>
+    라운드 <b id="roundText">1</b> / 10<br>
+    현재 점수: <b id="scoreText">0</b>점
   </p>
+
+  <div id="problemText" class="problem"></div>
+
+  <input id="answerInput" placeholder="위 문장을 빠르게 입력하세요" autocomplete="off">
+  <button onclick="submitAnswer()">제출</button>
+
+  <div id="gameMsg" class="msg"></div>
+  <div id="rankBox" class="rank"></div>
+</div>
+
+<div class="box hidden" id="finishBox">
+  <h1>게임 종료</h1>
+  <div id="finalRank" class="rank"></div>
+  <button onclick="location.reload()">다시 하기</button>
 </div>
 
 <script>
-const SUPABASE_URL = "https://xyibdanmecakevhtdajl.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_uvYqwDymxodcSdpT1zAWyg_PeVHh_ZO";
+const SUPABASE_URL = "여기에 Supabase URL";
+const SUPABASE_ANON_KEY = "여기에 anon public key";
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+const roomId = "main";
+const maxPlayers = 10;
+const maxRound = 10;
+
 let currentUser = null;
-let roomId = "main";
+let isHost = false;
+let currentRoom = null;
+let localScore = 0;
+let roundStartTime = null;
+let submittedRound = null;
+
+const sentences = [
+  "동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라 만세",
+  "빠르게 타자를 입력하는 사람이 이번 라운드의 승자가 됩니다",
+  "루칭방 올라타자 미니게임에 오신 것을 환영합니다",
+  "정확하게 입력해야 점수를 받을 수 있습니다",
+  "끝까지 집중하는 사람이 최종 우승자가 됩니다",
+  "오늘도 즐겁고 매너 있는 경기를 부탁드립니다",
+  "손가락보다 중요한 것은 침착함과 정확도입니다",
+  "순간의 실수가 승부를 바꿀 수 있습니다",
+  "빠른 입력과 정확한 판단이 승리를 만듭니다",
+  "마지막 라운드까지 포기하지 말고 도전하세요",
+  "카트라이더 러쉬플러스 루칭방 이벤트 게임입니다",
+  "실시간으로 점수가 반영되는 타자 대결입니다",
+  "모두가 동시에 같은 문장을 보고 입력합니다",
+  "가장 먼저 정확히 제출한 사람이 점수를 얻습니다",
+  "연습은 실전처럼 실전은 침착하게 진행합니다"
+];
+
+function showOnly(id){
+  ["homeBox","loginBox","waitingBox","countBox","gameBox","finishBox"].forEach(x=>{
+    document.getElementById(x).classList.add("hidden");
+  });
+  document.getElementById(id).classList.remove("hidden");
+}
 
 function showLogin(){
-  document.getElementById("homeBox").classList.add("hidden");
-  document.getElementById("loginBox").classList.remove("hidden");
+  showOnly("loginBox");
 }
 
 async function loginGame(){
@@ -185,8 +235,8 @@ async function loginGame(){
     }
 
     currentUser = {
-      nickname: data.nickname,
-      pin5: data.pin5
+      nickname:data.nickname,
+      pin5:data.pin5
     };
 
     await enterWaitingRoom();
@@ -198,16 +248,29 @@ async function loginGame(){
   }
 }
 
+async function ensureRoom(){
+  await sb.from("typing_game_rooms").upsert({
+    id: roomId,
+    status: "waiting",
+    round: 0,
+    max_round: maxRound,
+    updated_at: new Date().toISOString()
+  }, { onConflict:"id" });
+}
+
 async function enterWaitingRoom(){
+  await ensureRoom();
+
   const { error } = await sb
     .from("typing_game_players")
     .upsert({
       room_id: roomId,
       nickname: currentUser.nickname,
       pin5: currentUser.pin5,
+      score: 0,
       last_seen: new Date().toISOString()
     }, {
-      onConflict: "room_id,nickname"
+      onConflict:"room_id,nickname"
     });
 
   if(error){
@@ -215,41 +278,315 @@ async function enterWaitingRoom(){
     return;
   }
 
-  document.getElementById("loginBox").classList.add("hidden");
-  document.getElementById("waitingBox").classList.remove("hidden");
   document.getElementById("myNickText").textContent = currentUser.nickname;
+  showOnly("waitingBox");
 
   await loadPlayerCount();
-  subscribePlayers();
+  await checkHost();
+  await loadRoom();
+
+  subscribeAll();
+}
+
+async function checkHost(){
+  const { data, error } = await sb
+    .from("typing_game_players")
+    .select("nickname,joined_at")
+    .eq("room_id", roomId)
+    .order("joined_at", { ascending:true })
+    .limit(1);
+
+  if(error || !data || !data.length) return;
+
+  isHost = data[0].nickname === currentUser.nickname;
+
+  if(isHost){
+    document.getElementById("hostArea").classList.remove("hidden");
+  }else{
+    document.getElementById("hostArea").classList.add("hidden");
+  }
 }
 
 async function loadPlayerCount(){
-  const { count, error } = await sb
+  const { count } = await sb
     .from("typing_game_players")
     .select("*", { count:"exact", head:true })
     .eq("room_id", roomId);
 
-  if(error){
-    console.error(error);
+  document.getElementById("playerCount").textContent = count || 0;
+
+  if((count || 0) >= maxPlayers){
+    await forceStartGame();
+  }
+}
+
+async function forceStartGame(){
+  if(!isHost){
+    alert("처음 입장한 사람만 강제 시작할 수 있습니다.");
     return;
   }
 
-  document.getElementById("playerCount").textContent = count || 0;
+  const text = sentences[Math.floor(Math.random() * sentences.length)];
+
+  const { error } = await sb
+    .from("typing_game_rooms")
+    .update({
+      status:"countdown",
+      round:1,
+      current_text:text,
+      round_started_at:null,
+      updated_at:new Date().toISOString()
+    })
+    .eq("id", roomId);
+
+  if(error){
+    alert("강제 시작 실패: " + error.message);
+  }
 }
 
-function subscribePlayers(){
-  sb.channel("typing_game_players_watch")
-    .on(
-      "postgres_changes",
-      {
-        event: "*",
-        schema: "public",
-        table: "typing_game_players"
-      },
-      async () => {
-        await loadPlayerCount();
+async function loadRoom(){
+  const { data } = await sb
+    .from("typing_game_rooms")
+    .select("*")
+    .eq("id", roomId)
+    .single();
+
+  if(!data) return;
+
+  currentRoom = data;
+  handleRoomState(data);
+}
+
+function handleRoomState(room){
+  currentRoom = room;
+
+  if(room.status === "waiting"){
+    showOnly("waitingBox");
+  }
+
+  if(room.status === "countdown"){
+    startCountdown();
+  }
+
+  if(room.status === "playing"){
+    startRound(room);
+  }
+
+  if(room.status === "finished"){
+    showFinish();
+  }
+}
+
+function startCountdown(){
+  showOnly("countBox");
+
+  let n = 3;
+  document.getElementById("countText").textContent = n;
+
+  const timer = setInterval(async ()=>{
+    n--;
+    if(n > 0){
+      document.getElementById("countText").textContent = n;
+    }else{
+      clearInterval(timer);
+      document.getElementById("countText").textContent = "시작!";
+
+      if(isHost){
+        setTimeout(async ()=>{
+          await sb.from("typing_game_rooms")
+            .update({
+              status:"playing",
+              round_started_at:new Date().toISOString(),
+              updated_at:new Date().toISOString()
+            })
+            .eq("id", roomId);
+        }, 700);
       }
-    )
+    }
+  }, 1000);
+}
+
+function startRound(room){
+  showOnly("gameBox");
+
+  submittedRound = null;
+  roundStartTime = Date.now();
+
+  document.getElementById("roundText").textContent = room.round;
+  document.getElementById("problemText").textContent = room.current_text;
+  document.getElementById("answerInput").value = "";
+  document.getElementById("answerInput").focus();
+  document.getElementById("gameMsg").textContent = "";
+
+  loadMyScore();
+  loadRanks();
+}
+
+async function submitAnswer(){
+  if(!currentRoom || currentRoom.status !== "playing") return;
+
+  if(submittedRound === currentRoom.round){
+    document.getElementById("gameMsg").textContent = "이미 제출했습니다.";
+    document.getElementById("gameMsg").className = "msg error";
+    return;
+  }
+
+  const answer = document.getElementById("answerInput").value.trim();
+  const correct = answer === currentRoom.current_text;
+  const elapsed = Date.now() - roundStartTime;
+
+  submittedRound = currentRoom.round;
+
+  await sb.from("typing_game_answers").insert({
+    room_id: roomId,
+    round: currentRoom.round,
+    nickname: currentUser.nickname,
+    answer: answer,
+    is_correct: correct,
+    elapsed_ms: elapsed
+  });
+
+  if(!correct){
+    document.getElementById("gameMsg").textContent = "오답입니다.";
+    document.getElementById("gameMsg").className = "msg error";
+    return;
+  }
+
+  document.getElementById("gameMsg").textContent = "정답 제출 완료!";
+  document.getElementById("gameMsg").className = "msg success";
+
+  setTimeout(checkRoundWinner, 500);
+}
+
+async function checkRoundWinner(){
+  if(!isHost || !currentRoom) return;
+
+  const { data } = await sb
+    .from("typing_game_answers")
+    .select("*")
+    .eq("room_id", roomId)
+    .eq("round", currentRoom.round)
+    .eq("is_correct", true)
+    .order("elapsed_ms", { ascending:true })
+    .limit(1);
+
+  if(!data || !data.length) return;
+
+  const winner = data[0].nickname;
+
+  const { data: player } = await sb
+    .from("typing_game_players")
+    .select("score")
+    .eq("room_id", roomId)
+    .eq("nickname", winner)
+    .single();
+
+  const newScore = (player?.score || 0) + 10;
+
+  await sb.from("typing_game_players")
+    .update({ score:newScore })
+    .eq("room_id", roomId)
+    .eq("nickname", winner);
+
+  setTimeout(nextRound, 1500);
+}
+
+async function nextRound(){
+  if(!isHost || !currentRoom) return;
+
+  if(currentRoom.round >= maxRound){
+    await sb.from("typing_game_rooms")
+      .update({
+        status:"finished",
+        updated_at:new Date().toISOString()
+      })
+      .eq("id", roomId);
+    return;
+  }
+
+  const text = sentences[Math.floor(Math.random() * sentences.length)];
+
+  await sb.from("typing_game_rooms")
+    .update({
+      status:"playing",
+      round: currentRoom.round + 1,
+      current_text:text,
+      round_started_at:new Date().toISOString(),
+      updated_at:new Date().toISOString()
+    })
+    .eq("id", roomId);
+}
+
+async function loadMyScore(){
+  const { data } = await sb
+    .from("typing_game_players")
+    .select("score")
+    .eq("room_id", roomId)
+    .eq("nickname", currentUser.nickname)
+    .single();
+
+  localScore = data?.score || 0;
+  document.getElementById("scoreText").textContent = localScore;
+}
+
+async function loadRanks(){
+  const { data } = await sb
+    .from("typing_game_players")
+    .select("nickname,score")
+    .eq("room_id", roomId)
+    .order("score", { ascending:false });
+
+  const box = document.getElementById("rankBox");
+  box.innerHTML = "<b>현재 순위</b>";
+
+  (data || []).forEach((p,i)=>{
+    box.innerHTML += `<div>${i+1}위 ${p.nickname} - ${p.score || 0}점</div>`;
+  });
+}
+
+async function showFinish(){
+  showOnly("finishBox");
+
+  const { data } = await sb
+    .from("typing_game_players")
+    .select("nickname,score")
+    .eq("room_id", roomId)
+    .order("score", { ascending:false });
+
+  const box = document.getElementById("finalRank");
+  box.innerHTML = "<b>최종 순위</b>";
+
+  (data || []).forEach((p,i)=>{
+    box.innerHTML += `<div>${i+1}위 ${p.nickname} - ${p.score || 0}점</div>`;
+  });
+}
+
+function subscribeAll(){
+  sb.channel("typing_game_watch")
+    .on("postgres_changes", {
+      event:"*",
+      schema:"public",
+      table:"typing_game_players"
+    }, async ()=>{
+      await loadPlayerCount();
+      await checkHost();
+      await loadRanks();
+      await loadMyScore();
+    })
+    .on("postgres_changes", {
+      event:"*",
+      schema:"public",
+      table:"typing_game_rooms"
+    }, async ()=>{
+      await loadRoom();
+    })
+    .on("postgres_changes", {
+      event:"*",
+      schema:"public",
+      table:"typing_game_answers"
+    }, async ()=>{
+      await loadRanks();
+    })
     .subscribe();
 }
 </script>
