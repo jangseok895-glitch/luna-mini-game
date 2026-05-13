@@ -3,183 +3,256 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>올라타자</title>
+<title>루칭방 미니게임</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
+
+*{box-sizing:border-box}
 body{
   margin:0;
   min-height:100vh;
-  background:linear-gradient(135deg,#111827,#1e293b);
-  color:white;
-  font-family:Arial,sans-serif;
+  font-family:'Jua',sans-serif;
+  background:linear-gradient(135deg,#dbeafe,#fce7f3,#ffffff);
+  color:#1e293b;
   display:flex;
-  align-items:center;
   justify-content:center;
+  align-items:center;
 }
-.box{
-  width:90%;
-  max-width:620px;
-  background:rgba(255,255,255,.08);
-  border:1px solid rgba(255,255,255,.15);
-  border-radius:24px;
-  padding:32px;
+
+.wrap{
+  width:94%;
+  max-width:760px;
+  background:rgba(255,255,255,.78);
+  border:3px solid rgba(147,197,253,.7);
+  border-radius:30px;
+  padding:28px;
   text-align:center;
-  box-shadow:0 20px 50px rgba(0,0,0,.35);
+  box-shadow:0 20px 55px rgba(59,130,246,.22);
 }
+
+.main-img{
+  width:100%;
+  max-height:240px;
+  object-fit:cover;
+  border-radius:24px;
+  margin-bottom:14px;
+}
+
 h1{
-  margin:0 0 12px;
+  margin:8px 0 18px;
   font-size:46px;
-  color:#60a5fa;
+  color:#3b82f6;
+  text-shadow:3px 3px 0 #fbcfe8,0 0 12px rgba(255,255,255,.9);
 }
-p{color:#d1d5db;line-height:1.6}
+
+h2{
+  color:#ec4899;
+  font-size:34px;
+}
+
 input{
   width:100%;
-  box-sizing:border-box;
+  padding:16px;
   margin-top:12px;
-  padding:15px;
-  border-radius:12px;
-  border:1px solid rgba(255,255,255,.25);
-  background:rgba(0,0,0,.25);
-  color:white;
-  font-size:18px;
+  border-radius:18px;
+  border:3px solid #bfdbfe;
+  font-size:20px;
+  font-family:'Jua',sans-serif;
   outline:none;
 }
-button{
-  margin-top:16px;
-  width:100%;
-  padding:16px;
-  border:0;
-  border-radius:14px;
-  background:#2563eb;
-  color:white;
-  font-size:22px;
-  font-weight:900;
-  cursor:pointer;
-}
-button:hover{background:#1d4ed8}
-.host-btn{background:#dc2626}
-.host-btn:hover{background:#b91c1c}
-.hidden{display:none}
-.msg{margin-top:14px;font-weight:800}
-.error{color:#f87171}
-.success{color:#4ade80}
-.panel{
-  margin-top:18px;
-  padding:18px;
-  border-radius:16px;
-  background:rgba(0,0,0,.25);
-}
-.big{
-  font-size:46px;
-  font-weight:1000;
-  color:#60a5fa;
-}
-.problem{
-  margin:20px 0;
-  padding:22px;
-  border-radius:16px;
-  background:rgba(0,0,0,.35);
-  font-size:24px;
-  line-height:1.5;
-  font-weight:900;
-  user-select:none;
-  -webkit-user-select:none;
-}
-.rank{
-  text-align:left;
-  margin-top:16px;
-}
-.rank div{
-  padding:8px 10px;
-  border-bottom:1px solid rgba(255,255,255,.12);
-}
 
-  .pin-wrap{
-  position:relative;
-}
-
-.pin-wrap input{
-  padding-right:58px;
-}
-
+.pin-wrap{position:relative}
+.pin-wrap input{padding-right:60px}
 .eye-btn{
   position:absolute;
   right:8px;
-  top:12px;
-  width:42px;
-  height:42px;
+  top:18px;
+  width:48px;
+  height:44px;
   margin:0;
   padding:0;
-  border-radius:10px;
+  border-radius:14px;
   font-size:18px;
-  background:rgba(255,255,255,.12);
+  background:#fbcfe8;
+  color:#1e293b;
+}
+
+button{
+  width:100%;
+  padding:17px;
+  margin-top:16px;
+  border:0;
+  border-radius:20px;
+  font-size:23px;
+  font-family:'Jua',sans-serif;
+  font-weight:900;
+  color:white;
+  background:linear-gradient(135deg,#60a5fa,#ec4899);
+  cursor:pointer;
+  box-shadow:0 8px 0 rgba(59,130,246,.25);
+}
+
+button:active{transform:translateY(3px);box-shadow:none}
+.hidden{display:none!important}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:14px;
+}
+
+.game-btn{
+  background:linear-gradient(135deg,#93c5fd,#f9a8d4);
+  color:#1e293b;
+  min-height:76px;
+}
+
+.ready-btn{background:linear-gradient(135deg,#22c55e,#60a5fa)}
+.cancel-btn{background:linear-gradient(135deg,#f97316,#ef4444)}
+.red-btn{background:linear-gradient(135deg,#ef4444,#fb7185)}
+
+.character-grid{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:12px;
+  margin-top:16px;
+}
+
+.char{
+  padding:12px;
+  border-radius:18px;
+  background:#eff6ff;
+  border:3px solid transparent;
+  cursor:pointer;
+  font-size:34px;
+}
+
+.char.selected{
+  border-color:#ec4899;
+  background:#fce7f3;
+}
+
+.player-list{
+  margin-top:18px;
+  text-align:left;
+  background:#eff6ff;
+  border-radius:20px;
+  padding:14px;
+}
+
+.player{
+  padding:9px 10px;
+  border-bottom:1px solid #bfdbfe;
+  font-size:19px;
+}
+
+.problem{
+  user-select:none;
+  -webkit-user-select:none;
+  margin:18px 0;
+  padding:22px;
+  border-radius:22px;
+  background:#eff6ff;
+  border:3px solid #bfdbfe;
+  font-size:25px;
+  color:#1d4ed8;
+}
+
+.msg{
+  margin-top:12px;
+  font-size:20px;
+  color:#ef4444;
+}
+
+.count{
+  font-size:86px;
+  color:#ec4899;
+  text-shadow:4px 4px 0 #bfdbfe;
+}
+
+.small{
+  color:#64748b;
+  font-size:18px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="box" id="homeBox">
-  <h1>올라타자</h1>
-  <p>루칭방 미니게임 사이트입니다.</p>
-  <button onclick="showLogin()">게임 시작</button>
-</div>
+<div class="wrap" id="loginScreen">
+  <img class="main-img" src="https://i.ibb.co/PZs2pDCb/55555.jpg">
+  <h1>루칭방 미니게임</h1>
 
-<div class="box hidden" id="loginBox">
-  <h1>로그인</h1>
-  <p>루칭방에 등록된 닉네임과 PIN5를 입력하세요.</p>
-  <input id="nicknameInput" placeholder="닉네임 입력">
-<div class="pin-wrap">
-  <input id="pinInput" type="password" placeholder="PIN5 입력" maxlength="5">
-  <button type="button" class="eye-btn" onclick="togglePin()">👁</button>
-</div>
-  <button onclick="loginGame()">입장하기</button>
+  <input id="nicknameInput" placeholder="아이디 / 닉네임">
+
+  <div class="pin-wrap">
+    <input id="pinInput" type="password" placeholder="PIN5 비밀번호" maxlength="5">
+    <button type="button" class="eye-btn" onclick="togglePin()">👁</button>
+  </div>
+
+  <button onclick="login()">로그인</button>
   <div id="loginMsg" class="msg"></div>
 </div>
 
-<div class="box hidden" id="waitingBox">
-  <h1>대기실</h1>
-  <p><b id="myNickText"></b> 님 입장 완료</p>
-
-  <div class="panel">
-    현재 대기 인원<br>
-    <span id="playerCount" class="big">1</span> 명 / 10명
-  </div>
-
-  <div id="hostArea" class="hidden">
-    <p class="success">방장입니다. 테스트용 강제 시작이 가능합니다.</p>
-    <button class="host-btn" onclick="forceStartGame()">강제 시작</button>
-  </div>
-
-  <p>10명이 모이면 자동 시작됩니다.</p>
+<div class="wrap hidden" id="characterScreen">
+  <h1>캐릭터 선택</h1>
+  <p class="small">한 번 고르면 계속 사용됩니다.</p>
+  <div class="character-grid" id="characterGrid"></div>
+  <button onclick="saveCharacter()">이 캐릭터로 시작</button>
+  <div id="charMsg" class="msg"></div>
 </div>
 
-<div class="box hidden" id="countBox">
-  <h1>게임 시작</h1>
-  <div id="countText" class="big">3</div>
+<div class="wrap hidden" id="menuScreen">
+  <h1>게임 선택</h1>
+  <p><span id="menuChar"></span> <b id="menuNick"></b> 님 환영합니다</p>
+
+  <div class="grid">
+    <button class="game-btn" onclick="enterTypingLobby()">루칭방 타자타자</button>
+    <button class="game-btn" onclick="alert('준비중입니다')">준비중</button>
+    <button class="game-btn" onclick="alert('준비중입니다')">준비중</button>
+    <button class="game-btn" onclick="alert('준비중입니다')">준비중</button>
+    <button class="game-btn" onclick="alert('준비중입니다')">준비중</button>
+    <button class="game-btn" onclick="alert('준비중입니다')">준비중</button>
+    <button class="game-btn" onclick="alert('준비중입니다')">준비중</button>
+    <button class="game-btn" onclick="alert('준비중입니다')">준비중</button>
+  </div>
 </div>
 
-<div class="box hidden" id="gameBox">
-  <h1>올라타자</h1>
-  <p>
-    라운드 <b id="roundText">1</b> / 10<br>
-    현재 점수: <b id="scoreText">0</b>점
-  </p>
+<div class="wrap hidden" id="lobbyScreen">
+  <h1>루칭방 타자타자</h1>
+  <p><span id="myChar"></span> <b id="myNick"></b> 님 대기중</p>
 
-  <div id="problemText" class="problem"></div>
+  <button id="readyBtn" class="ready-btn" onclick="toggleReady()">준비</button>
+  <button class="red-btn" onclick="backToMenu()">나가기</button>
 
-  <input id="answerInput" placeholder="위 문장을 빠르게 입력하세요" autocomplete="off">
+  <div class="player-list" id="playerList"></div>
+  <p class="small">모든 인원이 준비하면 5초 카운트 후 시작됩니다.</p>
+</div>
+
+<div class="wrap hidden" id="countScreen">
+  <h1>곧 시작!</h1>
+  <div class="count" id="countText">5</div>
+</div>
+
+<div class="wrap hidden" id="gameScreen">
+  <h1>루칭방 타자타자</h1>
+  <p>라운드 <b id="roundText">1</b> / 10 · 내 점수 <b id="scoreText">0</b>점</p>
+
+  <div class="problem" id="problemText"></div>
+  <input id="answerInput" placeholder="문장을 그대로 입력하세요" autocomplete="off"
+         onpaste="return false" oncopy="return false" oncut="return false">
   <button onclick="submitAnswer()">제출</button>
 
   <div id="gameMsg" class="msg"></div>
-  <div id="rankBox" class="rank"></div>
+  <div class="player-list" id="rankList"></div>
 </div>
 
-<div class="box hidden" id="finishBox">
+<div class="wrap hidden" id="finishScreen">
   <h1>게임 종료</h1>
-  <div id="finalRank" class="rank"></div>
-  <button onclick="location.reload()">다시 하기</button>
+  <div class="player-list" id="finalRank"></div>
+  <button onclick="resetToLobby()">대기실로</button>
 </div>
 
 <script>
@@ -189,63 +262,79 @@ const SUPABASE_ANON_KEY = "sb_publishable_uvYqwDymxodcSdpT1zAWyg_PeVHh_ZO";
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const roomId = "main";
-const maxPlayers = 10;
 const maxRound = 10;
 
-let currentUser = null;
-let isHost = false;
+let user = null;
+let selectedChar = "";
+let isReady = false;
 let currentRoom = null;
-let localScore = 0;
-let roundStartTime = null;
 let submittedRound = null;
+let roundStart = 0;
+let countTimer = null;
+let subscribed = false;
+
+const characters = ["🐰","🐱","🐶","🐻","🐼","🐥","🦊","🐯","🐵","🐧"];
 
 const sentences = [
   "동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라 만세",
-  "빠르게 타자를 입력하는 사람이 이번 라운드의 승자가 됩니다",
-  "루칭방 올라타자 미니게임에 오신 것을 환영합니다",
   "정확하게 입력해야 점수를 받을 수 있습니다",
+  "루칭방 타자타자 미니게임에 오신 것을 환영합니다",
+  "빠른 손보다 중요한 것은 침착함과 정확도입니다",
+  "모두가 준비하면 카운트다운 후 게임이 시작됩니다",
   "끝까지 집중하는 사람이 최종 우승자가 됩니다",
-  "오늘도 즐겁고 매너 있는 경기를 부탁드립니다",
-  "손가락보다 중요한 것은 침착함과 정확도입니다",
-  "순간의 실수가 승부를 바꿀 수 있습니다",
-  "빠른 입력과 정확한 판단이 승리를 만듭니다",
+  "복사 붙여넣기는 사용할 수 없습니다",
+  "가장 먼저 정확히 입력한 사람이 점수를 얻습니다",
   "마지막 라운드까지 포기하지 말고 도전하세요",
-  "카트라이더 러쉬플러스 루칭방 이벤트 게임입니다",
-  "실시간으로 점수가 반영되는 타자 대결입니다",
-  "모두가 동시에 같은 문장을 보고 입력합니다",
-  "가장 먼저 정확히 제출한 사람이 점수를 얻습니다",
-  "연습은 실전처럼 실전은 침착하게 진행합니다"
+  "즐겁고 매너 있는 게임을 부탁드립니다",
+  "푸른 하늘 아래 귀여운 캐릭터들이 달려갑니다",
+  "실시간 점수판을 보며 순위를 확인하세요",
+  "오늘의 승자는 과연 누가 될까요",
+  "한 글자라도 틀리면 점수를 받을 수 없습니다",
+  "준비를 취소하면 카운트다운이 멈춥니다"
 ];
 
-function showOnly(id){
-  ["homeBox","loginBox","waitingBox","countBox","gameBox","finishBox"].forEach(x=>{
+function show(id){
+  ["loginScreen","characterScreen","menuScreen","lobbyScreen","countScreen","gameScreen","finishScreen"].forEach(x=>{
     document.getElementById(x).classList.add("hidden");
   });
   document.getElementById(id).classList.remove("hidden");
 }
 
-function showLogin(){
-  showOnly("loginBox");
+function togglePin(){
+  const pin = document.getElementById("pinInput");
+  pin.type = pin.type === "password" ? "text" : "password";
 }
 
-async function loginGame(){
+function renderCharacters(){
+  const box = document.getElementById("characterGrid");
+  box.innerHTML = "";
+  characters.forEach(c=>{
+    const div = document.createElement("div");
+    div.className = "char" + (selectedChar === c ? " selected" : "");
+    div.textContent = c;
+    div.onclick = ()=>{
+      selectedChar = c;
+      renderCharacters();
+    };
+    box.appendChild(div);
+  });
+}
+
+async function login(){
   const nickname = document.getElementById("nicknameInput").value.trim();
   const pin5 = document.getElementById("pinInput").value.trim();
   const msg = document.getElementById("loginMsg");
-
   msg.textContent = "";
-  msg.className = "msg";
 
   if(!nickname || !pin5){
-    msg.textContent = "닉네임과 PIN5를 모두 입력해주세요.";
-    msg.classList.add("error");
+    msg.textContent = "아이디와 PIN5를 입력해주세요.";
     return;
   }
 
   try{
     const { data, error } = await sb
       .from("team_members")
-      .select("nickname,pin5")
+      .select("id,nickname,pin5,mini_character")
       .eq("nickname", nickname)
       .eq("pin5", pin5)
       .maybeSingle();
@@ -253,107 +342,150 @@ async function loginGame(){
     if(error) throw error;
 
     if(!data){
-      msg.textContent = "닉네임 또는 PIN5가 일치하지 않습니다.";
-      msg.classList.add("error");
+      msg.textContent = "아이디 또는 PIN5가 일치하지 않습니다.";
       return;
     }
 
-    currentUser = {
-      nickname:data.nickname,
-      pin5:data.pin5
-    };
+    user = data;
+    selectedChar = data.mini_character || "";
 
-    await enterWaitingRoom();
-
-}catch(e){
-  console.error(e);
-  msg.textContent = "오류: " + (e.message || JSON.stringify(e));
-  msg.classList.add("error");
-}
-}
-
-async function ensureRoom(){
-  await sb.from("typing_game_rooms").upsert({
-    id: roomId,
-    status: "waiting",
-    round: 0,
-    max_round: maxRound,
-    updated_at: new Date().toISOString()
-  }, { onConflict:"id" });
+    if(!selectedChar){
+      renderCharacters();
+      show("characterScreen");
+    }else{
+      openMenu();
+    }
+  }catch(e){
+    msg.textContent = "오류: " + (e.message || JSON.stringify(e));
+  }
 }
 
-async function enterWaitingRoom(){
-  await ensureRoom();
+async function saveCharacter(){
+  const msg = document.getElementById("charMsg");
+  msg.textContent = "";
 
-  const { error } = await sb
-    .from("typing_game_players")
-    .upsert({
-      room_id: roomId,
-      nickname: currentUser.nickname,
-      pin5: currentUser.pin5,
-      score: 0,
-      last_seen: new Date().toISOString()
-    }, {
-      onConflict:"room_id,nickname"
-    });
-
-  if(error){
-    alert("대기실 입장 실패: " + error.message);
+  if(!selectedChar){
+    msg.textContent = "캐릭터를 선택해주세요.";
     return;
   }
 
-  document.getElementById("myNickText").textContent = currentUser.nickname;
-  showOnly("waitingBox");
+  try{
+    const { error } = await sb
+      .from("team_members")
+      .update({ mini_character:selectedChar })
+      .eq("id", user.id);
 
-  await loadPlayerCount();
-  await checkHost();
-  await loadRoom();
+    if(error) throw error;
 
-  subscribeAll();
+    user.mini_character = selectedChar;
+    openMenu();
+  }catch(e){
+    msg.textContent = "캐릭터 저장 오류: " + e.message;
+  }
 }
 
-async function checkHost(){
-  const { data, error } = await sb
+function openMenu(){
+  document.getElementById("menuChar").textContent = user.mini_character;
+  document.getElementById("menuNick").textContent = user.nickname;
+  show("menuScreen");
+}
+
+async function enterTypingLobby(){
+  try{
+    await sb.from("typing_game_rooms").upsert({
+      id:roomId,
+      status:"waiting",
+      round:0,
+      max_round:maxRound,
+      current_text:null,
+      round_started_at:null,
+      updated_at:new Date().toISOString()
+    }, { onConflict:"id" });
+
+    await sb.from("typing_game_players").upsert({
+      room_id:roomId,
+      nickname:user.nickname,
+      pin5:user.pin5,
+      character:user.mini_character,
+      score:0,
+      ready:false,
+      last_seen:new Date().toISOString()
+    }, { onConflict:"room_id,nickname" });
+
+    isReady = false;
+    document.getElementById("readyBtn").textContent = "준비";
+    document.getElementById("readyBtn").className = "ready-btn";
+    document.getElementById("myChar").textContent = user.mini_character;
+    document.getElementById("myNick").textContent = user.nickname;
+
+    show("lobbyScreen");
+    subscribe();
+    await loadPlayers();
+    await loadRoom();
+  }catch(e){
+    alert("입장 오류: " + e.message);
+  }
+}
+
+async function backToMenu(){
+  await sb.from("typing_game_players")
+    .delete()
+    .eq("room_id",roomId)
+    .eq("nickname",user.nickname);
+
+  openMenu();
+}
+
+async function toggleReady(){
+  isReady = !isReady;
+
+  await sb.from("typing_game_players")
+    .update({ ready:isReady, last_seen:new Date().toISOString() })
+    .eq("room_id",roomId)
+    .eq("nickname",user.nickname);
+
+  document.getElementById("readyBtn").textContent = isReady ? "준비 취소" : "준비";
+  document.getElementById("readyBtn").className = isReady ? "cancel-btn" : "ready-btn";
+
+  await checkReadyStart();
+}
+
+async function loadPlayers(){
+  const { data } = await sb
     .from("typing_game_players")
-    .select("nickname,joined_at")
-    .eq("room_id", roomId)
-    .order("joined_at", { ascending:true })
-    .limit(1);
+    .select("nickname,score,character,ready")
+    .eq("room_id",roomId)
+    .order("score",{ascending:false});
 
-  if(error || !data || !data.length) return;
+  const list = document.getElementById("playerList");
+  list.innerHTML = "<b>참가자 목록</b>";
 
-  isHost = data[0].nickname === currentUser.nickname;
+  (data || []).forEach(p=>{
+    list.innerHTML += `<div class="player">${p.character || "🐰"} ${p.nickname} · ${p.ready ? "준비완료 ✅" : "대기중 ⏳"} · ${p.score || 0}점</div>`;
+  });
 
-  if(isHost){
-    document.getElementById("hostArea").classList.remove("hidden");
+  return data || [];
+}
+
+async function checkReadyStart(){
+  const players = await loadPlayers();
+  if(!players.length) return;
+
+  const allReady = players.every(p=>p.ready === true);
+
+  if(allReady){
+    await startCountdownRoom();
   }else{
-    document.getElementById("hostArea").classList.add("hidden");
+    await sb.from("typing_game_rooms")
+      .update({status:"waiting",updated_at:new Date().toISOString()})
+      .eq("id",roomId);
   }
 }
 
-async function loadPlayerCount(){
-  const { count } = await sb
-    .from("typing_game_players")
-    .select("*", { count:"exact", head:true })
-    .eq("room_id", roomId);
+async function startCountdownRoom(){
+  const text = sentences[Math.floor(Math.random()*sentences.length)];
 
-  document.getElementById("playerCount").textContent = count || 0;
-
-  if((count || 0) >= maxPlayers){
-    await forceStartGame();
-  }
-}
-
-async function forceStartGame(){
-  if(!isHost){
-    alert("처음 입장한 사람만 강제 시작할 수 있습니다.");
-    return;
-  }
-
-  const text = sentences[Math.floor(Math.random() * sentences.length)];
-
-  const { error } = await sb
-    .from("typing_game_rooms")
+  await sb.from("typing_game_rooms")
     .update({
       status:"countdown",
       round:1,
@@ -361,35 +493,29 @@ async function forceStartGame(){
       round_started_at:null,
       updated_at:new Date().toISOString()
     })
-    .eq("id", roomId);
-
-  if(error){
-    alert("강제 시작 실패: " + error.message);
-  }
+    .eq("id",roomId);
 }
 
 async function loadRoom(){
   const { data } = await sb
     .from("typing_game_rooms")
     .select("*")
-    .eq("id", roomId)
+    .eq("id",roomId)
     .single();
 
-  if(!data) return;
-
-  currentRoom = data;
-  handleRoomState(data);
+  if(data) handleRoom(data);
 }
 
-function handleRoomState(room){
+function handleRoom(room){
   currentRoom = room;
 
   if(room.status === "waiting"){
-    showOnly("waitingBox");
+    clearInterval(countTimer);
+    show("lobbyScreen");
   }
 
   if(room.status === "countdown"){
-    startCountdown();
+    startLocalCountdown();
   }
 
   if(room.status === "playing"){
@@ -401,40 +527,44 @@ function handleRoomState(room){
   }
 }
 
-function startCountdown(){
-  showOnly("countBox");
-
-  let n = 3;
+function startLocalCountdown(){
+  show("countScreen");
+  let n = 5;
   document.getElementById("countText").textContent = n;
+  clearInterval(countTimer);
 
-  const timer = setInterval(async ()=>{
+  countTimer = setInterval(async()=>{
+    const players = await loadPlayers();
+    const allReady = players.length && players.every(p=>p.ready === true);
+
+    if(!allReady){
+      clearInterval(countTimer);
+      await sb.from("typing_game_rooms")
+        .update({status:"waiting",updated_at:new Date().toISOString()})
+        .eq("id",roomId);
+      return;
+    }
+
     n--;
     if(n > 0){
       document.getElementById("countText").textContent = n;
     }else{
-      clearInterval(timer);
-      document.getElementById("countText").textContent = "시작!";
-
-      if(isHost){
-        setTimeout(async ()=>{
-          await sb.from("typing_game_rooms")
-            .update({
-              status:"playing",
-              round_started_at:new Date().toISOString(),
-              updated_at:new Date().toISOString()
-            })
-            .eq("id", roomId);
-        }, 700);
-      }
+      clearInterval(countTimer);
+      await sb.from("typing_game_rooms")
+        .update({
+          status:"playing",
+          round_started_at:new Date().toISOString(),
+          updated_at:new Date().toISOString()
+        })
+        .eq("id",roomId);
     }
-  }, 1000);
+  },1000);
 }
 
 function startRound(room){
-  showOnly("gameBox");
-
+  show("gameScreen");
   submittedRound = null;
-  roundStartTime = Date.now();
+  roundStart = Date.now();
 
   document.getElementById("roundText").textContent = room.round;
   document.getElementById("problemText").textContent = room.current_text;
@@ -451,172 +581,153 @@ async function submitAnswer(){
 
   if(submittedRound === currentRoom.round){
     document.getElementById("gameMsg").textContent = "이미 제출했습니다.";
-    document.getElementById("gameMsg").className = "msg error";
     return;
   }
 
   const answer = document.getElementById("answerInput").value.trim();
   const correct = answer === currentRoom.current_text;
-  const elapsed = Date.now() - roundStartTime;
-
+  const elapsed = Date.now() - roundStart;
   submittedRound = currentRoom.round;
 
   await sb.from("typing_game_answers").insert({
-    room_id: roomId,
-    round: currentRoom.round,
-    nickname: currentUser.nickname,
-    answer: answer,
-    is_correct: correct,
-    elapsed_ms: elapsed
+    room_id:roomId,
+    round:currentRoom.round,
+    nickname:user.nickname,
+    answer,
+    is_correct:correct,
+    elapsed_ms:elapsed
   });
 
   if(!correct){
     document.getElementById("gameMsg").textContent = "오답입니다.";
-    document.getElementById("gameMsg").className = "msg error";
     return;
   }
 
   document.getElementById("gameMsg").textContent = "정답 제출 완료!";
-  document.getElementById("gameMsg").className = "msg success";
-
-  setTimeout(checkRoundWinner, 500);
+  setTimeout(checkWinner,500);
 }
 
-async function checkRoundWinner(){
-  if(!isHost || !currentRoom) return;
-
+async function checkWinner(){
   const { data } = await sb
     .from("typing_game_answers")
     .select("*")
-    .eq("room_id", roomId)
-    .eq("round", currentRoom.round)
-    .eq("is_correct", true)
-    .order("elapsed_ms", { ascending:true })
+    .eq("room_id",roomId)
+    .eq("round",currentRoom.round)
+    .eq("is_correct",true)
+    .order("elapsed_ms",{ascending:true})
     .limit(1);
 
   if(!data || !data.length) return;
 
   const winner = data[0].nickname;
 
-  const { data: player } = await sb
+  const { data: p } = await sb
     .from("typing_game_players")
     .select("score")
-    .eq("room_id", roomId)
-    .eq("nickname", winner)
+    .eq("room_id",roomId)
+    .eq("nickname",winner)
     .single();
 
-  const newScore = (player?.score || 0) + 10;
-
   await sb.from("typing_game_players")
-    .update({ score:newScore })
-    .eq("room_id", roomId)
-    .eq("nickname", winner);
+    .update({score:(p?.score || 0)+10})
+    .eq("room_id",roomId)
+    .eq("nickname",winner);
 
-  setTimeout(nextRound, 1500);
+  setTimeout(nextRound,1500);
 }
 
 async function nextRound(){
-  if(!isHost || !currentRoom) return;
-
   if(currentRoom.round >= maxRound){
     await sb.from("typing_game_rooms")
-      .update({
-        status:"finished",
-        updated_at:new Date().toISOString()
-      })
-      .eq("id", roomId);
+      .update({status:"finished",updated_at:new Date().toISOString()})
+      .eq("id",roomId);
     return;
   }
 
-  const text = sentences[Math.floor(Math.random() * sentences.length)];
+  const text = sentences[Math.floor(Math.random()*sentences.length)];
 
   await sb.from("typing_game_rooms")
     .update({
       status:"playing",
-      round: currentRoom.round + 1,
+      round:currentRoom.round+1,
       current_text:text,
       round_started_at:new Date().toISOString(),
       updated_at:new Date().toISOString()
     })
-    .eq("id", roomId);
+    .eq("id",roomId);
 }
 
 async function loadMyScore(){
   const { data } = await sb
     .from("typing_game_players")
     .select("score")
-    .eq("room_id", roomId)
-    .eq("nickname", currentUser.nickname)
+    .eq("room_id",roomId)
+    .eq("nickname",user.nickname)
     .single();
 
-  localScore = data?.score || 0;
-  document.getElementById("scoreText").textContent = localScore;
+  document.getElementById("scoreText").textContent = data?.score || 0;
 }
 
 async function loadRanks(){
   const { data } = await sb
     .from("typing_game_players")
-    .select("nickname,score")
-    .eq("room_id", roomId)
-    .order("score", { ascending:false });
+    .select("nickname,score,character")
+    .eq("room_id",roomId)
+    .order("score",{ascending:false});
 
-  const box = document.getElementById("rankBox");
+  const box = document.getElementById("rankList");
   box.innerHTML = "<b>현재 순위</b>";
 
   (data || []).forEach((p,i)=>{
-    box.innerHTML += `<div>${i+1}위 ${p.nickname} - ${p.score || 0}점</div>`;
+    box.innerHTML += `<div class="player">${i+1}위 ${p.character || "🐰"} ${p.nickname} - ${p.score || 0}점</div>`;
   });
 }
 
 async function showFinish(){
-  showOnly("finishBox");
+  show("finishScreen");
 
   const { data } = await sb
     .from("typing_game_players")
-    .select("nickname,score")
-    .eq("room_id", roomId)
-    .order("score", { ascending:false });
+    .select("nickname,score,character")
+    .eq("room_id",roomId)
+    .order("score",{ascending:false});
 
   const box = document.getElementById("finalRank");
   box.innerHTML = "<b>최종 순위</b>";
 
   (data || []).forEach((p,i)=>{
-    box.innerHTML += `<div>${i+1}위 ${p.nickname} - ${p.score || 0}점</div>`;
+    box.innerHTML += `<div class="player">${i+1}위 ${p.character || "🐰"} ${p.nickname} - ${p.score || 0}점</div>`;
   });
 }
 
-function subscribeAll(){
-  sb.channel("typing_game_watch")
-    .on("postgres_changes", {
-      event:"*",
-      schema:"public",
-      table:"typing_game_players"
-    }, async ()=>{
-      await loadPlayerCount();
-      await checkHost();
-      await loadRanks();
-      await loadMyScore();
-    })
-    .on("postgres_changes", {
-      event:"*",
-      schema:"public",
-      table:"typing_game_rooms"
-    }, async ()=>{
-      await loadRoom();
-    })
-    .on("postgres_changes", {
-      event:"*",
-      schema:"public",
-      table:"typing_game_answers"
-    }, async ()=>{
-      await loadRanks();
-    })
-    .subscribe();
+async function resetToLobby(){
+  await sb.from("typing_game_players")
+    .update({ready:false,score:0})
+    .eq("room_id",roomId)
+    .eq("nickname",user.nickname);
+
+  await sb.from("typing_game_rooms")
+    .update({status:"waiting",round:0,current_text:null,updated_at:new Date().toISOString()})
+    .eq("id",roomId);
+
+  enterTypingLobby();
 }
 
-  function togglePin(){
-  const pin = document.getElementById("pinInput");
-  pin.type = pin.type === "password" ? "text" : "password";
+function subscribe(){
+  if(subscribed) return;
+  subscribed = true;
+
+  sb.channel("typing_game_all")
+    .on("postgres_changes",{event:"*",schema:"public",table:"typing_game_players"},async()=>{
+      await loadPlayers();
+      await loadRanks();
+      await loadMyScore();
+      await checkReadyStart();
+    })
+    .on("postgres_changes",{event:"*",schema:"public",table:"typing_game_rooms"},async()=>{
+      await loadRoom();
+    })
+    .subscribe();
 }
 </script>
 
