@@ -1,14 +1,3 @@
-<!-- 너무 길어서 한 번에 붙여넣기용으로 만들었습니다.
-핵심 반영:
-1. 대기방 채팅 30줄 저장/불러오기, 화면은 5줄 높이 + 스크롤
-2. 타자 입력칸을 하단 준비/나가기 버튼 바로 위로 이동
-3. 게임방 우측 제목: 대기자 → 선수
-4. 선수 목록에서 [대기] 제거, 현재점수 표시
-5. 라운드 정답 10점
-6. 게임 종료 시 1위 +30 / 2위 +20 / 3위 +10 보너스
-7. 추후 8개 게임 통합 점수용 함수 구조 추가
--->
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -72,6 +61,36 @@ h2{
   margin:8px 0 12px;
   color:#ec4899;
   font-size:26px;
+}
+
+.pretty-title{
+  display:inline-block;
+  padding:8px 18px;
+  border-radius:18px;
+  color:#ffffff;
+  background:linear-gradient(135deg,#60a5fa,#f472b6);
+  border:3px solid #ffffff;
+  box-shadow:
+    0 7px 0 rgba(59,130,246,.18),
+    0 0 0 3px rgba(191,219,254,.85);
+  text-shadow:
+    -1px -1px 0 #2563eb,
+     1px -1px 0 #2563eb,
+    -1px  1px 0 #ec4899,
+     1px  1px 0 #ec4899;
+}
+
+.typing-title{
+  text-align:center;
+  font-size:42px;
+  margin:4px 0 10px;
+  color:#ffffff;
+  text-shadow:
+    -2px -2px 0 #2563eb,
+     2px -2px 0 #2563eb,
+    -2px  2px 0 #ec4899,
+     2px  2px 0 #ec4899,
+     0 4px 10px rgba(59,130,246,.3);
 }
 
 input{
@@ -155,7 +174,7 @@ button:active{
   width:100%;
   max-width:1280px;
   display:grid;
-  grid-template-columns:260px 1fr 290px;
+  grid-template-columns:260px minmax(0,1fr) 290px;
   gap:18px;
   align-items:stretch;
 }
@@ -200,12 +219,26 @@ button:active{
 
 .rank-item,
 .online-item,
-viewer-item{
-  padding:8px 10px;
+.viewer-item{
+  padding:9px 10px;
   border-bottom:1px solid #bfdbfe;
   text-align:left;
   font-size:15px;
   word-break:break-all;
+}
+
+.score-strong{
+  color:#ef4444;
+  font-weight:1000 !important;
+  font-size:18px;
+  text-shadow:1px 1px 0 #fecdd3;
+}
+
+.place-line{
+  display:block;
+  margin-top:3px;
+  color:#2563eb;
+  font-size:13px;
 }
 
 .menu-chat-box{
@@ -216,7 +249,6 @@ viewer-item{
   padding:10px;
 }
 
-/* 보이는 건 약 5줄, 스크롤로 최대 30줄 확인 */
 .menu-chat-log{
   height:118px;
   max-height:118px;
@@ -257,9 +289,10 @@ viewer-item{
   width:100%;
   min-height:100vh;
   display:grid;
-  grid-template-columns:1fr 270px;
+  grid-template-columns:minmax(0,1fr) 285px;
   gap:16px;
   padding:16px;
+  align-items:start;
 }
 
 .typing-main,
@@ -277,12 +310,16 @@ viewer-item{
   flex-direction:column;
 }
 
+.typing-side{
+  min-height:calc(100vh - 32px);
+}
+
 .center-message{
   flex:1;
   display:flex;
   justify-content:center;
   align-items:center;
-  margin:12px 0;
+  margin:10px 0;
 }
 
 .message-box{
@@ -310,34 +347,6 @@ viewer-item{
   border:3px solid #bfdbfe;
   font-size:22px;
   color:#1d4ed8;
-}
-
-/* 타자 입력칸 하단 고정 영역 */
-.answer-dock{
-  margin-top:10px;
-  padding:12px;
-  background:#f8fafc;
-  border:2px solid #bfdbfe;
-  border-radius:18px;
-}
-
-.answer-row{
-  display:flex;
-  gap:8px;
-}
-
-.answer-row input{
-  margin:0;
-  flex:1;
-  padding:12px;
-  font-size:16px;
-}
-
-.answer-row button{
-  margin:0;
-  width:95px;
-  padding:10px;
-  font-size:15px;
 }
 
 .room-bubble-chat{
@@ -409,13 +418,32 @@ viewer-item{
   min-height:16px;
 }
 
-.seat-chat{
+.seat-chat-wrap{
   position:absolute;
   bottom:118px;
   left:50%;
   transform:translateX(-50%);
+  z-index:20;
+  pointer-events:none;
+  text-align:center;
+}
+
+.first-label{
+  display:inline-block;
+  margin-bottom:4px;
+  padding:2px 8px;
+  border-radius:999px;
+  background:#dbeafe;
+  border:2px solid #60a5fa;
+  color:#1d4ed8;
+  font-size:12px;
+  font-weight:1000 !important;
+  animation:popFlash .65s ease-in-out 1;
+}
+
+.seat-chat{
   min-width:90px;
-  max-width:130px;
+  max-width:140px;
   background:#ffffff;
   border:2px solid #f9a8d4;
   border-radius:16px;
@@ -424,8 +452,18 @@ viewer-item{
   color:#333;
   word-break:break-all;
   box-shadow:0 6px 16px rgba(236,72,153,.18);
-  z-index:20;
-  pointer-events:none;
+}
+
+.seat-chat.wrong{
+  color:#ef4444;
+  border-color:#ef4444;
+  animation:wrongFlash .65s ease-in-out 1;
+}
+
+.seat-chat.first{
+  color:#2563eb;
+  border-color:#60a5fa;
+  animation:firstFlash .75s ease-in-out 1;
 }
 
 .seat-chat:after{
@@ -437,6 +475,21 @@ viewer-item{
   border-width:8px 7px 0 7px;
   border-style:solid;
   border-color:#f9a8d4 transparent transparent transparent;
+}
+
+@keyframes wrongFlash{
+  0%,100%{transform:scale(1); background:#fff;}
+  40%{transform:scale(1.12); background:#fee2e2;}
+}
+
+@keyframes firstFlash{
+  0%,100%{transform:scale(1); background:#fff;}
+  40%{transform:scale(1.14); background:#dbeafe;}
+}
+
+@keyframes popFlash{
+  0%,100%{transform:scale(1);}
+  40%{transform:scale(1.22);}
 }
 
 .ready-btn{
@@ -455,6 +508,25 @@ viewer-item{
   background:linear-gradient(135deg,#64748b,#ef4444);
 }
 
+.cute-ready,
+.cute-exit{
+  font-size:20px !important;
+  border:3px solid #ffffff;
+  border-radius:24px;
+  box-shadow:
+    0 7px 0 rgba(59,130,246,.22),
+    0 0 0 3px rgba(191,219,254,.65);
+  text-shadow:1px 1px 0 rgba(0,0,0,.18);
+}
+
+.cute-ready{
+  background:linear-gradient(135deg,#34d399,#60a5fa,#f9a8d4);
+}
+
+.cute-exit{
+  background:linear-gradient(135deg,#fb7185,#f97316,#94a3b8);
+}
+
 .bottom-buttons{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -464,7 +536,7 @@ viewer-item{
 
 .bottom-buttons button{
   margin-top:0;
-  padding:11px;
+  padding:13px;
   font-size:15px;
 }
 
@@ -475,13 +547,40 @@ viewer-item{
   margin-top:8px;
 }
 
-.count{
-  font-size:82px;
-  color:#ec4899;
-  text-shadow:4px 4px 0 #bfdbfe;
+.count-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,.25);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
 }
 
-@media(max-width:1000px){
+.count-pop{
+  width:min(420px,86vw);
+  padding:34px 24px;
+  border-radius:34px;
+  background:rgba(255,255,255,.94);
+  border:4px solid #bfdbfe;
+  box-shadow:0 24px 70px rgba(59,130,246,.35);
+  text-align:center;
+}
+
+.count-pop-title{
+  font-size:28px;
+  color:#ec4899;
+  margin-bottom:8px;
+  text-shadow:2px 2px 0 #bfdbfe;
+}
+
+.count{
+  font-size:88px;
+  color:#2563eb;
+  text-shadow:4px 4px 0 #fbcfe8;
+}
+
+@media(max-width:760px){
   .menu-layout,
   .typing-layout{
     grid-template-columns:1fr;
@@ -489,6 +588,10 @@ viewer-item{
 
   .seat-row{
     grid-template-columns:repeat(4,1fr);
+  }
+
+  .typing-side{
+    min-height:auto;
   }
 }
 
@@ -498,8 +601,6 @@ viewer-item{
   .seat-row{grid-template-columns:repeat(2,1fr)}
   .bottom-buttons{grid-template-columns:1fr}
   .room-bubble-chat{width:100%}
-  .answer-row{flex-direction:column}
-  .answer-row button{width:100%}
 }
 </style>
 </head>
@@ -537,7 +638,7 @@ viewer-item{
   <div class="menu-layout">
 
     <div class="side-panel">
-      <h2>통합 점수 TOP 30</h2>
+      <h2 class="pretty-title">통합점수 TOP 30</h2>
       <div id="topRankList"></div>
     </div>
 
@@ -569,7 +670,7 @@ viewer-item{
     </div>
 
     <div class="side-panel">
-      <h2>현재 접속자</h2>
+      <h2 class="pretty-title">현재접속자</h2>
       <div id="menuOnlineList"></div>
     </div>
 
@@ -580,7 +681,7 @@ viewer-item{
   <div class="typing-layout">
 
     <div class="typing-main">
-      <h1>루칭방 타자타자</h1>
+      <h1 class="typing-title">루칭방 타자타자</h1>
 
       <div class="center-message">
         <div class="message-box" id="centerMessage">
@@ -590,40 +691,27 @@ viewer-item{
 
       <div id="problemArea" class="hidden">
         <p>라운드 <span id="roundText">1</span> / 10 · 내 현재점수 <span id="scoreText">0</span>점</p>
-        <div class="problem" id="problemText"></div>
-        <div id="gameMsg" class="msg"></div>
       </div>
 
-<div class="seat-row" id="seatRow"></div>
+      <div class="seat-row" id="seatRow"></div>
 
-<div class="room-bubble-chat">
-  <input id="chatInput" placeholder="말풍선 채팅 입력 40자 이내" maxlength="40"
-    onkeydown="if(event.key==='Enter')sendChat()">
-  <button onclick="sendChat()">전송</button>
-</div>
-
-<div id="answerDock" class="answer-dock hidden">
-
-      <div id="answerDock" class="answer-dock hidden">
-        <div class="answer-row">
-          <input id="answerInput" placeholder="문장을 그대로 입력하세요" autocomplete="off"
-            onpaste="return false" oncopy="return false" oncut="return false"
-            onkeydown="if(event.key==='Enter')submitAnswer()">
-          <button onclick="submitAnswer()">제출</button>
-        </div>
+      <div class="room-bubble-chat">
+        <input id="chatInput" placeholder="말풍선 채팅 입력 40자 이내" maxlength="120"
+          onkeydown="if(event.key==='Enter')sendChatOrAnswer()">
+        <button onclick="sendChatOrAnswer()">전송</button>
       </div>
 
       <div class="bottom-buttons">
-        <button id="readyBtn" class="ready-btn" onclick="toggleReady()">준비</button>
-        <button class="exit-btn" onclick="leaveTyping()">나가기</button>
+        <button id="readyBtn" class="cute-ready ready-btn" onclick="toggleReady()">준비</button>
+        <button class="cute-exit exit-btn" onclick="leaveTyping()">나가기</button>
       </div>
     </div>
 
     <div class="typing-side">
-      <h2>선수</h2>
+      <h2 class="pretty-title">선수</h2>
       <div id="typingPlayerList"></div>
 
-      <h2 style="margin-top:20px;">관전자</h2>
+      <h2 class="pretty-title" style="margin-top:20px;">관전자</h2>
       <div id="typingViewerList"></div>
 
       <button class="spectator-btn" onclick="goSpectator()">관전자로 가기</button>
@@ -633,9 +721,9 @@ viewer-item{
   </div>
 </div>
 
-<div class="screen hidden" id="countScreen">
-  <div class="wrap">
-    <h1>곧 시작</h1>
+<div id="countOverlay" class="count-overlay hidden">
+  <div class="count-pop">
+    <div class="count-pop-title">게임 시작합니다!</div>
     <div class="count" id="countText">5</div>
   </div>
 </div>
@@ -673,64 +761,38 @@ let countTimer = null;
 let subscribed = false;
 let lastChats = [];
 let finishBonusApplied = false;
+let startingCountdown = false;
+let handledWinnerKey = "";
 
 const characters = ["🐰","🐱","🐶","🐻","🐼","🐥","🦊","🐯","🐵","🐧"];
 
+/*
+  문제 100개는 바로 이 sentences 안에 넣으시면 됩니다.
+  아래 예시 문장을 전부 지우고, 사용자님이 뽑아놓은 100문장을
+  "문장",
+  "문장",
+  이런 식으로 넣으시면 됩니다.
+*/
 const sentences = [
-"야 너만 믿는다 했는데 내가 제일 먼저 망했다",
-"엄마 나 5분만 더 잘게 했는데 두시간 지나있다",
-"치킨 시킬까 말까 하다가 이미 결제 완료됐다",
-"너 숙제 했어 물어봤다가 같이 큰일나버렸다",
-"오늘 공부 진짜 열심히 한다 그리고 책만 폈다",
-"야 잠깐만 보자 했는데 새벽까지 안끝났다",
-"배 안고프다 해놓고 내 음식까지 다 먹고갔다",
-"분명 안웃긴데 친구 표정 보고 빵터져버렸다",
-"야 한판만 하자더니 아침해 뜰때까지 게임했다",
-"오늘은 절대 안늦는다 그리고 또 뛰어가는중",
-"내일부터 운동 시작입니다 오늘은 마지막 치킨",
-"시험 망했다 했는데 꼭 그런애가 일등급이다",
-"야 너 어디야 거의 다왔어 아직 집이다",
-"한입만 할게 해놓고 절반을 가져가버렸다",
-"알람 분명 맞췄는데 왜 못들은건지 아직 의문",
-"엄마 나 안졸려 그리고 3초뒤 코골기 시작",
-"라면 하나만 먹는다 해놓고 김밥까지 추가했다",
-"게임 시작전 화장실은 세계 공통 국룰이다",
-"야 그거 비밀이다 해놓고 하루만에 다 퍼졌다",
-"나 진짜 화안났어 말투에서 이미 끝난상황이다",
-"오늘은 진짜 돈 안쓴다 그리고 배달앱 실행",
-"너 먼저 자 난 안졸려 그리고 먼저 잠들었다",
-"야 잠깐 나온다더니 세시간째 연락이 없다",
-"공부하자고 모였는데 과자만 네봉지 비워졌다",
-"이번엔 진짜 다이어트다 냉장고 문 열기전까지는",
-"내 폰 어디갔지 하면서 손에 들고 찾고있다",
-"야 너도 그생각 했지 우리 동시에 웃어버렸다",
-"딱 한곡만 듣는다 그리고 플레이리스트 끝까지감",
-"나 안무섭거든 귀신얘기 나오자마자 화장실 못감",
-"오늘은 일찍 잔다 해놓고 해뜨는거 구경중",
-"야 사진 찍는다 하나둘셋에서 다 딴데본다",
-"너가 골라줘 해놓고 결국 자기맘대로 산다",
-"엄마 나 배안고파 그리고 치킨 냄새에 흔들림",
-"이번 시험 쉽다더니 평균점수 처참하게 나왔다",
-"야 이거 절대 안들킨다 그리고 바로 걸렸다",
-"나 진짜 한입만 먹는다 그리고 반이 사라졌다",
-"분명 금방 끝난다 했는데 하루가 순삭됐다",
-"오늘은 폰 안본다 해놓고 십초뒤 다시 켰다",
-"야 너 왜웃어 그말에 더 터져버리는 상황",
-"딱 오분만 쉰다 그리고 한시간 지나있다",
-"안졸리다 해놓고 답장하다가 그대로 잠들었다",
-"야 너 목소리 왜그래 방금 일어난 티난다",
-"오늘은 진짜 집밖 안나간다 택배오면 예외다",
-"시험기간엔 평소 안보던 책도 재밌어보인다",
-"나 오늘은 진짜 참는다 그리고 야식 주문완료",
-"야 그게임 재미없다 해놓고 제일 오래한다",
-"카톡 답장하려다 유튜브 보고 까먹어버렸다",
-"이번엔 진짜 빨리간다 그리고 또 지각확정",
-"야 너도 배고프지 결국 둘다 편의점행이다",
-"분명 시원했는데 버스 타자마자 더워지기 시작"
+  "동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라 만세",
+  "정확하게 입력해야 점수를 받을 수 있습니다",
+  "루칭방 타자타자 미니게임에 오신 것을 환영합니다",
+  "빠른 손보다 중요한 것은 침착함과 정확도입니다",
+  "모두가 준비하면 카운트다운 후 게임이 시작됩니다",
+  "끝까지 집중하는 사람이 최종 우승자가 됩니다",
+  "복사 붙여넣기는 사용할 수 없습니다",
+  "가장 먼저 정확히 입력한 사람이 점수를 얻습니다",
+  "마지막 라운드까지 포기하지 말고 도전하세요",
+  "즐겁고 매너 있는 게임을 부탁드립니다",
+  "푸른 하늘 아래 귀여운 캐릭터들이 달려갑니다",
+  "실시간 점수판을 보며 순위를 확인하세요",
+  "오늘의 승자는 과연 누가 될까요",
+  "한 글자라도 틀리면 점수를 받을 수 없습니다",
+  "준비를 취소하면 카운트다운이 멈춥니다"
 ];
 
 function show(id){
-  ["loginScreen","characterScreen","menuScreen","typingScreen","countScreen","finishScreen"].forEach(x=>{
+  ["loginScreen","characterScreen","menuScreen","typingScreen","finishScreen"].forEach(x=>{
     document.getElementById(x).classList.add("hidden");
   });
   document.getElementById(id).classList.remove("hidden");
@@ -828,9 +890,6 @@ async function saveCharacter(){
   }
 }
 
-/* 통합 점수 저장용.
-   mini_game_scores 테이블이 없으면 현재 방 점수만 사용됩니다.
-   나중에 7개 게임 추가할 때도 이 함수만 같이 쓰면 됩니다. */
 async function addIntegratedScore(nickname, character, addScore){
   if(!nickname || !addScore) return;
 
@@ -859,7 +918,7 @@ async function addIntegratedScore(nickname, character, addScore){
         });
     }
   }catch(e){
-    console.warn("통합 점수 테이블이 없거나 저장 실패:", e.message);
+    console.warn("통합 점수 저장 실패:", e.message);
   }
 }
 
@@ -914,11 +973,11 @@ async function openMenu(){
 
 async function logout(){
   if(user){
-    await sb.from("typing_game_players")
+    await sb.from("typing_game_chats")
       .delete()
       .eq("nickname",user.nickname);
 
-    await sb.from("typing_game_chats")
+    await sb.from("typing_game_players")
       .delete()
       .eq("nickname",user.nickname);
   }
@@ -929,6 +988,8 @@ async function logout(){
   myRole = "player";
   currentRoom = null;
   lastChats = [];
+  finishBonusApplied = false;
+  handledWinnerKey = "";
 
   document.getElementById("nicknameInput").value = "";
   document.getElementById("pinInput").value = "";
@@ -975,7 +1036,8 @@ async function loadMenuOnline(){
 
     box.innerHTML += `
       <div class="online-item">
-        ${p.character || "🐰"} ${escapeHtml(p.nickname)} [${place}] - ${score}점
+        ${p.character || "🐰"} ${escapeHtml(p.nickname)} <span class="score-strong">[${score}점]</span>
+        <span class="place-line">[${place}]</span>
       </div>
     `;
   });
@@ -994,7 +1056,12 @@ async function loadTopRanks(){
 
     if(data && data.length){
       data.forEach((p,i)=>{
-        box.innerHTML += `<div class="rank-item">${i+1}위 ${p.character || "🐰"} ${escapeHtml(p.nickname)} · ${p.total_score || 0}점</div>`;
+        box.innerHTML += `
+          <div class="rank-item">
+            ${i+1}위 ${p.character || "🐰"} ${escapeHtml(p.nickname)}
+            <span class="score-strong">${p.total_score || 0}점</span>
+          </div>
+        `;
       });
       return;
     }
@@ -1002,21 +1069,7 @@ async function loadTopRanks(){
     console.warn("통합 랭킹 테이블 없음:", e.message);
   }
 
-  const { data } = await sb
-    .from("typing_game_players")
-    .select("nickname,score,character")
-    .eq("room_id",roomId)
-    .order("score",{ascending:false})
-    .limit(30);
-
-  if(!data || !data.length){
-    box.innerHTML = `<div class="rank-item">아직 기록 없음</div>`;
-    return;
-  }
-
-  data.forEach((p,i)=>{
-    box.innerHTML += `<div class="rank-item">${i+1}위 ${p.character || "🐰"} ${escapeHtml(p.nickname)} · ${p.score || 0}점</div>`;
-  });
+  box.innerHTML = `<div class="rank-item">아직 기록 없음</div>`;
 }
 
 async function sendMenuChat(){
@@ -1062,6 +1115,7 @@ async function loadMenuChat(){
 async function enterTypingLobby(){
   try{
     finishBonusApplied = false;
+    handledWinnerKey = "";
 
     await sb.from("typing_game_rooms").upsert({
       id:roomId,
@@ -1078,13 +1132,12 @@ async function enterTypingLobby(){
       .eq("room_id","online")
       .eq("nickname",user.nickname);
 
-await sb.from("typing_game_chats")
-  .delete()
-  .eq("room_id",roomId)
-  .eq("nickname",user.nickname);
+    await sb.from("typing_game_chats")
+      .delete()
+      .eq("room_id",roomId)
+      .eq("nickname",user.nickname);
 
-lastChats = [];
-await loadChats();
+    lastChats = [];
 
     const { data: usedSeats } = await sb
       .from("typing_game_players")
@@ -1117,11 +1170,10 @@ await loadChats();
 
     myRole = "player";
     isReady = false;
-    lastChats = [];
 
     document.getElementById("readyBtn").classList.remove("hidden");
     document.getElementById("readyBtn").textContent = "준비";
-    document.getElementById("readyBtn").className = "ready-btn";
+    document.getElementById("readyBtn").className = "cute-ready ready-btn";
 
     show("typingScreen");
     subscribe();
@@ -1151,6 +1203,14 @@ async function loadTypingPlayers(){
   return { players, viewers };
 }
 
+function parseBubbleMessage(raw){
+  try{
+    const obj = JSON.parse(raw || "");
+    if(obj && obj.__miniBubble === true) return obj;
+  }catch(e){}
+  return { __miniBubble:false, text:raw || "", result:"normal" };
+}
+
 function renderSeats(players){
   const row = document.getElementById("seatRow");
   row.innerHTML = "";
@@ -1170,7 +1230,19 @@ function renderSeats(players){
     }
 
     const chat = [...lastChats].reverse().find(c => c.nickname === p.nickname);
-    const chatHtml = chat ? `<div class="seat-chat">${escapeHtml(chat.message)}</div>` : "";
+    let chatHtml = "";
+
+    if(chat){
+      const parsed = parseBubbleMessage(chat.message);
+      const cls = parsed.result === "wrong" ? "wrong" : (parsed.result === "first" ? "first" : "");
+      const label = parsed.result === "first" ? `<div class="first-label">1등!</div>` : "";
+      chatHtml = `
+        <div class="seat-chat-wrap">
+          ${label}
+          <div class="seat-chat ${cls}">${escapeHtml(parsed.text)}</div>
+        </div>
+      `;
+    }
 
     row.innerHTML += `
       <div class="seat">
@@ -1223,7 +1295,8 @@ function renderSidePlayers(players, viewers){
     players.forEach(p=>{
       pbox.innerHTML += `
         <div class="online-item">
-          ${p.character || "🐰"} ${escapeHtml(p.nickname)} - 현재점수 ${p.score || 0}점
+          ${p.character || "🐰"} ${escapeHtml(p.nickname)}
+          <span class="score-strong">[${p.score || 0}점]</span>
         </div>
       `;
     });
@@ -1296,7 +1369,7 @@ async function goPlayer(){
 
   document.getElementById("readyBtn").classList.remove("hidden");
   document.getElementById("readyBtn").textContent = "준비";
-  document.getElementById("readyBtn").className = "ready-btn";
+  document.getElementById("readyBtn").className = "cute-ready ready-btn";
 
   await loadTypingPlayers();
 }
@@ -1318,7 +1391,7 @@ async function toggleReady(){
     .eq("nickname",user.nickname);
 
   document.getElementById("readyBtn").textContent = isReady ? "준비 취소" : "준비";
-  document.getElementById("readyBtn").className = isReady ? "cancel-btn" : "ready-btn";
+  document.getElementById("readyBtn").className = isReady ? "cute-ready cancel-btn" : "cute-ready ready-btn";
 
   await checkReadyStart();
 }
@@ -1330,9 +1403,9 @@ async function checkReadyStart(){
 
   const allReady = players.every(p=>p.ready === true);
 
-  if(allReady){
-    await startCountdownRoom();
-  }else{
+  if(allReady && !startingCountdown){
+    await startCountdownRoom(1);
+  }else if(!allReady){
     await sb.from("typing_game_rooms")
       .update({
         status:"waiting",
@@ -1342,13 +1415,13 @@ async function checkReadyStart(){
   }
 }
 
-async function startCountdownRoom(){
+async function startCountdownRoom(roundNo){
   const text = sentences[Math.floor(Math.random()*sentences.length)];
 
   await sb.from("typing_game_rooms")
     .update({
       status:"countdown",
-      round:1,
+      round:roundNo,
       current_text:text,
       round_started_at:null,
       updated_at:new Date().toISOString()
@@ -1371,30 +1444,45 @@ function handleRoom(room){
 
   if(room.status === "waiting"){
     clearInterval(countTimer);
+    startingCountdown = false;
+    document.getElementById("countOverlay").classList.add("hidden");
     document.getElementById("problemArea").classList.add("hidden");
-    document.getElementById("answerDock").classList.add("hidden");
     document.getElementById("centerMessage").textContent = "곧 메세지가 나올 공간입니다.";
+    document.getElementById("chatInput").placeholder = "말풍선 채팅 입력 40자 이내";
+    document.getElementById("chatInput").maxLength = 40;
     show("typingScreen");
   }
 
   if(room.status === "countdown"){
-    startLocalCountdown();
+    show("typingScreen");
+    document.getElementById("problemArea").classList.add("hidden");
+    document.getElementById("centerMessage").textContent = "곧 메세지가 나올 공간입니다.";
+    document.getElementById("chatInput").placeholder = "잠시 후 문제가 나옵니다";
+    startLocalCountdown(room.round);
   }
 
   if(room.status === "playing"){
+    startingCountdown = false;
+    document.getElementById("countOverlay").classList.add("hidden");
     startRound(room);
   }
 
   if(room.status === "finished"){
+    startingCountdown = false;
+    document.getElementById("countOverlay").classList.add("hidden");
     showFinish();
   }
 }
 
-function startLocalCountdown(){
-  show("countScreen");
+function startLocalCountdown(roundNo){
+  if(startingCountdown) return;
 
+  startingCountdown = true;
   let n = 5;
+
+  document.getElementById("countOverlay").classList.remove("hidden");
   document.getElementById("countText").textContent = n;
+
   clearInterval(countTimer);
 
   countTimer = setInterval(async()=>{
@@ -1403,6 +1491,8 @@ function startLocalCountdown(){
 
     if(!allReady){
       clearInterval(countTimer);
+      startingCountdown = false;
+      document.getElementById("countOverlay").classList.add("hidden");
 
       await sb.from("typing_game_rooms")
         .update({
@@ -1420,6 +1510,8 @@ function startLocalCountdown(){
       document.getElementById("countText").textContent = n;
     }else{
       clearInterval(countTimer);
+      startingCountdown = false;
+      document.getElementById("countOverlay").classList.add("hidden");
 
       await sb.from("typing_game_rooms")
         .update({
@@ -1439,38 +1531,108 @@ function startRound(room){
   roundStart = Date.now();
 
   document.getElementById("problemArea").classList.remove("hidden");
-  document.getElementById("answerDock").classList.remove("hidden");
-  document.getElementById("centerMessage").textContent = "타자타자 시작";
+  document.getElementById("centerMessage").textContent = room.current_text || "문제가 없습니다.";
   document.getElementById("roundText").textContent = room.round;
-  document.getElementById("problemText").textContent = room.current_text;
-  document.getElementById("answerInput").value = "";
-  document.getElementById("gameMsg").textContent = "";
+  document.getElementById("gameMsg")?.remove?.();
+
+  const chatInput = document.getElementById("chatInput");
+  chatInput.value = "";
 
   if(myRole === "player"){
-    document.getElementById("answerInput").disabled = false;
-    document.getElementById("answerInput").focus();
+    chatInput.disabled = false;
+    chatInput.placeholder = "정답을 입력하세요";
+    chatInput.maxLength = 300;
+    chatInput.focus();
   }else{
-    document.getElementById("answerInput").disabled = true;
+    chatInput.disabled = true;
+    chatInput.placeholder = "관전자는 정답을 제출할 수 없습니다";
   }
 
   loadMyScore();
   loadTypingPlayers();
 }
 
-async function submitAnswer(){
-  if(myRole === "viewer"){
-    document.getElementById("gameMsg").textContent = "관전자는 제출할 수 없습니다.";
-    return;
+async function sendChatOrAnswer(){
+  if(currentRoom && currentRoom.status === "playing"){
+    await submitAnswerByChat();
+  }else{
+    await sendNormalChat();
+  }
+}
+
+async function sendNormalChat(){
+  const input = document.getElementById("chatInput");
+  let message = input.value.trim();
+
+  if(!message || !user) return;
+
+  if(message.length > 40){
+    message = message.slice(0,40);
   }
 
+  input.value = "";
+
+  await sb.from("typing_game_chats").insert({
+    room_id:roomId,
+    nickname:user.nickname,
+    character:user.mini_character,
+    message
+  });
+
+  await loadChats();
+}
+
+async function insertBubble(text, result){
+  const message = JSON.stringify({
+    __miniBubble:true,
+    kind:"answer",
+    text,
+    result:result || "normal",
+    round:currentRoom?.round || 0,
+    time:Date.now()
+  });
+
+  await sb.from("typing_game_chats").insert({
+    room_id:roomId,
+    nickname:user.nickname,
+    character:user.mini_character,
+    message
+  });
+}
+
+async function insertFirstBubble(nickname, character, text){
+  const message = JSON.stringify({
+    __miniBubble:true,
+    kind:"answer",
+    text,
+    result:"first",
+    round:currentRoom?.round || 0,
+    time:Date.now()
+  });
+
+  await sb.from("typing_game_chats").insert({
+    room_id:roomId,
+    nickname,
+    character:character || "🐰",
+    message
+  });
+}
+
+async function submitAnswerByChat(){
+  if(myRole === "viewer") return;
   if(!currentRoom || currentRoom.status !== "playing") return;
 
+  const input = document.getElementById("chatInput");
+  const answer = input.value.trim();
+
+  if(!answer) return;
+
+  input.value = "";
+
   if(submittedRound === currentRoom.round){
-    document.getElementById("gameMsg").textContent = "이미 제출했습니다.";
     return;
   }
 
-  const answer = document.getElementById("answerInput").value.trim();
   const correct = answer === currentRoom.current_text;
   const elapsed = Date.now() - roundStart;
 
@@ -1486,15 +1648,23 @@ async function submitAnswer(){
   });
 
   if(!correct){
-    document.getElementById("gameMsg").textContent = "오답입니다.";
+    await insertBubble(answer, "wrong");
+    await loadChats();
     return;
   }
 
-  document.getElementById("gameMsg").textContent = "정답 제출 완료";
-  setTimeout(checkWinner,500);
+  await insertBubble(answer, "normal");
+  await loadChats();
+
+  setTimeout(checkWinner,350);
 }
 
 async function checkWinner(){
+  if(!currentRoom) return;
+
+  const key = `${currentRoom.round}`;
+  if(handledWinnerKey === key) return;
+
   const { data } = await sb
     .from("typing_game_answers")
     .select("*")
@@ -1506,7 +1676,10 @@ async function checkWinner(){
 
   if(!data || !data.length) return;
 
+  handledWinnerKey = key;
+
   const winner = data[0].nickname;
+  const answerText = data[0].answer;
 
   const { data: p } = await sb
     .from("typing_game_players")
@@ -1523,13 +1696,16 @@ async function checkWinner(){
     .eq("nickname",winner);
 
   await addIntegratedScore(winner, p?.character || "🐰", ROUND_SCORE);
+  await insertFirstBubble(winner, p?.character || "🐰", answerText);
 
-  document.getElementById("centerMessage").textContent = `${winner} 님 정답 ${ROUND_SCORE}점`;
+  document.getElementById("centerMessage").textContent = `${winner} 님 1등! ${ROUND_SCORE}점`;
 
-  setTimeout(nextRound,1500);
+  setTimeout(nextRound,1200);
 }
 
 async function nextRound(){
+  if(!currentRoom) return;
+
   if(currentRoom.round >= maxRound){
     await applyFinishBonus();
 
@@ -1542,17 +1718,8 @@ async function nextRound(){
     return;
   }
 
-  const text = sentences[Math.floor(Math.random()*sentences.length)];
-
-  await sb.from("typing_game_rooms")
-    .update({
-      status:"playing",
-      round:currentRoom.round+1,
-      current_text:text,
-      round_started_at:new Date().toISOString(),
-      updated_at:new Date().toISOString()
-    })
-    .eq("id",roomId);
+  handledWinnerKey = "";
+  await startCountdownRoom(Number(currentRoom.round || 0) + 1);
 }
 
 async function applyFinishBonus(){
@@ -1582,6 +1749,8 @@ async function applyFinishBonus(){
 }
 
 async function loadMyScore(){
+  if(!user) return;
+
   const { data } = await sb
     .from("typing_game_players")
     .select("score")
@@ -1590,28 +1759,6 @@ async function loadMyScore(){
     .single();
 
   document.getElementById("scoreText").textContent = data?.score || 0;
-}
-
-async function sendChat(){
-  const input = document.getElementById("chatInput");
-  let message = input.value.trim();
-
-  if(!message || !user) return;
-
-  if(message.length > 40){
-    message = message.slice(0,40);
-  }
-
-  input.value = "";
-
-  await sb.from("typing_game_chats").insert({
-    room_id:roomId,
-    nickname:user.nickname,
-    character:user.mini_character,
-    message
-  });
-
-  await loadChats();
 }
 
 async function loadChats(){
@@ -1648,13 +1795,15 @@ async function showFinish(){
     if(i === 1) bonusText = " / 2위 보너스 +20";
     if(i === 2) bonusText = " / 3위 보너스 +10";
 
-    box.innerHTML += `<div class="rank-item">${i+1}위 ${p.character || "🐰"} ${escapeHtml(p.nickname)} - ${p.score || 0}점${bonusText}</div>`;
+    box.innerHTML += `<div class="rank-item">${i+1}위 ${p.character || "🐰"} ${escapeHtml(p.nickname)} - <span class="score-strong">${p.score || 0}점</span>${bonusText}</div>`;
   });
 
   await loadTopRanks();
 }
 
 async function resetToLobby(){
+  if(!user) return;
+
   await sb.from("typing_game_players")
     .update({
       ready:false,
@@ -1677,6 +1826,8 @@ async function resetToLobby(){
 }
 
 async function leaveTyping(){
+  if(!user) return;
+
   await sb.from("typing_game_chats")
     .delete()
     .eq("room_id",roomId)
@@ -1713,6 +1864,11 @@ function subscribe(){
     })
     .on("postgres_changes",{event:"*",schema:"public",table:"typing_game_chats"},async()=>{
       await loadChats();
+    })
+    .on("postgres_changes",{event:"*",schema:"public",table:"typing_game_answers"},async()=>{
+      if(currentRoom && currentRoom.status === "playing"){
+        await checkWinner();
+      }
     })
     .on("postgres_changes",{event:"*",schema:"public",table:"mini_game_chats"},async()=>{
       await loadMenuChat();
