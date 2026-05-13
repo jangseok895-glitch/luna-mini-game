@@ -5,13 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>올라타자</title>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
 body{
   margin:0;
   min-height:100vh;
   background:linear-gradient(135deg,#111827,#1e293b);
   color:white;
-  font-family:Arial, sans-serif;
+  font-family:Arial,sans-serif;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -39,8 +41,25 @@ p{
   line-height:1.6;
 }
 
+input{
+  width:100%;
+  box-sizing:border-box;
+  margin-top:12px;
+  padding:15px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.25);
+  background:rgba(0,0,0,.25);
+  color:white;
+  font-size:18px;
+  outline:none;
+}
+
+input::placeholder{
+  color:#9ca3af;
+}
+
 button{
-  margin-top:20px;
+  margin-top:18px;
   width:100%;
   padding:16px;
   border:0;
@@ -55,22 +74,185 @@ button{
 button:hover{
   background:#1d4ed8;
 }
+
+.hidden{
+  display:none;
+}
+
+.msg{
+  margin-top:14px;
+  font-weight:700;
+}
+
+.error{
+  color:#f87171;
+}
+
+.success{
+  color:#4ade80;
+}
+
+.waiting-box{
+  margin-top:20px;
+  padding:18px;
+  border-radius:16px;
+  background:rgba(0,0,0,.25);
+}
 </style>
 </head>
 
 <body>
 
-<div class="box">
+<div class="box" id="homeBox">
   <h1>올라타자</h1>
   <p>
     루칭방 미니게임 사이트입니다.<br>
-    닉네임과 PIN5 로그인 후 타자 게임을 진행합니다.
+    닉네임과 PIN5로 로그인하세요.
   </p>
 
-  <button onclick="alert('다음 단계에서 로그인 기능을 연결합니다.')">
-    게임 시작
-  </button>
+  <button onclick="showLogin()">게임 시작</button>
 </div>
+
+<div class="box hidden" id="loginBox">
+  <h1>로그인</h1>
+  <p>루칭방에 등록된 닉네임과 PIN5를 입력하세요.</p>
+
+  <input id="nicknameInput" placeholder="닉네임 입력">
+  <input id="pinInput" placeholder="PIN5 입력" maxlength="5">
+
+  <button onclick="loginGame()">입장하기</button>
+
+  <div id="loginMsg" class="msg"></div>
+</div>
+
+<div class="box hidden" id="waitingBox">
+  <h1>대기실</h1>
+  <p><b id="myNickText"></b> 님 입장 완료</p>
+
+  <div class="waiting-box">
+    현재 대기 인원<br>
+    <span id="playerCount" style="font-size:42px;font-weight:900;color:#60a5fa;">1</span>
+    명 / 10명
+  </div>
+
+  <p style="margin-top:20px;">
+    10명이 모이면 자동으로 게임이 시작됩니다.
+  </p>
+</div>
+
+<script>
+const SUPABASE_URL = "https://xyibdanmecakevhtdajl.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_uvYqwDymxodcSdpT1zAWyg_PeVHh_ZO";
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let currentUser = null;
+let roomId = "main";
+
+function showLogin(){
+  document.getElementById("homeBox").classList.add("hidden");
+  document.getElementById("loginBox").classList.remove("hidden");
+}
+
+async function loginGame(){
+  const nickname = document.getElementById("nicknameInput").value.trim();
+  const pin5 = document.getElementById("pinInput").value.trim();
+  const msg = document.getElementById("loginMsg");
+
+  msg.textContent = "";
+  msg.className = "msg";
+
+  if(!nickname || !pin5){
+    msg.textContent = "닉네임과 PIN5를 모두 입력해주세요.";
+    msg.classList.add("error");
+    return;
+  }
+
+  try{
+    const { data, error } = await sb
+      .from("team_members")
+      .select("nickname,pin5")
+      .eq("nickname", nickname)
+      .eq("pin5", pin5)
+      .maybeSingle();
+
+    if(error) throw error;
+
+    if(!data){
+      msg.textContent = "닉네임 또는 PIN5가 일치하지 않습니다.";
+      msg.classList.add("error");
+      return;
+    }
+
+    currentUser = {
+      nickname: data.nickname,
+      pin5: data.pin5
+    };
+
+    await enterWaitingRoom();
+
+  }catch(e){
+    console.error(e);
+    msg.textContent = "로그인 중 오류가 발생했습니다.";
+    msg.classList.add("error");
+  }
+}
+
+async function enterWaitingRoom(){
+  const { error } = await sb
+    .from("typing_game_players")
+    .upsert({
+      room_id: roomId,
+      nickname: currentUser.nickname,
+      pin5: currentUser.pin5,
+      last_seen: new Date().toISOString()
+    }, {
+      onConflict: "room_id,nickname"
+    });
+
+  if(error){
+    alert("대기실 입장 실패: " + error.message);
+    return;
+  }
+
+  document.getElementById("loginBox").classList.add("hidden");
+  document.getElementById("waitingBox").classList.remove("hidden");
+  document.getElementById("myNickText").textContent = currentUser.nickname;
+
+  await loadPlayerCount();
+  subscribePlayers();
+}
+
+async function loadPlayerCount(){
+  const { count, error } = await sb
+    .from("typing_game_players")
+    .select("*", { count:"exact", head:true })
+    .eq("room_id", roomId);
+
+  if(error){
+    console.error(error);
+    return;
+  }
+
+  document.getElementById("playerCount").textContent = count || 0;
+}
+
+function subscribePlayers(){
+  sb.channel("typing_game_players_watch")
+    .on(
+      "postgres_changes",
+      {
+        event: "*",
+        schema: "public",
+        table: "typing_game_players"
+      },
+      async () => {
+        await loadPlayerCount();
+      }
+    )
+    .subscribe();
+}
+</script>
 
 </body>
 </html>
