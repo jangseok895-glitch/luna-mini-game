@@ -380,6 +380,25 @@ button:disabled{opacity:.38;cursor:not-allowed;filter:grayscale(.3)}
   background:linear-gradient(135deg,#64748b,#ef4444)!important;
 }
 
+
+/* 베스킨라빈스31 더 부드러운 이동 */
+.silhouette-line{
+  transition:transform .65s cubic-bezier(.22,1,.36,1);
+}
+.person.walking{
+  animation:brWalkSmooth .72s cubic-bezier(.22,1,.36,1) 1;
+}
+@keyframes brWalkSmooth{
+  0%{transform:translateX(34px) scale(1.04); opacity:.45}
+  55%{transform:translateX(-4px) scale(1.01); opacity:1}
+  100%{transform:translateX(0) scale(1); opacity:1}
+}
+.viewer-score{
+  color:#ef4444;
+  font-size:13px;
+  font-weight:1000!important;
+}
+
 @media(max-width:1100px){.seat-row{grid-template-columns:repeat(4,1fr)}.room-bubble-chat{width:90%}}
 @media(max-width:760px){.menu-layout,.game-layout{grid-template-columns:1fr}.game-side{min-height:auto}.seat-row{grid-template-columns:repeat(4,1fr)}}
 @media(max-width:600px){h1{font-size:32px}.character-grid{grid-template-columns:repeat(5,1fr)}.seat-row{grid-template-columns:repeat(2,1fr)}.bottom-buttons{grid-template-columns:1fr}.room-bubble-chat{width:100%}.person{font-size:48px}.br31-buttons button{font-size:22px}}
@@ -550,6 +569,7 @@ let rankHtmlCache="";
 let onlineHtmlCache="";
 let playerHtmlCache="";
 let viewerHtmlCache="";
+let lastLocalActivity=Date.now();
 
 const characters=["🐰","🐱","🐶","🐻","🐼","🐥","🦊","🐯","🐵","🐧"];
 
@@ -581,6 +601,17 @@ function stopRoundTimer(){
   if(roundTimerId){
     clearInterval(roundTimerId);
     roundTimerId=null;
+  }
+}
+function markLocalActivity(){
+  lastLocalActivity=Date.now();
+}
+async function touchRoomActivity(){
+  markLocalActivity();
+  if(roomId){
+    await sb.from("typing_game_rooms")
+      .update({updated_at:new Date().toISOString()})
+      .eq("id",roomId);
   }
 }
 function startRoundTimer(seconds, elId, key, onExpire){
@@ -687,27 +718,10 @@ async function login(){
 
     if(dupError) throw dupError;
 
-// 이미 로그인중인 기록이 있으면 강제 로그아웃 처리
-if(onlineDup && onlineDup.length){
-
-  // 기존 접속자 제거
-  await sb
-    .from("typing_game_players")
-    .delete()
-    .eq("nickname", loginUser.nickname);
-
-  // 기존 채팅 말풍선 제거
-  await sb
-    .from("typing_game_chats")
-    .delete()
-    .eq("nickname", loginUser.nickname);
-
-  // 기존 정답 기록 제거
-  await sb
-    .from("typing_game_answers")
-    .delete()
-    .eq("nickname", loginUser.nickname);
-}
+    if(onlineDup&&onlineDup.length){
+      msg.textContent="중복 로그인입니다. 잠시후 다시 시도해주세요.";
+      return;
+    }
 
     user=loginUser;
     selectedChar=user.mini_character||localStorage.getItem("mini_character_"+user.nickname)||"";
@@ -737,11 +751,12 @@ async function saveCharacter(){
 }
 
 async function addIntegratedScore(nickname,character,addScore){
-  if(!nickname||!addScore)return;
+  if(!nickname || Number(addScore)===0)return;
   try{
     const {data}=await sb.from("mini_game_scores").select("nickname,total_score,character").eq("nickname",nickname).maybeSingle();
-    if(data) await sb.from("mini_game_scores").update({total_score:Number(data.total_score||0)+Number(addScore||0),character:character||data.character||"🐰",updated_at:new Date().toISOString()}).eq("nickname",nickname);
-    else await sb.from("mini_game_scores").insert({nickname,character:character||"🐰",total_score:Number(addScore||0),updated_at:new Date().toISOString()});
+    const delta=Number(addScore||0);
+    if(data) await sb.from("mini_game_scores").update({total_score:Number(data.total_score||0)+delta,character:character||data.character||"🐰",updated_at:new Date().toISOString()}).eq("nickname",nickname);
+    else await sb.from("mini_game_scores").insert({nickname,character:character||"🐰",total_score:delta,updated_at:new Date().toISOString()});
   }catch(e){console.warn("통합 점수 저장 실패:",e.message)}
 }
 async function getIntegratedScoreMap(){
@@ -834,9 +849,22 @@ async function enterRoom(game){
     lastChats=[];
     const {data:usedSeats}=await sb.from("typing_game_players").select("seat_no").eq("room_id",roomId).not("seat_no","is",null);
     const used=(usedSeats||[]).map(x=>Number(x.seat_no));let mySeat=1;for(let i=1;i<=8;i++){if(!used.includes(i)){mySeat=i;break}}
-    await sb.from("typing_game_players").upsert({room_id:roomId,nickname:user.nickname,pin5:user.pin5,character:user.mini_character,score:0,ready:false,role:"player",seat_no:mySeat,current_place:gameName(game),last_seen:new Date().toISOString()},{onConflict:"room_id,nickname"});
-    myRole="player";isReady=false;
-    document.getElementById("readyBtn").classList.remove("hidden");document.getElementById("readyBtn").textContent=mySeat===1?"시작":"준비";document.getElementById("readyBtn").className="cute-ready ready-btn";
+    await sb.from("typing_game_players").upsert({
+      room_id:roomId,
+      nickname:user.nickname,
+      pin5:user.pin5,
+      character:user.mini_character,
+      score:0,
+      ready:false,
+      role:"viewer",
+      seat_no:null,
+      current_place:gameName(game),
+      last_seen:new Date().toISOString()
+    },{onConflict:"room_id,nickname"});
+
+    myRole="viewer";
+    isReady=false;
+    document.getElementById("readyBtn").classList.add("hidden");
     show("gameScreen");subscribe();startRealtimeRefresh();await loadPlayers();await loadChats();await loadViewerChat();await loadRoom();
   }catch(e){alert("입장 오류: "+e.message)}
 }
@@ -870,16 +898,38 @@ function renderSidePlayers(players,viewers){
   if(!players.length)pHtml=`<div class="online-item">선수 없음</div>`;
   else players.forEach(p=>pHtml+=`<div class="online-item">${p.character||"🐰"} ${escapeHtml(p.nickname)} <span class="score-strong">[${p.score||0}점]</span></div>`);
   if(!viewers.length)vHtml=`<div class="viewer-item">관전자 없음</div>`;
-  else viewers.forEach(p=>vHtml+=`<div class="viewer-item">${p.character||"🐰"} ${escapeHtml(p.nickname)}</div>`);
+  else viewers.forEach(p=>vHtml+=`<div class="viewer-item">${p.character||"🐰"} ${escapeHtml(p.nickname)} <span class="viewer-score">[${p.score||0}점]</span></div>`);
   setHtmlIfChanged(pbox,pHtml);
   setHtmlIfChanged(vbox,vHtml);
 }
 
 async function moveSeat(seatNo){
-  if(myRole==="viewer"){alert("관전자는 자리를 선택할 수 없습니다.");return}
   const {data}=await sb.from("typing_game_players").select("nickname").eq("room_id",roomId).eq("seat_no",seatNo).maybeSingle();
   if(data){alert("이미 사용 중인 자리입니다.");return}
-  await sb.from("typing_game_players").update({seat_no:seatNo}).eq("room_id",roomId).eq("nickname",user.nickname);await loadPlayers();
+
+  const {error}=await sb.from("typing_game_players")
+    .update({
+      role:"player",
+      ready:false,
+      seat_no:seatNo,
+      current_place:gameName(currentGame),
+      last_seen:new Date().toISOString()
+    })
+    .eq("room_id",roomId)
+    .eq("nickname",user.nickname);
+
+  if(error){
+    alert("자리 선택 오류: "+error.message);
+    return;
+  }
+
+  myRole="player";
+  isReady=false;
+  document.getElementById("readyBtn").classList.remove("hidden");
+  document.getElementById("readyBtn").textContent=seatNo===1?"시작":"준비";
+  document.getElementById("readyBtn").className="cute-ready ready-btn";
+
+  await loadPlayers();
 }
 
 async function goSpectator(){
@@ -888,11 +938,7 @@ async function goSpectator(){
   document.getElementById("readyBtn").classList.add("hidden");await loadPlayers();await checkReadyStart();
 }
 async function goPlayer(){
-  myRole="player";const {data:usedSeats}=await sb.from("typing_game_players").select("seat_no").eq("room_id",roomId).not("seat_no","is",null);
-  const used=(usedSeats||[]).map(x=>Number(x.seat_no));let mySeat=null;for(let i=1;i<=8;i++){if(!used.includes(i)){mySeat=i;break}}
-  if(!mySeat){alert("빈 자리가 없습니다.");return}
-  await sb.from("typing_game_players").update({role:"player",ready:false,seat_no:mySeat,current_place:gameName(currentGame),last_seen:new Date().toISOString()}).eq("room_id",roomId).eq("nickname",user.nickname);
-  document.getElementById("readyBtn").classList.remove("hidden");document.getElementById("readyBtn").textContent=mySeat===1?"시작":"준비";document.getElementById("readyBtn").className="cute-ready ready-btn";await loadPlayers();
+  alert("빈 자리를 클릭하면 선수로 참가됩니다.");
 }
 
 async function toggleReady(){
@@ -1068,12 +1114,48 @@ async function sendChatOrAnswer(){
 }
 async function sendNormalChat(){
   const input=document.getElementById("chatInput");let message=input.value.trim();if(!message||!user)return;if(message.length>40)message=message.slice(0,40);input.value="";
-  await sb.from("typing_game_chats").insert({room_id:roomId,nickname:user.nickname,character:user.mini_character,message});await loadChats();
+  await sb.from("typing_game_chats").insert({room_id:roomId,nickname:user.nickname,character:user.mini_character,message});
+  if(currentRoom && currentRoom.status==="playing") await touchRoomActivity();
+  await loadChats();
 }
 async function insertBubble(text,result,nickname=user?.nickname,character=user?.mini_character){
   const message=JSON.stringify({__miniBubble:true,text,result:result||"normal",round:currentRoom?.round||0,time:Date.now()});
   await sb.from("typing_game_chats").insert({room_id:roomId,nickname,character:character||"🐰",message});
+  if(currentRoom && currentRoom.status==="playing") await touchRoomActivity();
 }
+
+async function addPlayerScoreDelta(nickname, delta){
+  const {data:p}=await sb.from("typing_game_players")
+    .select("score,character")
+    .eq("room_id",roomId)
+    .eq("nickname",nickname)
+    .maybeSingle();
+
+  if(!p) return;
+
+  const nextScore=Number(p.score||0)+Number(delta||0);
+
+  await sb.from("typing_game_players")
+    .update({score:nextScore})
+    .eq("room_id",roomId)
+    .eq("nickname",nickname);
+
+  await addIntegratedScore(nickname,p.character||"🐰",delta);
+}
+
+async function penalizeOtherPlayers(winner, delta){
+  const {data}=await sb.from("typing_game_players")
+    .select("nickname,role")
+    .eq("room_id",roomId)
+    .eq("role","player");
+
+  for(const p of (data||[])){
+    if(p.nickname!==winner){
+      await addPlayerScoreDelta(p.nickname,delta);
+    }
+  }
+}
+
 async function submitTypingAnswer(){
   if(myRole==="viewer"||!currentRoom||currentRoom.status!=="playing")return;
   const input=document.getElementById("chatInput"),answer=input.value.trim();if(!answer)return;input.value="";
@@ -1090,7 +1172,9 @@ async function checkTypingWinner(){
   const winner=data[0].nickname, answerText=data[0].answer;
   const {data:p}=await sb.from("typing_game_players").select("score,character").eq("room_id",roomId).eq("nickname",winner).single();
   await sb.from("typing_game_players").update({score:Number(p?.score||0)+ROUND_SCORE}).eq("room_id",roomId).eq("nickname",winner);
-  await addIntegratedScore(winner,p?.character||"🐰",ROUND_SCORE);await insertBubble(answerText,"first",winner,p?.character||"🐰");
+  await addIntegratedScore(winner,p?.character||"🐰",ROUND_SCORE);
+  await penalizeOtherPlayers(winner,-0.3);
+  await insertBubble(answerText,"first",winner,p?.character||"🐰");
   document.getElementById("centerMessage").textContent=`${winner} 님 1등! ${ROUND_SCORE}점`;setTimeout(nextTypingRound,1200);
 }
 async function typingTimeoutNext(roundNo){
@@ -1161,7 +1245,10 @@ function setBr31Buttons(on){
 function updateBr31InputAndButtons(){
   const st=br31Local||{}, me=user?.nickname, active=st.players?.[st.turnIndex], alive=st.players||[];
   const myTurn=currentRoom?.status==="playing"&&myRole==="player"&&active===me&&!st.eliminated?.includes(me);
-  document.getElementById("chatInput").disabled=true;document.getElementById("chatInput").placeholder=myTurn?"아래 숫자 버튼을 선택하세요":"베스킨라빈스31 진행중";
+  const chat=document.getElementById("chatInput");
+  chat.disabled=false;
+  chat.placeholder="말풍선 채팅 입력 40자 이내";
+  chat.maxLength=40;
   [1,2,3].forEach(n=>{const b=document.getElementById("brBtn"+n);b.disabled=!myTurn||Number(st.lastChoice)===n});
   loadPlayers();
 }
@@ -1194,6 +1281,7 @@ async function chooseBr31(n){
     st.lastEliminated=loser;
     st.eliminated=[...(st.eliminated||[]),loser];
     st.players=(st.players||[]).filter(x=>x!==loser);
+    await addPlayerScoreDelta(loser,-0.5);
     await insertBubble("탈락","wrong",loser,user.mini_character);
 
     if(st.players.length<=1){
@@ -1325,8 +1413,9 @@ function updateBurgerButtons(){
   const can=currentRoom?.status==="playing" && currentGame==="burger" && myRole==="player" && !st.winner;
   setBurgerButtons(can);
   const input=document.getElementById("chatInput");
-  input.disabled=true;
-  input.placeholder=can?"햄버거 버튼을 순서대로 누르세요":"햄버거 게임 진행중";
+  input.disabled=false;
+  input.placeholder="말풍선 채팅 입력 40자 이내";
+  input.maxLength=40;
 }
 
 function startBurgerRound(room){
@@ -1433,6 +1522,7 @@ async function finishBurgerRound(winner){
   const {data:p}=await sb.from("typing_game_players").select("score,character").eq("room_id",roomId).eq("nickname",winner).maybeSingle();
   await sb.from("typing_game_players").update({score:Number(p?.score||0)+3}).eq("room_id",roomId).eq("nickname",winner);
   await addIntegratedScore(winner,p?.character||"🐰",3);
+  await penalizeOtherPlayers(winner,-0.3);
   await insertBubble("완성!","first",winner,p?.character||"🐰");
 
   document.getElementById("burgerStatus").textContent=`${winner} 님 햄버거 완성! +3점`;
@@ -1459,6 +1549,53 @@ async function applyBurgerFinishBonus(){
 }
 
 
+
+async function resetCurrentRoomToWaiting(){
+  stopRoundTimer();
+  clearTimeout(burgerShowingTimer);
+  typingRoundKey="";
+  burgerRoundKey="";
+  handledWinnerKey="";
+  br31Local=null;
+  burgerLocal=null;
+  burgerInputSeq=[];
+
+  await sb.from("typing_game_rooms")
+    .update({
+      status:"waiting",
+      round:0,
+      current_text:null,
+      round_started_at:null,
+      updated_at:new Date().toISOString()
+    })
+    .eq("id",roomId);
+}
+
+async function monitorGameIdle(){
+  if(!user || !currentRoom) return;
+  if(!(currentRoom.status==="playing" || currentRoom.status==="countdown")) return;
+
+  const {data}=await sb
+    .from("typing_game_players")
+    .select("nickname,role")
+    .eq("room_id",roomId)
+    .eq("role","player");
+
+  const players=data||[];
+
+  if(!players.length){
+    await resetCurrentRoomToWaiting();
+    return;
+  }
+
+  const updatedAt=currentRoom.updated_at ? new Date(currentRoom.updated_at).getTime() : Date.now();
+  const idleMs=Date.now()-updatedAt;
+
+  if(idleMs>30000){
+    await resetCurrentRoomToWaiting();
+  }
+}
+
 async function finishAndKickPlayers(){
   await sb.from("typing_game_rooms").update({status:"finished",updated_at:new Date().toISOString()}).eq("id",roomId);
   setTimeout(async()=>{await sb.from("typing_game_players").delete().eq("room_id",roomId).neq("role","viewer")},1200);
@@ -1483,9 +1620,24 @@ async function showFinish(){
 async function backToMenuAfterFinish(){await markOnline("대기방");openMenu()}
 async function leaveGame(){
   if(!user)return;
+
+  if(currentRoom && (currentRoom.status==="playing" || currentRoom.status==="countdown")){
+    const ok=confirm("게임중입니다. 진짜로 나가겠습니까?");
+    if(!ok) return;
+  }
+
   await sb.from("typing_game_chats").delete().eq("room_id",roomId).eq("nickname",user.nickname);
   await sb.from("typing_game_players").delete().eq("room_id",roomId).eq("nickname",user.nickname);
-  lastChats=[];await loadChats();await markOnline("대기방");openMenu();
+  lastChats=[];
+  await loadChats();
+
+  const {players}=await loadPlayers();
+  if(!players.length && currentRoom && currentRoom.status!=="waiting"){
+    await resetCurrentRoomToWaiting();
+  }
+
+  await markOnline("대기방");
+  openMenu();
 }
 
 
@@ -1591,6 +1743,7 @@ async function refreshRealtimeAll(){
       if(currentGame==="burger"){
         updateBurgerButtons();
       }
+      await monitorGameIdle();
     }
   }catch(e){
     console.warn("실시간 새로고침 오류:", e.message);
