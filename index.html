@@ -144,7 +144,7 @@ button:active{
   width:100%;
   max-width:1280px;
   display:grid;
-  grid-template-columns:260px 1fr 270px;
+  grid-template-columns:260px 1fr 290px;
   gap:18px;
   align-items:stretch;
 }
@@ -156,6 +156,23 @@ button:active{
   border-radius:26px;
   padding:18px;
   box-shadow:0 16px 42px rgba(59,130,246,.16);
+}
+
+.menu-center{
+  position:relative;
+}
+
+.menu-logout-btn{
+  position:absolute;
+  top:12px;
+  right:12px;
+  width:auto;
+  margin:0;
+  padding:6px 10px;
+  font-size:12px;
+  border-radius:10px;
+  background:linear-gradient(135deg,#64748b,#ef4444);
+  box-shadow:none;
 }
 
 .game-grid{
@@ -263,11 +280,33 @@ button:active{
   color:#2563eb;
 }
 
+.room-bubble-chat{
+  display:flex;
+  gap:8px;
+  margin:8px auto 12px;
+  width:70%;
+}
+
+.room-bubble-chat input{
+  margin:0;
+  flex:1;
+  padding:12px;
+  font-size:15px;
+}
+
+.room-bubble-chat button{
+  margin:0;
+  width:85px;
+  padding:10px;
+  font-size:15px;
+}
+
 .seat-row{
   display:grid;
   grid-template-columns:repeat(8,1fr);
   gap:8px;
   margin-top:10px;
+  padding-top:46px;
 }
 
 .seat{
@@ -281,6 +320,8 @@ button:active{
   align-items:center;
   justify-content:center;
   cursor:pointer;
+  position:relative;
+  overflow:visible;
 }
 
 .seat.empty{
@@ -308,50 +349,33 @@ button:active{
 }
 
 .seat-chat{
-  margin-top:5px;
-  padding:5px 7px;
-  background:#fff;
+  position:absolute;
+  bottom:118px;
+  left:50%;
+  transform:translateX(-50%);
+  min-width:90px;
+  max-width:150px;
+  background:#ffffff;
   border:2px solid #f9a8d4;
-  border-radius:12px;
+  border-radius:16px;
+  padding:7px 9px;
   font-size:12px;
   color:#333;
-  max-width:100%;
   word-break:break-all;
+  box-shadow:0 6px 16px rgba(236,72,153,.18);
+  z-index:20;
+  pointer-events:none;
 }
 
-.chat-area{
-  margin-top:12px;
-  background:#f8fafc;
-  border:3px solid #dbeafe;
-  border-radius:20px;
-  padding:12px;
-}
-
-.chat-log{
-  height:115px;
-  overflow:auto;
-  text-align:left;
-  font-size:14px;
-  padding:8px;
-  background:white;
-  border-radius:14px;
-}
-
-.chat-input-row{
-  display:flex;
-  gap:8px;
-  margin-top:8px;
-}
-
-.chat-input-row input{
-  margin:0;
-}
-
-.chat-input-row button{
-  width:90px;
-  margin:0;
-  padding:10px;
-  font-size:15px;
+.seat-chat:after{
+  content:"";
+  position:absolute;
+  bottom:-8px;
+  left:50%;
+  transform:translateX(-50%);
+  border-width:8px 7px 0 7px;
+  border-style:solid;
+  border-color:#f9a8d4 transparent transparent transparent;
 }
 
 .ready-btn{
@@ -424,61 +448,7 @@ button:active{
   .character-grid{grid-template-columns:repeat(5,1fr)}
   .seat-row{grid-template-columns:repeat(2,1fr)}
   .bottom-buttons{grid-template-columns:1fr}
-}
-
-  .room-bubble-chat{
-  display:flex;
-  gap:8px;
-  margin:8px auto 12px;
-  width:70%;
-}
-
-.room-bubble-chat input{
-  margin:0;
-  flex:1;
-  padding:12px;
-  font-size:15px;
-}
-
-.room-bubble-chat button{
-  margin:0;
-  width:85px;
-  padding:10px;
-  font-size:15px;
-}
-
-.seat-chat{
-  position:absolute;
-  top:-42px;
-  left:50%;
-  transform:translateX(-50%);
-  min-width:90px;
-  max-width:150px;
-  background:#ffffff;
-  border:2px solid #f9a8d4;
-  border-radius:16px;
-  padding:7px 9px;
-  font-size:12px;
-  color:#333;
-  word-break:break-all;
-  box-shadow:0 6px 16px rgba(236,72,153,.18);
-  z-index:5;
-}
-
-.seat-chat:after{
-  content:"";
-  position:absolute;
-  bottom:-8px;
-  left:50%;
-  transform:translateX(-50%);
-  border-width:8px 7px 0 7px;
-  border-style:solid;
-  border-color:#f9a8d4 transparent transparent transparent;
-}
-
-.seat{
-  position:relative;
-  overflow:visible;
+  .room-bubble-chat{width:100%}
 }
 </style>
 </head>
@@ -521,10 +491,9 @@ button:active{
     </div>
 
     <div class="menu-center">
+      <button class="menu-logout-btn" onclick="logout()">로그아웃</button>
+
       <h1>게임 선택</h1>
-      <button onclick="logout()" style="background:linear-gradient(135deg,#64748b,#ef4444);">
-  로그아웃
-</button>
       <p><span id="menuChar"></span> <span id="menuNick"></span> 님 환영합니다</p>
 
       <div class="game-grid">
@@ -541,7 +510,7 @@ button:active{
       <div class="menu-chat-box">
         <div id="menuChatLog" class="menu-chat-log"></div>
         <div class="menu-chat-row">
-          <input id="menuChatInput" placeholder="대기방 채팅 입력" maxlength="50"
+          <input id="menuChatInput" placeholder="대기방 채팅 입력" maxlength="80"
             onkeydown="if(event.key==='Enter')sendMenuChat()">
           <button onclick="sendMenuChat()">전송</button>
         </div>
@@ -568,12 +537,6 @@ button:active{
         </div>
       </div>
 
-      <div class="room-bubble-chat">
-  <input id="chatInput" placeholder="말풍선 채팅 입력" maxlength="35"
-    onkeydown="if(event.key==='Enter')sendChat()">
-  <button onclick="sendChat()">전송</button>
-</div>
-
       <div id="problemArea" class="hidden">
         <p>라운드 <span id="roundText">1</span> / 10 · 내 점수 <span id="scoreText">0</span>점</p>
         <div class="problem" id="problemText"></div>
@@ -583,9 +546,13 @@ button:active{
         <div id="gameMsg" class="msg"></div>
       </div>
 
+      <div class="room-bubble-chat">
+        <input id="chatInput" placeholder="말풍선 채팅 입력 40자 이내" maxlength="40"
+          onkeydown="if(event.key==='Enter')sendChat()">
+        <button onclick="sendChat()">전송</button>
+      </div>
+
       <div class="seat-row" id="seatRow"></div>
-
-
 
       <div class="bottom-buttons">
         <button id="readyBtn" class="ready-btn" onclick="toggleReady()">준비</button>
@@ -791,34 +758,87 @@ async function openMenu(){
   await loadMenuChat();
 }
 
+async function logout(){
+  if(user){
+    await sb.from("typing_game_players")
+      .delete()
+      .eq("nickname",user.nickname);
+
+    await sb.from("typing_game_chats")
+      .delete()
+      .eq("nickname",user.nickname);
+  }
+
+  user = null;
+  selectedChar = "";
+  isReady = false;
+  myRole = "player";
+  currentRoom = null;
+  lastChats = [];
+
+  document.getElementById("nicknameInput").value = "";
+  document.getElementById("pinInput").value = "";
+
+  show("loginScreen");
+}
+
+async function getScoreMap(){
+  const { data } = await sb
+    .from("typing_game_players")
+    .select("nickname,score")
+    .eq("room_id",roomId);
+
+  const map = {};
+
+  (data || []).forEach(p=>{
+    if(!map[p.nickname] || Number(p.score || 0) > map[p.nickname]){
+      map[p.nickname] = Number(p.score || 0);
+    }
+  });
+
+  return map;
+}
+
 async function loadMenuOnline(){
   const { data } = await sb
     .from("typing_game_players")
-    .select("nickname,character,current_place,room_id,role,last_seen")
-    .order("last_seen",{ascending:false});
+    .select("nickname,character,current_place,room_id,role,last_seen,score")
+    .order("last_seen",{ascending:true});
+
+  const scoreMap = await getScoreMap();
 
   const box = document.getElementById("menuOnlineList");
   box.innerHTML = "";
 
-  const filtered = (data || []).filter((p, index, arr)=>{
+  let rows = data || [];
+
+  rows = rows.filter((p, index, arr)=>{
     return arr.findIndex(x=>x.nickname === p.nickname) === index;
   });
 
-  if(!filtered.length){
+  if(user){
+    const me = rows.filter(p => p.nickname === user.nickname);
+    const others = rows.filter(p => p.nickname !== user.nickname);
+    rows = [...others, ...me];
+  }
+
+  if(!rows.length){
     box.innerHTML = `<div class="online-item">현재 접속자 없음</div>`;
     return;
   }
 
-  filtered.forEach(p=>{
+  rows.forEach(p=>{
     let place = "대기방";
 
     if(p.room_id === roomId){
       place = "루칭방 타자타자";
     }
 
+    const score = scoreMap[p.nickname] || p.score || 0;
+
     box.innerHTML += `
       <div class="online-item">
-        ${p.character || "🐰"} ${escapeHtml(p.nickname)} [${place}]
+        ${p.character || "🐰"} ${escapeHtml(p.nickname)} [${place}] - ${score}점
       </div>
     `;
   });
@@ -886,11 +906,6 @@ async function loadMenuChat(){
 }
 
 async function enterTypingLobby(){
-await sb.from("typing_game_chats")
-  .delete()
-  .eq("room_id",roomId)
-  .eq("nickname",user.nickname);
-  
   try{
     await sb.from("typing_game_rooms").upsert({
       id:roomId,
@@ -905,6 +920,11 @@ await sb.from("typing_game_chats")
     await sb.from("typing_game_players")
       .delete()
       .eq("room_id","online")
+      .eq("nickname",user.nickname);
+
+    await sb.from("typing_game_chats")
+      .delete()
+      .eq("room_id",roomId)
       .eq("nickname",user.nickname);
 
     const { data: usedSeats } = await sb
@@ -938,6 +958,7 @@ await sb.from("typing_game_chats")
 
     myRole = "player";
     isReady = false;
+    lastChats = [];
 
     document.getElementById("readyBtn").classList.remove("hidden");
     document.getElementById("readyBtn").textContent = "준비";
@@ -994,11 +1015,11 @@ function renderSeats(players){
 
     row.innerHTML += `
       <div class="seat">
+        ${chatHtml}
         <div class="seat-char">${p.character || "🐰"}</div>
         <div class="seat-name">${escapeHtml(p.nickname)}</div>
         <div class="seat-score">${p.score || 0}점</div>
         <div class="ready-mark">${p.ready ? "준비완료" : "대기중"}</div>
-        ${chatHtml}
       </div>
     `;
   }
@@ -1376,9 +1397,13 @@ async function loadMyScore(){
 
 async function sendChat(){
   const input = document.getElementById("chatInput");
-  const message = input.value.trim();
+  let message = input.value.trim();
 
   if(!message || !user) return;
+
+  if(message.length > 40){
+    message = message.slice(0,40);
+  }
 
   input.value = "";
 
@@ -1510,31 +1535,23 @@ document.getElementById("pinInput")?.addEventListener("keydown", e=>{
 setInterval(()=>{
   if(user){
     const isTyping = !document.getElementById("typingScreen").classList.contains("hidden");
-    markOnline(isTyping ? "루칭방 타자타자" : "대기방");
+    const isMenu = !document.getElementById("menuScreen").classList.contains("hidden");
+
+    if(isMenu){
+      markOnline("대기방");
+    }
+
+    if(isTyping){
+      sb.from("typing_game_players")
+        .update({
+          current_place:"루칭방 타자타자",
+          last_seen:new Date().toISOString()
+        })
+        .eq("room_id",roomId)
+        .eq("nickname",user.nickname);
+    }
   }
 },15000);
-
-  async function logout(){
-  if(user){
-    await sb.from("typing_game_players")
-      .delete()
-      .eq("nickname",user.nickname);
-
-    localStorage.removeItem("mini_login_nickname");
-  }
-
-  user = null;
-  selectedChar = "";
-  isReady = false;
-  myRole = "player";
-  currentRoom = null;
-  lastChats = [];
-
-  document.getElementById("nicknameInput").value = "";
-  document.getElementById("pinInput").value = "";
-
-  show("loginScreen");
-}
 </script>
 
 </body>
