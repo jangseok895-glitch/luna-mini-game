@@ -687,10 +687,27 @@ async function login(){
 
     if(dupError) throw dupError;
 
-    if(onlineDup&&onlineDup.length){
-      msg.textContent="중복 로그인입니다. 잠시후 다시 시도해주세요.";
-      return;
-    }
+// 이미 로그인중인 기록이 있으면 강제 로그아웃 처리
+if(onlineDup && onlineDup.length){
+
+  // 기존 접속자 제거
+  await sb
+    .from("typing_game_players")
+    .delete()
+    .eq("nickname", loginUser.nickname);
+
+  // 기존 채팅 말풍선 제거
+  await sb
+    .from("typing_game_chats")
+    .delete()
+    .eq("nickname", loginUser.nickname);
+
+  // 기존 정답 기록 제거
+  await sb
+    .from("typing_game_answers")
+    .delete()
+    .eq("nickname", loginUser.nickname);
+}
 
     user=loginUser;
     selectedChar=user.mini_character||localStorage.getItem("mini_character_"+user.nickname)||"";
