@@ -313,6 +313,73 @@ button:disabled{opacity:.38;cursor:not-allowed;filter:grayscale(.3)}
   transform:translateZ(0);
 }
 
+
+.admin-btn{
+  position:absolute;
+  top:12px;
+  right:82px;
+  width:auto;
+  margin:0;
+  padding:6px 10px;
+  font-size:12px;
+  border-radius:10px;
+  background:linear-gradient(135deg,#2563eb,#a855f7);
+  box-shadow:none;
+}
+.admin-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,.35);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:10000;
+}
+.admin-pop{
+  width:min(520px,92vw);
+  background:#ffffff;
+  border:4px solid #bfdbfe;
+  border-radius:28px;
+  padding:20px;
+  box-shadow:0 25px 70px rgba(37,99,235,.3);
+  text-align:center;
+}
+.admin-pop h2{
+  margin:0 0 12px;
+}
+.admin-row{
+  margin-top:12px;
+  padding:10px;
+  background:#f8fafc;
+  border:2px solid #dbeafe;
+  border-radius:18px;
+}
+.admin-row select,
+.admin-row input{
+  margin-top:6px;
+  padding:10px;
+  font-size:15px;
+  border-radius:14px;
+}
+.admin-row button{
+  margin-top:8px;
+  padding:10px;
+  font-size:15px;
+}
+.admin-danger{
+  background:linear-gradient(135deg,#ef4444,#f97316)!important;
+}
+.admin-reset{
+  background:linear-gradient(135deg,#64748b,#ef4444)!important;
+}
+.burger-reset-btn{
+  grid-column:1 / -1;
+  height:42px!important;
+  font-size:15px!important;
+  color:#ffffff!important;
+  background:linear-gradient(135deg,#64748b,#ef4444)!important;
+}
+
 @media(max-width:1100px){.seat-row{grid-template-columns:repeat(4,1fr)}.room-bubble-chat{width:90%}}
 @media(max-width:760px){.menu-layout,.game-layout{grid-template-columns:1fr}.game-side{min-height:auto}.seat-row{grid-template-columns:repeat(4,1fr)}}
 @media(max-width:600px){h1{font-size:32px}.character-grid{grid-template-columns:repeat(5,1fr)}.seat-row{grid-template-columns:repeat(2,1fr)}.bottom-buttons{grid-template-columns:1fr}.room-bubble-chat{width:100%}.person{font-size:48px}.br31-buttons button{font-size:22px}}
@@ -337,6 +404,7 @@ button:disabled{opacity:.38;cursor:not-allowed;filter:grayscale(.3)}
 <div class="screen hidden" id="menuScreen"><div class="menu-layout">
   <div class="side-panel"><h2 class="pretty-title rank-title-small">통합점수 TOP 30</h2><div id="topRankList"></div></div>
   <div class="menu-center">
+    <button class="admin-btn" onclick="openAdminMode()">운영진모드</button>
     <button class="menu-logout-btn" onclick="logout()">로그아웃</button>
     <h1>게임 선택</h1><p><span id="menuChar"></span> <span id="menuNick"></span> 님 환영합니다</p>
     <div class="game-grid">
@@ -387,6 +455,7 @@ button:disabled{opacity:.38;cursor:not-allowed;filter:grayscale(.3)}
         <button title="토마토" onclick="chooseBurger('tomato')"><img class="burger-btn-img" src="https://i.ibb.co/sMLPj43/image.png" alt="토마토"></button>
         <button title="고기" onclick="chooseBurger('meat')"><img class="burger-btn-img" src="https://i.ibb.co/Zp9dNNhX/image.png" alt="고기"></button>
         <button title="야채" onclick="chooseBurger('veggie')"><img class="burger-btn-img" src="https://i.ibb.co/ccpxjWr1/image.png" alt="야채"></button>
+        <button class="burger-reset-btn" onclick="resetBurgerInput()">리셋</button>
       </div>
       <div class="burger-answer" id="burgerAnswer">버튼을 순서대로 눌러주세요.</div>
     </div>
@@ -416,6 +485,41 @@ button:disabled{opacity:.38;cursor:not-allowed;filter:grayscale(.3)}
     <button class="ready-btn" onclick="goPlayer()">선수로 가기</button>
   </div>
 </div></div>
+
+
+<div id="adminOverlay" class="admin-overlay hidden">
+  <div class="admin-pop">
+    <h2 class="pretty-title">운영진 모드</h2>
+
+    <div id="adminLoginBox" class="admin-row">
+      <p class="small">운영진 비밀번호를 입력해주세요.</p>
+      <input id="adminPwInput" type="password" placeholder="비밀번호" maxlength="4" onkeydown="if(event.key==='Enter')checkAdminPw()">
+      <button onclick="checkAdminPw()">확인</button>
+      <button class="admin-reset" onclick="closeAdminMode()">닫기</button>
+      <div id="adminMsg" class="msg"></div>
+    </div>
+
+    <div id="adminPanelBox" class="hidden">
+      <div class="admin-row">
+        <button class="admin-danger" onclick="adminResetScores()">모든 점수 리셋</button>
+      </div>
+
+      <div class="admin-row">
+        <p class="small">추방할 접속자를 선택하세요.</p>
+        <select id="kickUserSelect"></select>
+        <button class="admin-danger" onclick="adminKickUser()">추방</button>
+      </div>
+
+      <div class="admin-row">
+        <button class="admin-reset" onclick="adminFullReset()">완전초기화</button>
+        <p class="small">점수, 접속기록, 게임방, 채팅, 캐릭터 선택값까지 초기화합니다.</p>
+      </div>
+
+      <button onclick="closeAdminMode()">닫기</button>
+      <div id="adminResultMsg" class="msg"></div>
+    </div>
+  </div>
+</div>
 
 <div id="countOverlay" class="count-overlay hidden"><div class="count-pop"><div class="count-pop-title">게임 시작합니다!</div><div class="count" id="countText">5</div></div></div>
 
@@ -1231,6 +1335,18 @@ async function burgerTimeoutNext(roundNo,key){
   await startCountdownRoom(Number(roundNo)+1);
 }
 
+
+function resetBurgerInput(){
+  if(currentGame!=="burger"||!currentRoom||currentRoom.status!=="playing") return;
+  burgerInputSeq=[];
+  const answer=document.getElementById("burgerAnswer");
+  if(answer){
+    answer.textContent="입력 순서를 초기화했습니다. 다시 처음부터 눌러주세요.";
+    answer.className="burger-answer";
+  }
+  updateBurgerButtons();
+}
+
 async function chooseBurger(kind){
   if(currentGame!=="burger"||!currentRoom||currentRoom.status!=="playing"||!burgerLocal)return;
   if(myRole!=="player"||burgerLocal.winner)return;
@@ -1372,6 +1488,31 @@ async function loadViewerChat(){
   box.scrollTop=box.scrollHeight;
 }
 
+
+async function checkIfKicked(){
+  if(!user) return;
+  const isLogin=!document.getElementById("loginScreen").classList.contains("hidden");
+  if(isLogin) return;
+
+  const {data}=await sb
+    .from("typing_game_players")
+    .select("nickname")
+    .eq("nickname",user.nickname)
+    .limit(1);
+
+  if(!data || !data.length){
+    user=null;
+    selectedChar="";
+    isReady=false;
+    myRole="player";
+    currentRoom=null;
+    lastChats=[];
+    show("loginScreen");
+    const msg=document.getElementById("loginMsg");
+    if(msg) msg.textContent="운영진에 의해 추방되었습니다.";
+  }
+}
+
 async function refreshRealtimeAll(){
   if(realtimeBusy) return;
   if(!user) return;
@@ -1407,6 +1548,7 @@ async function refreshRealtimeAll(){
         updateBurgerButtons();
       }
     }
+    await checkIfKicked();
   }catch(e){
     console.warn("실시간 새로고침 오류:", e.message);
   }finally{
@@ -1430,6 +1572,154 @@ function subscribe(){
     .on("postgres_changes",{event:"*",schema:"public",table:"mini_game_scores"},async()=>{await loadMenuOnline();await loadTopRanks()})
     .subscribe();
 }
+
+
+function openAdminMode(){
+  document.getElementById("adminOverlay").classList.remove("hidden");
+  document.getElementById("adminLoginBox").classList.remove("hidden");
+  document.getElementById("adminPanelBox").classList.add("hidden");
+  document.getElementById("adminPwInput").value="";
+  document.getElementById("adminMsg").textContent="";
+  document.getElementById("adminResultMsg").textContent="";
+  setTimeout(()=>document.getElementById("adminPwInput")?.focus(),50);
+}
+
+function closeAdminMode(){
+  document.getElementById("adminOverlay").classList.add("hidden");
+}
+
+async function checkAdminPw(){
+  const pw=document.getElementById("adminPwInput").value.trim();
+  const msg=document.getElementById("adminMsg");
+  msg.textContent="";
+
+  if(pw!=="0523"){
+    msg.textContent="비밀번호가 틀렸습니다.";
+    return;
+  }
+
+  document.getElementById("adminLoginBox").classList.add("hidden");
+  document.getElementById("adminPanelBox").classList.remove("hidden");
+  await loadAdminKickList();
+}
+
+async function loadAdminKickList(){
+  const select=document.getElementById("kickUserSelect");
+  if(!select) return;
+
+  const {data}=await sb
+    .from("typing_game_players")
+    .select("nickname,character,current_place,room_id,last_seen")
+    .order("last_seen",{ascending:false});
+
+  const seen=new Set();
+  select.innerHTML="";
+
+  (data||[]).forEach(p=>{
+    if(seen.has(p.nickname)) return;
+    seen.add(p.nickname);
+    let place=p.current_place||"대기방";
+    if(p.room_id==="typing_main") place="루칭방 타자타자";
+    if(p.room_id==="br31_main") place="베스킨라빈스31";
+    if(p.room_id==="burger_main") place="햄버거를 만들자";
+
+    const opt=document.createElement("option");
+    opt.value=p.nickname;
+    opt.textContent=`${p.character||"🐰"} ${p.nickname} - ${place}`;
+    select.appendChild(opt);
+  });
+
+  if(!select.innerHTML){
+    const opt=document.createElement("option");
+    opt.value="";
+    opt.textContent="현재 접속자 없음";
+    select.appendChild(opt);
+  }
+}
+
+async function adminResetScores(){
+  if(!confirm("모든 통합점수를 0점으로 초기화할까요?")) return;
+
+  const msg=document.getElementById("adminResultMsg");
+  msg.textContent="점수 초기화 중...";
+
+  try{
+    await sb.from("mini_game_scores").update({total_score:0,updated_at:new Date().toISOString()}).neq("nickname","__none__");
+    await sb.from("typing_game_players").update({score:0}).neq("nickname","__none__");
+    msg.textContent="모든 점수를 초기화했습니다.";
+    await loadTopRanks();
+    await loadMenuOnline();
+    await loadPlayers();
+  }catch(e){
+    msg.textContent="점수 초기화 오류: "+e.message;
+  }
+}
+
+async function adminKickUser(){
+  const select=document.getElementById("kickUserSelect");
+  const nickname=select?.value;
+  const msg=document.getElementById("adminResultMsg");
+
+  if(!nickname){
+    msg.textContent="추방할 접속자가 없습니다.";
+    return;
+  }
+
+  if(!confirm(`${nickname} 님을 추방할까요?`)) return;
+
+  try{
+    await sb.from("typing_game_chats").delete().eq("nickname",nickname);
+    await sb.from("typing_game_players").delete().eq("nickname",nickname);
+    msg.textContent=`${nickname} 님을 추방했습니다.`;
+    await loadAdminKickList();
+    await loadMenuOnline();
+    await loadGameCounts();
+    await loadPlayers();
+  }catch(e){
+    msg.textContent="추방 오류: "+e.message;
+  }
+}
+
+async function adminFullReset(){
+  if(!confirm("정말 완전초기화할까요?\\n모든 점수, 접속, 게임방, 채팅, 캐릭터 선택이 초기화됩니다.")) return;
+  if(!confirm("마지막 확인입니다. 모든 사용자가 캐릭터를 다시 선택해야 합니다.")) return;
+
+  const msg=document.getElementById("adminResultMsg");
+  msg.textContent="완전초기화 중...";
+
+  try{
+    await sb.from("typing_game_chats").delete().neq("nickname","__none__");
+    await sb.from("typing_game_answers").delete().neq("nickname","__none__");
+    await sb.from("typing_game_players").delete().neq("nickname","__none__");
+    await sb.from("mini_game_chats").delete().neq("nickname","__none__");
+    await sb.from("mini_game_scores").delete().neq("nickname","__none__");
+
+    await sb.from("typing_game_rooms").upsert([
+      {id:"typing_main",status:"waiting",round:0,max_round:10,current_text:null,round_started_at:null,updated_at:new Date().toISOString()},
+      {id:"br31_main",status:"waiting",round:0,max_round:31,current_text:null,round_started_at:null,updated_at:new Date().toISOString()},
+      {id:"burger_main",status:"waiting",round:0,max_round:10,current_text:null,round_started_at:null,updated_at:new Date().toISOString()}
+    ],{onConflict:"id"});
+
+    await sb.from("team_members").update({mini_character:null}).neq("nickname","__none__");
+
+    msg.textContent="완전초기화 완료. 모든 사용자는 캐릭터를 다시 선택해야 합니다.";
+
+    if(user){
+      user.mini_character="";
+      selectedChar="";
+      localStorage.clear();
+    }
+
+    await loadAdminKickList();
+    await loadMenuOnline();
+    await loadTopRanks();
+    await loadGameCounts();
+
+  }catch(e){
+    msg.textContent="완전초기화 오류: "+e.message;
+  }
+}
+
 
 document.getElementById("nicknameInput")?.addEventListener("keydown",e=>{
   if(e.key==="Enter"){
