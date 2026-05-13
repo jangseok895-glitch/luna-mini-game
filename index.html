@@ -265,11 +265,11 @@ async function loginGame(){
 
     await enterWaitingRoom();
 
-  }catch(e){
-    console.error(e);
-    msg.textContent = "로그인 중 오류가 발생했습니다.";
-    msg.classList.add("error");
-  }
+}catch(e){
+  console.error(e);
+  msg.textContent = "오류: " + (e.message || JSON.stringify(e));
+  msg.classList.add("error");
+}
 }
 
 async function ensureRoom(){
