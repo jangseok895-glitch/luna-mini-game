@@ -429,11 +429,11 @@ button:disabled{opacity:.38;cursor:not-allowed;filter:grayscale(.3)}
 
     <div id="typingBoard">
       <div class="center-message"><div class="message-box" id="centerMessage">곧 메세지가 나올 공간입니다.</div></div>
-      <div id="problemArea" class="hidden"><p class="problem-info">라운드 <span id="roundText">1</span> / 10 · 내 현재점수 <span id="scoreText">0</span>점 <span id="typingTimer" class="round-timer">10초</span></p></div>
+      <div id="problemArea" class="hidden"><p class="problem-info">라운드 <span id="roundText">1</span> / 10 · 내 현재점수 <span id="scoreText">0</span>점 <span id="typingTimer" class="round-timer">15초</span></p></div>
     </div>
 
     <div id="br31Board" class="br31-board hidden">
-      <div class="br31-status" id="br31Status">게임 준비중입니다. <span id="br31Timer" class="round-timer hidden">10초</span></div>
+      <div class="br31-status" id="br31Status">게임 준비중입니다. <span id="br31Timer" class="round-timer hidden">15초</span></div>
       <div class="silhouette-wrap"><div class="silhouette-line" id="silhouetteLine"></div></div>
       <div class="br31-buttons">
         <button id="brBtn1" onclick="chooseBr31(1)">1</button>
@@ -444,7 +444,7 @@ button:disabled{opacity:.38;cursor:not-allowed;filter:grayscale(.3)}
     </div>
 
     <div id="burgerBoard" class="burger-board hidden">
-      <div class="burger-status" id="burgerStatus">게임 준비중입니다. <span id="burgerTimer" class="round-timer hidden">10초</span></div>
+      <div class="burger-status" id="burgerStatus">게임 준비중입니다. <span id="burgerTimer" class="round-timer hidden">15초</span></div>
       <div class="burger-stage">
         <div class="burger-stack" id="burgerStack"></div>
       </div>
@@ -1037,7 +1037,7 @@ function startTypingRound(room){
     input.placeholder=myRole==="player"?"정답을 입력하세요":"관전자는 정답을 제출할 수 없습니다";
     input.maxLength=300;
     if(myRole==="player")input.focus();
-    startRoundTimer(10,"typingTimer",key,async()=>{
+    startRoundTimer(15,"typingTimer",key,async()=>{
       await typingTimeoutNext(room.round);
     });
   }
@@ -1117,7 +1117,7 @@ function startBr31Round(room){
   const st=br31Local||{};
   const key=`${roomId}-${st.count||0}-${st.turnIndex||0}-${st.moveTick||0}`;
   if(roundTimerKey!==key){
-    startRoundTimer(10,"br31Timer",key,async()=>{
+    startRoundTimer(15,"br31Timer",key,async()=>{
       await br31TimeoutNext(key);
     });
   }
@@ -1265,7 +1265,7 @@ function renderBurgerBoard(showAll=true){
   clearTimeout(burgerShowingTimer);
   burgerRoundKey=showAll ? key : "";
   burgerInputSeq=[];
-  document.getElementById("burgerStatus").innerHTML=`라운드 ${st.round||1} / 10<br>햄버거 순서를 기억하세요! <span id="burgerTimer" class="round-timer hidden">10초</span>`;
+  document.getElementById("burgerStatus").innerHTML=`라운드 ${st.round||1} / 10<br>햄버거 순서를 기억하세요! <span id="burgerTimer" class="round-timer hidden">15초</span>`;
   document.getElementById("burgerStack").innerHTML="";
   document.getElementById("burgerAnswer").textContent="문제를 보여주는 중입니다.";
   document.getElementById("burgerAnswer").className="burger-answer";
@@ -1278,7 +1278,7 @@ function renderBurgerBoard(showAll=true){
     if(i>=seq.length){
       document.getElementById("burgerAnswer").textContent="이제 순서대로 버튼을 눌러주세요.";
       updateBurgerButtons();
-      startRoundTimer(10,"burgerTimer",key,async()=>{
+      startRoundTimer(15,"burgerTimer",key,async()=>{
         await burgerTimeoutNext(st.round||1,key);
       });
       return;
@@ -1382,8 +1382,36 @@ async function finishBurgerRound(winner){
   stopRoundTimer();
   if(!burgerLocal||burgerLocal.winner)return;
 
+  // 동시 완료 방지: 방 상태를 다시 읽어서 이미 우승자가 있으면 무시합니다.
+  const {data:roomNow,error:roomErr}=await sb
+    .from("typing_game_rooms")
+    .select("current_text,round,status")
+    .eq("id",roomId)
+    .single();
+
+  if(roomErr){
+    console.warn("햄버거 우승 확인 오류:",roomErr.message);
+    return;
+  }
+
+  let latest=null;
+  try{ latest=JSON.parse(roomNow?.current_text||"{}"); }catch(e){ latest=null; }
+
+  if(latest?.winner){
+    burgerLocal=latest;
+    return;
+  }
+
   burgerLocal.winner=winner;
   burgerLocal.finished=true;
+
+  // 먼저 방에 우승자를 기록합니다. 이 기록이 들어간 뒤 다른 사람의 완료 처리는 무시됩니다.
+  await sb.from("typing_game_rooms")
+    .update({
+      current_text:JSON.stringify(burgerLocal),
+      updated_at:new Date().toISOString()
+    })
+    .eq("id",roomId);
 
   const {data:p}=await sb.from("typing_game_players").select("score,character").eq("room_id",roomId).eq("nickname",winner).maybeSingle();
   await sb.from("typing_game_players").update({score:Number(p?.score||0)+3}).eq("room_id",roomId).eq("nickname",winner);
@@ -1399,7 +1427,6 @@ async function finishBurgerRound(winner){
     return;
   }
 
-  await sb.from("typing_game_rooms").update({current_text:JSON.stringify(burgerLocal),updated_at:new Date().toISOString()}).eq("id",roomId);
   setTimeout(()=>startCountdownRoom(Number(currentRoom.round||1)+1),1200);
 }
 
@@ -1548,7 +1575,6 @@ async function refreshRealtimeAll(){
         updateBurgerButtons();
       }
     }
-    await checkIfKicked();
   }catch(e){
     console.warn("실시간 새로고침 오류:", e.message);
   }finally{
