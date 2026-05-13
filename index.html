@@ -94,6 +94,27 @@ button:hover{background:#1d4ed8}
   padding:8px 10px;
   border-bottom:1px solid rgba(255,255,255,.12);
 }
+
+  .pin-wrap{
+  position:relative;
+}
+
+.pin-wrap input{
+  padding-right:58px;
+}
+
+.eye-btn{
+  position:absolute;
+  right:8px;
+  top:12px;
+  width:42px;
+  height:42px;
+  margin:0;
+  padding:0;
+  border-radius:10px;
+  font-size:18px;
+  background:rgba(255,255,255,.12);
+}
 </style>
 </head>
 
@@ -109,7 +130,10 @@ button:hover{background:#1d4ed8}
   <h1>로그인</h1>
   <p>루칭방에 등록된 닉네임과 PIN5를 입력하세요.</p>
   <input id="nicknameInput" placeholder="닉네임 입력">
-  <input id="pinInput" placeholder="PIN5 입력" maxlength="5">
+<div class="pin-wrap">
+  <input id="pinInput" type="password" placeholder="PIN5 입력" maxlength="5">
+  <button type="button" class="eye-btn" onclick="togglePin()">👁</button>
+</div>
   <button onclick="loginGame()">입장하기</button>
   <div id="loginMsg" class="msg"></div>
 </div>
@@ -588,6 +612,11 @@ function subscribeAll(){
       await loadRanks();
     })
     .subscribe();
+}
+
+  function togglePin(){
+  const pin = document.getElementById("pinInput");
+  pin.type = pin.type === "password" ? "text" : "password";
 }
 </script>
 
