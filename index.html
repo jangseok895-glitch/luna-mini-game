@@ -53,7 +53,28 @@ button:disabled{opacity:.38;cursor:not-allowed;filter:grayscale(.3)}
 .seat{min-height:120px;background:#eff6ff;border:3px solid #bfdbfe;border-radius:20px;padding:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:visible}
 .seat.active-turn{border-color:#ef4444!important;box-shadow:0 0 0 4px rgba(239,68,68,.22),0 0 18px rgba(239,68,68,.38)}
 .seat.empty{opacity:.65;background:#f8fafc}.seat.eliminated{opacity:.45;background:#fee2e2;border-color:#ef4444}
-.seat-char{font-size:30px}.seat-name{font-size:14px;word-break:break-all}.seat-score{font-size:13px;color:#ef4444}.ready-mark{font-size:13px;color:#16a34a;min-height:16px}
+.seat-char{font-size:30px}.seat-name{font-size:14px;word-break:break-all}.seat-score{font-size:13px;color:#ef4444}.ready-mark{font-size:13px;min-height:20px;margin-top:3px}
+.ready-badge{
+  display:inline-block;
+  padding:2px 8px;
+  border:2px solid #60a5fa;
+  border-radius:999px;
+  background:#eff6ff;
+  color:#2563eb;
+  font-size:12px;
+  font-weight:1000!important;
+  box-shadow:0 2px 6px rgba(96,165,250,.25);
+}
+.elim-badge{
+  display:inline-block;
+  padding:2px 8px;
+  border:2px solid #ef4444;
+  border-radius:999px;
+  background:#fee2e2;
+  color:#ef4444;
+  font-size:12px;
+  font-weight:1000!important;
+}
 .seat-chat-wrap{position:absolute;bottom:118px;left:50%;transform:translateX(-50%);z-index:20;pointer-events:none;text-align:center}
 .first-label{display:inline-block;margin-bottom:4px;padding:2px 8px;border-radius:999px;background:#dbeafe;border:2px solid #60a5fa;color:#1d4ed8;font-size:12px;font-weight:1000!important;animation:popFlash .65s ease-in-out 1}
 .seat-chat{min-width:90px;max-width:140px;background:#fff;border:2px solid #f9a8d4;border-radius:16px;padding:7px 9px;font-size:12px;color:#333;word-break:break-all;box-shadow:0 6px 16px rgba(236,72,153,.18)}
@@ -210,6 +231,58 @@ button:disabled{opacity:.38;cursor:not-allowed;filter:grayscale(.3)}
   animation:firstFlash .65s ease-in-out 1;
 }
 
+
+.viewer-chat-box{
+  margin-top:14px;
+  padding:8px;
+  border:2px solid #bfdbfe;
+  border-radius:16px;
+  background:#f8fafc;
+}
+.viewer-chat-title{
+  font-size:15px;
+  color:#2563eb;
+  margin-bottom:6px;
+  font-weight:1000!important;
+}
+.viewer-chat-log{
+  height:220px;
+  max-height:220px;
+  overflow-y:auto;
+  padding:7px;
+  border-radius:12px;
+  background:#ffffff;
+  border:1px solid #dbeafe;
+  font-size:12px;
+  line-height:20px;
+  text-align:left;
+  word-break:break-all;
+}
+.viewer-chat-line{
+  min-height:20px;
+  border-bottom:1px dotted #e0f2fe;
+}
+.viewer-chat-row{
+  display:flex;
+  gap:5px;
+  margin-top:7px;
+}
+.viewer-chat-row input{
+  margin:0;
+  flex:1;
+  min-width:0;
+  padding:8px;
+  font-size:12px;
+  border-radius:12px;
+}
+.viewer-chat-row button{
+  margin:0;
+  width:52px;
+  padding:8px 4px;
+  font-size:12px;
+  border-radius:12px;
+}
+
 @media(max-width:1100px){.seat-row{grid-template-columns:repeat(4,1fr)}.room-bubble-chat{width:90%}}
 @media(max-width:760px){.menu-layout,.game-layout{grid-template-columns:1fr}.game-side{min-height:auto}.seat-row{grid-template-columns:repeat(4,1fr)}}
 @media(max-width:600px){h1{font-size:32px}.character-grid{grid-template-columns:repeat(5,1fr)}.seat-row{grid-template-columns:repeat(2,1fr)}.bottom-buttons{grid-template-columns:1fr}.room-bubble-chat{width:100%}.person{font-size:48px}.br31-buttons button{font-size:22px}}
@@ -299,6 +372,16 @@ button:disabled{opacity:.38;cursor:not-allowed;filter:grayscale(.3)}
   <div class="game-side">
     <h2 class="pretty-title">선수</h2><div id="playerList"></div>
     <h2 class="pretty-title" style="margin-top:20px;">관전자</h2><div id="viewerList"></div>
+
+    <div class="viewer-chat-box">
+      <div class="viewer-chat-title">관전자 채팅</div>
+      <div id="viewerChatLog" class="viewer-chat-log"></div>
+      <div class="viewer-chat-row">
+        <input id="viewerChatInput" placeholder="관전자 채팅" maxlength="60" onkeydown="if(event.key==='Enter')sendViewerChat()">
+        <button onclick="sendViewerChat()">전송</button>
+      </div>
+    </div>
+
     <button class="spectator-btn" onclick="goSpectator()">관전자로 가기</button>
     <button class="ready-btn" onclick="goPlayer()">선수로 가기</button>
   </div>
@@ -322,6 +405,8 @@ let br31Local=null;
 let burgerLocal=null;
 let burgerInputSeq=[];
 let burgerShowingTimer=null;
+let realtimeRefreshTimer=null;
+let realtimeBusy=false;
 
 const characters=["🐰","🐱","🐶","🐻","🐼","🐥","🦊","🐯","🐵","🐧"];
 
@@ -363,6 +448,15 @@ async function refreshReadyStartButton(){
   if(!user || document.getElementById("gameScreen").classList.contains("hidden")) return;
   const seatNo=await getMySeatNo();
   const btn=document.getElementById("readyBtn");
+
+  if(currentRoom && (currentRoom.status==="countdown" || currentRoom.status==="playing")){
+    if(seatNo===1){
+      btn.textContent="진행중";
+      btn.className="cute-ready ready-btn";
+    }
+    return;
+  }
+
   if(seatNo===1){
     btn.textContent="시작";
     btn.className="cute-ready ready-btn";
@@ -465,7 +559,7 @@ async function markOnline(place){
 
 async function openMenu(){
   document.getElementById("menuChar").textContent=user.mini_character;document.getElementById("menuNick").textContent=user.nickname;
-  show("menuScreen");subscribe();await markOnline("대기방");await loadMenuOnline();await loadTopRanks();await loadMenuChat();await loadGameCounts();
+  show("menuScreen");subscribe();startRealtimeRefresh();await markOnline("대기방");await loadMenuOnline();await loadTopRanks();await loadMenuChat();await loadGameCounts();
 }
 
 async function logout(){
@@ -535,7 +629,7 @@ async function enterRoom(game){
     await sb.from("typing_game_players").upsert({room_id:roomId,nickname:user.nickname,pin5:user.pin5,character:user.mini_character,score:0,ready:false,role:"player",seat_no:mySeat,current_place:gameName(game),last_seen:new Date().toISOString()},{onConflict:"room_id,nickname"});
     myRole="player";isReady=false;
     document.getElementById("readyBtn").classList.remove("hidden");document.getElementById("readyBtn").textContent=mySeat===1?"시작":"준비";document.getElementById("readyBtn").className="cute-ready ready-btn";
-    show("gameScreen");subscribe();await loadPlayers();await loadChats();await loadRoom();
+    show("gameScreen");subscribe();startRealtimeRefresh();await loadPlayers();await loadChats();await loadViewerChat();await loadRoom();
   }catch(e){alert("입장 오류: "+e.message)}
 }
 
@@ -558,7 +652,7 @@ function renderSeats(players){
     const elimCls=eliminated?" eliminated":"";
     const chat=[...lastChats].reverse().find(c=>c.nickname===p.nickname);let chatHtml="";
     if(chat){const parsed=parseBubbleMessage(chat.message), cls=parsed.result==="wrong"?"wrong":(parsed.result==="first"?"first":"");const label=parsed.result==="first"?`<div class="first-label">1등!</div>`:"";chatHtml=`<div class="seat-chat-wrap">${label}<div class="seat-chat ${cls}">${escapeHtml(parsed.text)}</div></div>`}
-    row.innerHTML+=`<div class="seat${activeCls}${elimCls}">${chatHtml}<div class="seat-char">${p.character||"🐰"}</div><div class="seat-name">${escapeHtml(p.nickname)}</div><div class="seat-score">현재점수 ${p.score||0}점</div><div class="ready-mark">${eliminated?"탈락":(p.ready?"준비완료":"")}</div></div>`;
+    row.innerHTML+=`<div class="seat${activeCls}${elimCls}">${chatHtml}<div class="seat-char">${p.character||"🐰"}</div><div class="seat-name">${escapeHtml(p.nickname)}</div><div class="seat-score">현재점수 ${p.score||0}점</div><div class="ready-mark">${eliminated?'<span class="elim-badge">탈락</span>':(p.ready?'<span class="ready-badge">준비</span>':'')}</div></div>`;
   }
 }
 
@@ -596,10 +690,15 @@ async function toggleReady(){
   // 1번 선수는 준비가 아니라 시작 버튼입니다.
   // 테스트 버전: 혼자 있어도 1번 선수가 시작을 누르면 바로 시작됩니다.
   if(seatNo===1){
-    await sb.from("typing_game_players")
+    const {error}=await sb.from("typing_game_players")
       .update({ready:true,last_seen:new Date().toISOString()})
       .eq("room_id",roomId)
       .eq("nickname",user.nickname);
+
+    if(error){
+      alert("시작 준비 오류: "+error.message);
+      return;
+    }
 
     isReady=true;
     startingCountdown=false;
@@ -625,10 +724,38 @@ async function checkReadyStart(){
 
 async function startCountdownRoom(roundNo){
   let text=null;
-  if(currentGame==="typing") text=sentences[Math.floor(Math.random()*sentences.length)];
-  else if(currentGame==="br31") text=JSON.stringify(await makeBr31InitialState());
-  else text=JSON.stringify(await makeBurgerRoundState(roundNo));
-  await sb.from("typing_game_rooms").update({status:"countdown",round:roundNo,current_text:text,round_started_at:null,updated_at:new Date().toISOString()}).eq("id",roomId);
+
+  if(currentGame==="typing"){
+    text=sentences[Math.floor(Math.random()*sentences.length)];
+  }else if(currentGame==="br31"){
+    text=JSON.stringify(await makeBr31InitialState());
+  }else{
+    text=JSON.stringify(await makeBurgerRoundState(roundNo));
+  }
+
+  const {data,error}=await sb
+    .from("typing_game_rooms")
+    .update({
+      status:"countdown",
+      round:roundNo,
+      current_text:text,
+      round_started_at:null,
+      updated_at:new Date().toISOString()
+    })
+    .eq("id",roomId)
+    .select()
+    .single();
+
+  if(error){
+    alert("게임 시작 오류: "+error.message);
+    return;
+  }
+
+  if(data){
+    handleRoom(data);
+  }else{
+    await loadRoom();
+  }
 }
 
 async function makeBr31InitialState(){
@@ -1009,6 +1136,94 @@ async function leaveGame(){
   lastChats=[];await loadChats();await markOnline("대기방");openMenu();
 }
 
+
+function viewerChatPlace(){
+  return "viewer_" + roomId;
+}
+
+async function sendViewerChat(){
+  const input=document.getElementById("viewerChatInput");
+  if(!input||!user) return;
+
+  const message=input.value.trim();
+  if(!message) return;
+
+  input.value="";
+
+  await sb.from("mini_game_chats").insert({
+    place:viewerChatPlace(),
+    nickname:user.nickname,
+    character:user.mini_character,
+    message
+  });
+
+  await loadViewerChat();
+}
+
+async function loadViewerChat(){
+  const box=document.getElementById("viewerChatLog");
+  if(!box) return;
+
+  const {data}=await sb
+    .from("mini_game_chats")
+    .select("nickname,character,message,created_at")
+    .eq("place",viewerChatPlace())
+    .order("created_at",{ascending:false})
+    .limit(10);
+
+  box.innerHTML="";
+
+  (data||[]).reverse().forEach(c=>{
+    box.innerHTML+=`<div class="viewer-chat-line">${c.character||"🐰"} ${escapeHtml(c.nickname)} : ${escapeHtml(c.message)}</div>`;
+  });
+
+  box.scrollTop=box.scrollHeight;
+}
+
+async function refreshRealtimeAll(){
+  if(realtimeBusy) return;
+  if(!user) return;
+
+  realtimeBusy=true;
+  try{
+    const isMenu=!document.getElementById("menuScreen").classList.contains("hidden");
+    const isGame=!document.getElementById("gameScreen").classList.contains("hidden");
+
+    if(isMenu){
+      await loadMenuOnline();
+      await loadTopRanks();
+      await loadGameCounts();
+      await loadMenuChat();
+    }
+
+    if(isGame){
+      await loadRoom();
+      await loadPlayers();
+      await loadChats();
+      await loadViewerChat();
+      await loadGameCounts();
+      if(currentGame==="typing"){
+        await loadMyScore();
+      }
+      if(currentGame==="br31"){
+        updateBr31InputAndButtons();
+      }
+      if(currentGame==="burger"){
+        updateBurgerButtons();
+      }
+    }
+  }catch(e){
+    console.warn("실시간 새로고침 오류:", e.message);
+  }finally{
+    realtimeBusy=false;
+  }
+}
+
+function startRealtimeRefresh(){
+  if(realtimeRefreshTimer) return;
+  realtimeRefreshTimer=setInterval(refreshRealtimeAll,1200);
+}
+
 function subscribe(){
   if(subscribed)return;subscribed=true;
   sb.channel("mini_game_all")
@@ -1016,7 +1231,7 @@ function subscribe(){
     .on("postgres_changes",{event:"*",schema:"public",table:"typing_game_rooms"},async()=>{await loadRoom()})
     .on("postgres_changes",{event:"*",schema:"public",table:"typing_game_chats"},async()=>{await loadChats()})
     .on("postgres_changes",{event:"*",schema:"public",table:"typing_game_answers"},async()=>{if(currentGame==="typing"&&currentRoom&&currentRoom.status==="playing")await checkTypingWinner()})
-    .on("postgres_changes",{event:"*",schema:"public",table:"mini_game_chats"},async()=>{await loadMenuChat()})
+    .on("postgres_changes",{event:"*",schema:"public",table:"mini_game_chats"},async()=>{await loadMenuChat();await loadViewerChat()})
     .on("postgres_changes",{event:"*",schema:"public",table:"mini_game_scores"},async()=>{await loadMenuOnline();await loadTopRanks()})
     .subscribe();
 }
