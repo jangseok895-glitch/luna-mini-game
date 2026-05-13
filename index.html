@@ -16,7 +16,8 @@ body{margin:0;min-height:100vh;background:linear-gradient(135deg,#dbeafe,#fce7f3
 h1{margin:8px 0 18px;font-size:42px;color:#3b82f6;text-shadow:3px 3px 0 #fbcfe8}
 h2{margin:8px 0 12px;color:#ec4899;font-size:26px}
 .pretty-title{display:inline-block;padding:8px 18px;border-radius:18px;color:#fff;background:linear-gradient(135deg,#60a5fa,#f472b6);border:3px solid #fff;box-shadow:0 7px 0 rgba(59,130,246,.18),0 0 0 3px rgba(191,219,254,.85);text-shadow:-1px -1px 0 #2563eb,1px -1px 0 #2563eb,-1px 1px 0 #ec4899,1px 1px 0 #ec4899}
-.rank-title-small{font-size:24px!important}
+.rank-title-small{font-size:22px!important}
+.online-title-small{font-size:24px!important}
 .typing-title{ text-align:center;font-size:42px;margin:4px 0 10px;color:#fff;text-shadow:-2px -2px 0 #2563eb,2px -2px 0 #2563eb,-2px 2px 0 #ec4899,2px 2px 0 #ec4899,0 4px 10px rgba(59,130,246,.3)}
 input{width:100%;padding:15px;margin-top:12px;border-radius:18px;border:3px solid #bfdbfe;font-size:18px;outline:none}
 button{width:100%;padding:15px;margin-top:14px;border:0;border-radius:20px;font-size:20px;color:white;background:linear-gradient(135deg,#60a5fa,#ec4899);cursor:pointer;box-shadow:0 7px 0 rgba(59,130,246,.22)}
@@ -31,10 +32,10 @@ button:disabled{opacity:.38;cursor:not-allowed;filter:grayscale(.3)}
 .menu-layout{width:100%;max-width:1280px;display:grid;grid-template-columns:260px minmax(0,1fr) 290px;gap:18px;align-items:stretch}
 .side-panel,.menu-center{background:rgba(255,255,255,.88);border:3px solid rgba(147,197,253,.75);border-radius:26px;padding:18px;box-shadow:0 16px 42px rgba(59,130,246,.16)}
 .menu-center{position:relative}.menu-logout-btn{position:absolute;top:12px;right:12px;width:auto;margin:0;padding:6px 10px;font-size:12px;border-radius:10px;background:linear-gradient(135deg,#64748b,#ef4444);box-shadow:none}
-.game-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
-.game-btn{background:linear-gradient(135deg,#93c5fd,#f9a8d4);color:#1e293b;min-height:92px;text-align:left;padding:15px 18px}
-.game-title{font-size:20px;font-weight:1000!important}
-.game-count{font-size:13px;margin-top:7px;line-height:1.45;color:#334155}
+.game-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.game-btn{background:linear-gradient(135deg,#93c5fd,#f9a8d4);color:#1e293b;min-height:70px;text-align:left;padding:10px 13px}
+.game-title{font-size:17px;font-weight:1000!important}
+.game-count{font-size:12px;margin-top:5px;line-height:1.2;color:#334155;white-space:nowrap}
 .rank-item,.online-item,.viewer-item{padding:9px 10px;border-bottom:1px solid #bfdbfe;text-align:left;font-size:15px;word-break:break-all}
 .score-strong{color:#ef4444;font-weight:1000!important;font-size:18px;text-shadow:1px 1px 0 #fecdd3}.place-line{display:block;margin-top:3px;color:#2563eb;font-size:13px}
 .menu-chat-box{margin-top:18px;background:#f8fafc;border:2px solid #bfdbfe;border-radius:18px;padding:10px}
@@ -222,7 +223,7 @@ button:disabled{opacity:.38;cursor:not-allowed;filter:grayscale(.3)}
   <h1>루칭방 미니게임</h1>
   <input id="nicknameInput" placeholder="아이디 / 닉네임">
   <div class="pin-wrap"><input id="pinInput" type="password" placeholder="PIN5 비밀번호" maxlength="5"><button type="button" class="eye-btn" onclick="togglePin()">보기</button></div>
-  <button onclick="login()">로그인</button><div id="loginMsg" class="msg"></div>
+  <button type="button" onclick="login()">로그인</button><div id="loginMsg" class="msg"></div>
 </div></div>
 
 <div class="screen hidden" id="characterScreen"><div class="wrap">
@@ -248,7 +249,7 @@ button:disabled{opacity:.38;cursor:not-allowed;filter:grayscale(.3)}
     </div>
     <div class="menu-chat-box"><div id="menuChatLog" class="menu-chat-log"></div><div class="menu-chat-row"><input id="menuChatInput" placeholder="대기방 채팅 입력" maxlength="80" onkeydown="if(event.key==='Enter')sendMenuChat()"><button onclick="sendMenuChat()">전송</button></div></div>
   </div>
-  <div class="side-panel"><h2 class="pretty-title">현재접속자</h2><div id="menuOnlineList"></div></div>
+  <div class="side-panel"><h2 class="pretty-title online-title-small">현재접속자</h2><div id="menuOnlineList"></div></div>
 </div></div>
 
 <div class="hidden" id="gameScreen"><div class="game-layout">
@@ -317,7 +318,7 @@ const seatCount=8, maxRound=10, ROUND_SCORE=10, BR31_CLICK_SCORE=2, BR31_WIN_BON
 const RANK_BONUS=[30,20,10];
 let user=null, selectedChar="", currentGame="typing", roomId="typing_main", isReady=false, myRole="player", currentRoom=null;
 let submittedRound=null, roundStart=0, countTimer=null, subscribed=false, lastChats=[], finishBonusApplied=false, startingCountdown=false, handledWinnerKey="";
-let br31Local=null;burgerLocal=null;burgerInputSeq=[];
+let br31Local=null;
 let burgerLocal=null;
 let burgerInputSeq=[];
 let burgerShowingTimer=null;
@@ -377,15 +378,62 @@ function renderCharacters(){
 }
 
 async function login(){
-  const nickname=document.getElementById("nicknameInput").value.trim(), pin5=document.getElementById("pinInput").value.trim(), msg=document.getElementById("loginMsg");msg.textContent="";
-  if(!nickname||!pin5){msg.textContent="아이디와 PIN5를 입력해주세요.";return}
+  const nickname=document.getElementById("nicknameInput").value.trim();
+  const pin5=document.getElementById("pinInput").value.trim();
+  const msg=document.getElementById("loginMsg");
+  msg.textContent="";
+
+  if(!nickname||!pin5){
+    msg.textContent="아이디와 PIN5를 입력해주세요.";
+    return;
+  }
+
   try{
-    const {data,error}=await sb.from("team_members").select("id,nickname,pin5,mini_character").eq("nickname",nickname).eq("pin5",pin5).maybeSingle();
-    if(error)throw error;if(!data){msg.textContent="아이디 또는 PIN5가 일치하지 않습니다.";return}
-    user=data;selectedChar=data.mini_character||localStorage.getItem("mini_character_"+data.nickname)||"";user.mini_character=selectedChar;
-    if(!selectedChar){renderCharacters();show("characterScreen");return}
-    await markOnline("대기방");openMenu();
-  }catch(e){msg.textContent="오류: "+(e.message||JSON.stringify(e))}
+    const {data,error}=await sb
+      .from("team_members")
+      .select("id,nickname,pin5,mini_character")
+      .eq("nickname",nickname)
+      .eq("pin5",pin5)
+      .order("id",{ascending:false})
+      .limit(1);
+
+    if(error) throw error;
+
+    if(!data||!data.length){
+      msg.textContent="아이디 또는 PIN5가 일치하지 않습니다.";
+      return;
+    }
+
+    const loginUser=data[0];
+
+    const {data:onlineDup,error:dupError}=await sb
+      .from("typing_game_players")
+      .select("nickname")
+      .eq("nickname",loginUser.nickname)
+      .limit(1);
+
+    if(dupError) throw dupError;
+
+    if(onlineDup&&onlineDup.length){
+      msg.textContent="중복 로그인입니다. 잠시후 다시 시도해주세요.";
+      return;
+    }
+
+    user=loginUser;
+    selectedChar=user.mini_character||localStorage.getItem("mini_character_"+user.nickname)||"";
+    user.mini_character=selectedChar;
+
+    if(!selectedChar){
+      renderCharacters();
+      show("characterScreen");
+      return;
+    }
+
+    await markOnline("대기방");
+    openMenu();
+  }catch(e){
+    msg.textContent="오류: "+(e.message||JSON.stringify(e));
+  }
 }
 
 async function saveCharacter(){
@@ -434,9 +482,9 @@ async function loadGameCounts(){
   const {data}=await sb.from("typing_game_players").select("room_id,role").in("room_id",["typing_main","br31_main","burger_main"]);
   const cnt={typing_main:{p:0,v:0},br31_main:{p:0,v:0},burger_main:{p:0,v:0}};
   (data||[]).forEach(x=>{if(!cnt[x.room_id])return;if((x.role||"player")==="viewer")cnt[x.room_id].v++;else cnt[x.room_id].p++});
-  document.getElementById("typingBtnCount").innerHTML=`선수 : ${cnt.typing_main.p}<br>관전자 : ${cnt.typing_main.v}`;
-  document.getElementById("br31BtnCount").innerHTML=`선수 : ${cnt.br31_main.p}<br>관전자 : ${cnt.br31_main.v}`;
-  document.getElementById("burgerBtnCount").innerHTML=`선수 : ${cnt.burger_main.p}<br>관전자 : ${cnt.burger_main.v}`;
+  document.getElementById("typingBtnCount").innerHTML=`선수:${cnt.typing_main.p} / 관전자:${cnt.typing_main.v}`;
+  document.getElementById("br31BtnCount").innerHTML=`선수:${cnt.br31_main.p} / 관전자:${cnt.br31_main.v}`;
+  document.getElementById("burgerBtnCount").innerHTML=`선수:${cnt.burger_main.p} / 관전자:${cnt.burger_main.v}`;
 }
 
 async function loadMenuOnline(){
@@ -554,6 +602,7 @@ async function toggleReady(){
       .eq("nickname",user.nickname);
 
     isReady=true;
+    startingCountdown=false;
     await startCountdownRoom(1);
     return;
   }
@@ -630,7 +679,7 @@ function startLocalCountdown(roundNo){
   countTimer=setInterval(async()=>{
     const {players}=await loadPlayers();
     const host=players.find(p=>Number(p.seat_no)===1);
-    const allReady=!!host;
+    const allReady=!!host; // 테스트 버전: 1번 선수 1명만 있어도 진행
     if(!allReady){clearInterval(countTimer);startingCountdown=false;document.getElementById("countOverlay").classList.add("hidden");await sb.from("typing_game_rooms").update({status:"waiting",updated_at:new Date().toISOString()}).eq("id",roomId);return}
     n--; if(n>0)document.getElementById("countText").textContent=n; else{clearInterval(countTimer);startingCountdown=false;document.getElementById("countOverlay").classList.add("hidden");await sb.from("typing_game_rooms").update({status:"playing",round_started_at:new Date().toISOString(),updated_at:new Date().toISOString()}).eq("id",roomId)}
   },1000);
@@ -972,8 +1021,19 @@ function subscribe(){
     .subscribe();
 }
 
-document.getElementById("nicknameInput")?.addEventListener("keydown",e=>{if(e.key==="Enter")login()});
-document.getElementById("pinInput")?.addEventListener("keydown",e=>{if(e.key==="Enter")login()});
+document.getElementById("nicknameInput")?.addEventListener("keydown",e=>{
+  if(e.key==="Enter"){
+    e.preventDefault();
+    login();
+  }
+});
+
+document.getElementById("pinInput")?.addEventListener("keydown",e=>{
+  if(e.key==="Enter"){
+    e.preventDefault();
+    login();
+  }
+});
 
 setInterval(()=>{if(user){const isGame=!document.getElementById("gameScreen").classList.contains("hidden"),isMenu=!document.getElementById("menuScreen").classList.contains("hidden");if(isMenu)markOnline("대기방");if(isGame)sb.from("typing_game_players").update({current_place:gameName(currentGame),last_seen:new Date().toISOString()}).eq("room_id",roomId).eq("nickname",user.nickname)}},15000);
 </script>
