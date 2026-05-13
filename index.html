@@ -1,3 +1,14 @@
+<!-- 너무 길어서 한 번에 붙여넣기용으로 만들었습니다.
+핵심 반영:
+1. 대기방 채팅 30줄 저장/불러오기, 화면은 5줄 높이 + 스크롤
+2. 타자 입력칸을 하단 준비/나가기 버튼 바로 위로 이동
+3. 게임방 우측 제목: 대기자 → 선수
+4. 선수 목록에서 [대기] 제거, 현재점수 표시
+5. 라운드 정답 10점
+6. 게임 종료 시 1위 +30 / 2위 +20 / 3위 +10 보너스
+7. 추후 8개 게임 통합 점수용 함수 구조 추가
+-->
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -189,7 +200,7 @@ button:active{
 
 .rank-item,
 .online-item,
-.viewer-item{
+viewer-item{
   padding:8px 10px;
   border-bottom:1px solid #bfdbfe;
   text-align:left;
@@ -205,14 +216,23 @@ button:active{
   padding:10px;
 }
 
+/* 보이는 건 약 5줄, 스크롤로 최대 30줄 확인 */
 .menu-chat-log{
-  height:110px;
+  height:118px;
+  max-height:118px;
   overflow-y:auto;
   background:white;
   border-radius:12px;
   padding:8px;
   text-align:left;
   font-size:14px;
+  line-height:22px;
+}
+
+.menu-chat-line{
+  min-height:22px;
+  line-height:22px;
+  word-break:break-all;
 }
 
 .menu-chat-row{
@@ -267,7 +287,7 @@ button:active{
 
 .message-box{
   width:80%;
-  min-height:160px;
+  min-height:150px;
   border-radius:28px;
   border:4px dashed #bfdbfe;
   background:linear-gradient(135deg,#eff6ff,#fdf2f8);
@@ -280,10 +300,50 @@ button:active{
   color:#2563eb;
 }
 
+.problem{
+  user-select:none;
+  -webkit-user-select:none;
+  margin:10px 0;
+  padding:18px;
+  border-radius:22px;
+  background:#eff6ff;
+  border:3px solid #bfdbfe;
+  font-size:22px;
+  color:#1d4ed8;
+}
+
+/* 타자 입력칸 하단 고정 영역 */
+.answer-dock{
+  margin-top:10px;
+  padding:12px;
+  background:#f8fafc;
+  border:2px solid #bfdbfe;
+  border-radius:18px;
+}
+
+.answer-row{
+  display:flex;
+  gap:8px;
+}
+
+.answer-row input{
+  margin:0;
+  flex:1;
+  padding:12px;
+  font-size:16px;
+}
+
+.answer-row button{
+  margin:0;
+  width:95px;
+  padding:10px;
+  font-size:15px;
+}
+
 .room-bubble-chat{
   display:flex;
   gap:8px;
-  margin:8px auto 12px;
+  margin:10px auto 10px;
   width:70%;
 }
 
@@ -346,6 +406,7 @@ button:active{
 .ready-mark{
   font-size:13px;
   color:#16a34a;
+  min-height:16px;
 }
 
 .seat-chat{
@@ -354,7 +415,7 @@ button:active{
   left:50%;
   transform:translateX(-50%);
   min-width:90px;
-  max-width:150px;
+  max-width:130px;
   background:#ffffff;
   border:2px solid #f9a8d4;
   border-radius:16px;
@@ -414,18 +475,6 @@ button:active{
   margin-top:8px;
 }
 
-.problem{
-  user-select:none;
-  -webkit-user-select:none;
-  margin:14px 0;
-  padding:20px;
-  border-radius:22px;
-  background:#eff6ff;
-  border:3px solid #bfdbfe;
-  font-size:22px;
-  color:#1d4ed8;
-}
-
 .count{
   font-size:82px;
   color:#ec4899;
@@ -449,6 +498,8 @@ button:active{
   .seat-row{grid-template-columns:repeat(2,1fr)}
   .bottom-buttons{grid-template-columns:1fr}
   .room-bubble-chat{width:100%}
+  .answer-row{flex-direction:column}
+  .answer-row button{width:100%}
 }
 </style>
 </head>
@@ -486,7 +537,7 @@ button:active{
   <div class="menu-layout">
 
     <div class="side-panel">
-      <h2>점수 TOP 30</h2>
+      <h2>통합 점수 TOP 30</h2>
       <div id="topRankList"></div>
     </div>
 
@@ -538,11 +589,8 @@ button:active{
       </div>
 
       <div id="problemArea" class="hidden">
-        <p>라운드 <span id="roundText">1</span> / 10 · 내 점수 <span id="scoreText">0</span>점</p>
+        <p>라운드 <span id="roundText">1</span> / 10 · 내 현재점수 <span id="scoreText">0</span>점</p>
         <div class="problem" id="problemText"></div>
-        <input id="answerInput" placeholder="문장을 그대로 입력하세요" autocomplete="off"
-          onpaste="return false" oncopy="return false" oncut="return false">
-        <button onclick="submitAnswer()">제출</button>
         <div id="gameMsg" class="msg"></div>
       </div>
 
@@ -554,6 +602,15 @@ button:active{
 
       <div class="seat-row" id="seatRow"></div>
 
+      <div id="answerDock" class="answer-dock hidden">
+        <div class="answer-row">
+          <input id="answerInput" placeholder="문장을 그대로 입력하세요" autocomplete="off"
+            onpaste="return false" oncopy="return false" oncut="return false"
+            onkeydown="if(event.key==='Enter')submitAnswer()">
+          <button onclick="submitAnswer()">제출</button>
+        </div>
+      </div>
+
       <div class="bottom-buttons">
         <button id="readyBtn" class="ready-btn" onclick="toggleReady()">준비</button>
         <button class="exit-btn" onclick="leaveTyping()">나가기</button>
@@ -561,7 +618,7 @@ button:active{
     </div>
 
     <div class="typing-side">
-      <h2>대기자</h2>
+      <h2>선수</h2>
       <div id="typingPlayerList"></div>
 
       <h2 style="margin-top:20px;">관전자</h2>
@@ -596,8 +653,12 @@ const SUPABASE_ANON_KEY = "sb_publishable_uvYqwDymxodcSdpT1zAWyg_PeVHh_ZO";
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const roomId = "main";
+const gameId = "typing";
 const maxRound = 10;
 const seatCount = 8;
+
+const ROUND_SCORE = 10;
+const RANK_BONUS = [30,20,10];
 
 let user = null;
 let selectedChar = "";
@@ -609,6 +670,7 @@ let roundStart = 0;
 let countTimer = null;
 let subscribed = false;
 let lastChats = [];
+let finishBonusApplied = false;
 
 const characters = ["🐰","🐱","🐶","🐻","🐼","🐥","🦊","🐯","🐵","🐧"];
 
@@ -729,15 +791,70 @@ async function saveCharacter(){
   }
 }
 
+/* 통합 점수 저장용.
+   mini_game_scores 테이블이 없으면 현재 방 점수만 사용됩니다.
+   나중에 7개 게임 추가할 때도 이 함수만 같이 쓰면 됩니다. */
+async function addIntegratedScore(nickname, character, addScore){
+  if(!nickname || !addScore) return;
+
+  try{
+    const { data } = await sb
+      .from("mini_game_scores")
+      .select("nickname,total_score,character")
+      .eq("nickname",nickname)
+      .maybeSingle();
+
+    if(data){
+      await sb.from("mini_game_scores")
+        .update({
+          total_score:Number(data.total_score || 0) + Number(addScore || 0),
+          character:character || data.character || "🐰",
+          updated_at:new Date().toISOString()
+        })
+        .eq("nickname",nickname);
+    }else{
+      await sb.from("mini_game_scores")
+        .insert({
+          nickname,
+          character:character || "🐰",
+          total_score:Number(addScore || 0),
+          updated_at:new Date().toISOString()
+        });
+    }
+  }catch(e){
+    console.warn("통합 점수 테이블이 없거나 저장 실패:", e.message);
+  }
+}
+
+async function getIntegratedScoreMap(){
+  const map = {};
+
+  try{
+    const { data } = await sb
+      .from("mini_game_scores")
+      .select("nickname,total_score");
+
+    (data || []).forEach(x=>{
+      map[x.nickname] = Number(x.total_score || 0);
+    });
+  }catch(e){
+    console.warn("통합 점수 불러오기 실패:", e.message);
+  }
+
+  return map;
+}
+
 async function markOnline(place){
   if(!user) return;
+
+  const scoreMap = await getIntegratedScoreMap();
 
   await sb.from("typing_game_players").upsert({
     room_id:"online",
     nickname:user.nickname,
     pin5:user.pin5,
     character:user.mini_character || selectedChar || "🐰",
-    score:0,
+    score:scoreMap[user.nickname] || 0,
     ready:false,
     role:"online",
     current_place:place || "대기방",
@@ -782,30 +899,13 @@ async function logout(){
   show("loginScreen");
 }
 
-async function getScoreMap(){
-  const { data } = await sb
-    .from("typing_game_players")
-    .select("nickname,score")
-    .eq("room_id",roomId);
-
-  const map = {};
-
-  (data || []).forEach(p=>{
-    if(!map[p.nickname] || Number(p.score || 0) > map[p.nickname]){
-      map[p.nickname] = Number(p.score || 0);
-    }
-  });
-
-  return map;
-}
-
 async function loadMenuOnline(){
   const { data } = await sb
     .from("typing_game_players")
     .select("nickname,character,current_place,room_id,role,last_seen,score")
     .order("last_seen",{ascending:true});
 
-  const scoreMap = await getScoreMap();
+  const scoreMap = await getIntegratedScoreMap();
 
   const box = document.getElementById("menuOnlineList");
   box.innerHTML = "";
@@ -834,7 +934,7 @@ async function loadMenuOnline(){
       place = "루칭방 타자타자";
     }
 
-    const score = scoreMap[p.nickname] || p.score || 0;
+    const score = scoreMap[p.nickname] ?? p.score ?? 0;
 
     box.innerHTML += `
       <div class="online-item">
@@ -845,15 +945,32 @@ async function loadMenuOnline(){
 }
 
 async function loadTopRanks(){
+  const box = document.getElementById("topRankList");
+  box.innerHTML = "";
+
+  try{
+    const { data } = await sb
+      .from("mini_game_scores")
+      .select("nickname,total_score,character")
+      .order("total_score",{ascending:false})
+      .limit(30);
+
+    if(data && data.length){
+      data.forEach((p,i)=>{
+        box.innerHTML += `<div class="rank-item">${i+1}위 ${p.character || "🐰"} ${escapeHtml(p.nickname)} · ${p.total_score || 0}점</div>`;
+      });
+      return;
+    }
+  }catch(e){
+    console.warn("통합 랭킹 테이블 없음:", e.message);
+  }
+
   const { data } = await sb
     .from("typing_game_players")
     .select("nickname,score,character")
     .eq("room_id",roomId)
     .order("score",{ascending:false})
     .limit(30);
-
-  const box = document.getElementById("topRankList");
-  box.innerHTML = "";
 
   if(!data || !data.length){
     box.innerHTML = `<div class="rank-item">아직 기록 없음</div>`;
@@ -889,7 +1006,7 @@ async function loadMenuChat(){
     .select("nickname,character,message,created_at")
     .eq("place","menu")
     .order("created_at",{ascending:false})
-    .limit(5);
+    .limit(30);
 
   const box = document.getElementById("menuChatLog");
   if(!box) return;
@@ -898,7 +1015,7 @@ async function loadMenuChat(){
 
   (data || []).reverse().forEach(c=>{
     box.innerHTML += `
-      <div>${c.character || "🐰"} ${escapeHtml(c.nickname)} : ${escapeHtml(c.message)}</div>
+      <div class="menu-chat-line">${c.character || "🐰"} ${escapeHtml(c.nickname)} : ${escapeHtml(c.message)}</div>
     `;
   });
 
@@ -907,6 +1024,8 @@ async function loadMenuChat(){
 
 async function enterTypingLobby(){
   try{
+    finishBonusApplied = false;
+
     await sb.from("typing_game_rooms").upsert({
       id:roomId,
       status:"waiting",
@@ -1018,8 +1137,8 @@ function renderSeats(players){
         ${chatHtml}
         <div class="seat-char">${p.character || "🐰"}</div>
         <div class="seat-name">${escapeHtml(p.nickname)}</div>
-        <div class="seat-score">${p.score || 0}점</div>
-        <div class="ready-mark">${p.ready ? "준비완료" : "대기중"}</div>
+        <div class="seat-score">현재점수 ${p.score || 0}점</div>
+        <div class="ready-mark">${p.ready ? "준비완료" : ""}</div>
       </div>
     `;
   }
@@ -1062,7 +1181,11 @@ function renderSidePlayers(players, viewers){
     pbox.innerHTML = `<div class="online-item">선수 없음</div>`;
   }else{
     players.forEach(p=>{
-      pbox.innerHTML += `<div class="online-item">${p.character || "🐰"} ${escapeHtml(p.nickname)} · ${p.ready ? "준비" : "대기"}</div>`;
+      pbox.innerHTML += `
+        <div class="online-item">
+          ${p.character || "🐰"} ${escapeHtml(p.nickname)} - 현재점수 ${p.score || 0}점
+        </div>
+      `;
     });
   }
 
@@ -1209,6 +1332,7 @@ function handleRoom(room){
   if(room.status === "waiting"){
     clearInterval(countTimer);
     document.getElementById("problemArea").classList.add("hidden");
+    document.getElementById("answerDock").classList.add("hidden");
     document.getElementById("centerMessage").textContent = "곧 메세지가 나올 공간입니다.";
     show("typingScreen");
   }
@@ -1275,6 +1399,7 @@ function startRound(room){
   roundStart = Date.now();
 
   document.getElementById("problemArea").classList.remove("hidden");
+  document.getElementById("answerDock").classList.remove("hidden");
   document.getElementById("centerMessage").textContent = "타자타자 시작";
   document.getElementById("roundText").textContent = room.round;
   document.getElementById("problemText").textContent = room.current_text;
@@ -1345,23 +1470,29 @@ async function checkWinner(){
 
   const { data: p } = await sb
     .from("typing_game_players")
-    .select("score")
+    .select("score,character")
     .eq("room_id",roomId)
     .eq("nickname",winner)
     .single();
 
+  const newScore = Number(p?.score || 0) + ROUND_SCORE;
+
   await sb.from("typing_game_players")
-    .update({ score:(p?.score || 0)+10 })
+    .update({ score:newScore })
     .eq("room_id",roomId)
     .eq("nickname",winner);
 
-  document.getElementById("centerMessage").textContent = `${winner} 님 정답 10점`;
+  await addIntegratedScore(winner, p?.character || "🐰", ROUND_SCORE);
+
+  document.getElementById("centerMessage").textContent = `${winner} 님 정답 ${ROUND_SCORE}점`;
 
   setTimeout(nextRound,1500);
 }
 
 async function nextRound(){
   if(currentRoom.round >= maxRound){
+    await applyFinishBonus();
+
     await sb.from("typing_game_rooms")
       .update({
         status:"finished",
@@ -1382,6 +1513,32 @@ async function nextRound(){
       updated_at:new Date().toISOString()
     })
     .eq("id",roomId);
+}
+
+async function applyFinishBonus(){
+  if(finishBonusApplied) return;
+  finishBonusApplied = true;
+
+  const { data } = await sb
+    .from("typing_game_players")
+    .select("nickname,score,character,role")
+    .eq("room_id",roomId)
+    .eq("role","player")
+    .order("score",{ascending:false});
+
+  const rows = data || [];
+
+  for(let i=0; i<rows.length && i<3; i++){
+    const bonus = RANK_BONUS[i];
+    const p = rows[i];
+
+    await sb.from("typing_game_players")
+      .update({ score:Number(p.score || 0) + bonus })
+      .eq("room_id",roomId)
+      .eq("nickname",p.nickname);
+
+    await addIntegratedScore(p.nickname, p.character || "🐰", bonus);
+  }
 }
 
 async function loadMyScore(){
@@ -1446,8 +1603,15 @@ async function showFinish(){
   box.innerHTML = "<h2>최종 순위</h2>";
 
   (data || []).forEach((p,i)=>{
-    box.innerHTML += `<div class="rank-item">${i+1}위 ${p.character || "🐰"} ${escapeHtml(p.nickname)} - ${p.score || 0}점</div>`;
+    let bonusText = "";
+    if(i === 0) bonusText = " / 1위 보너스 +30";
+    if(i === 1) bonusText = " / 2위 보너스 +20";
+    if(i === 2) bonusText = " / 3위 보너스 +10";
+
+    box.innerHTML += `<div class="rank-item">${i+1}위 ${p.character || "🐰"} ${escapeHtml(p.nickname)} - ${p.score || 0}점${bonusText}</div>`;
   });
+
+  await loadTopRanks();
 }
 
 async function resetToLobby(){
@@ -1511,6 +1675,10 @@ function subscribe(){
     })
     .on("postgres_changes",{event:"*",schema:"public",table:"mini_game_chats"},async()=>{
       await loadMenuChat();
+    })
+    .on("postgres_changes",{event:"*",schema:"public",table:"mini_game_scores"},async()=>{
+      await loadMenuOnline();
+      await loadTopRanks();
     })
     .subscribe();
 }
