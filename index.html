@@ -594,13 +594,15 @@ viewer-item{
         <div id="gameMsg" class="msg"></div>
       </div>
 
-      <div class="room-bubble-chat">
-        <input id="chatInput" placeholder="말풍선 채팅 입력 40자 이내" maxlength="40"
-          onkeydown="if(event.key==='Enter')sendChat()">
-        <button onclick="sendChat()">전송</button>
-      </div>
+<div class="seat-row" id="seatRow"></div>
 
-      <div class="seat-row" id="seatRow"></div>
+<div class="room-bubble-chat">
+  <input id="chatInput" placeholder="말풍선 채팅 입력 40자 이내" maxlength="40"
+    onkeydown="if(event.key==='Enter')sendChat()">
+  <button onclick="sendChat()">전송</button>
+</div>
+
+<div id="answerDock" class="answer-dock hidden">
 
       <div id="answerDock" class="answer-dock hidden">
         <div class="answer-row">
@@ -675,21 +677,56 @@ let finishBonusApplied = false;
 const characters = ["🐰","🐱","🐶","🐻","🐼","🐥","🦊","🐯","🐵","🐧"];
 
 const sentences = [
-  "동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라 만세",
-  "정확하게 입력해야 점수를 받을 수 있습니다",
-  "루칭방 타자타자 미니게임에 오신 것을 환영합니다",
-  "빠른 손보다 중요한 것은 침착함과 정확도입니다",
-  "모두가 준비하면 카운트다운 후 게임이 시작됩니다",
-  "끝까지 집중하는 사람이 최종 우승자가 됩니다",
-  "복사 붙여넣기는 사용할 수 없습니다",
-  "가장 먼저 정확히 입력한 사람이 점수를 얻습니다",
-  "마지막 라운드까지 포기하지 말고 도전하세요",
-  "즐겁고 매너 있는 게임을 부탁드립니다",
-  "푸른 하늘 아래 귀여운 캐릭터들이 달려갑니다",
-  "실시간 점수판을 보며 순위를 확인하세요",
-  "오늘의 승자는 과연 누가 될까요",
-  "한 글자라도 틀리면 점수를 받을 수 없습니다",
-  "준비를 취소하면 카운트다운이 멈춥니다"
+"야 너만 믿는다 했는데 내가 제일 먼저 망했다",
+"엄마 나 5분만 더 잘게 했는데 두시간 지나있다",
+"치킨 시킬까 말까 하다가 이미 결제 완료됐다",
+"너 숙제 했어 물어봤다가 같이 큰일나버렸다",
+"오늘 공부 진짜 열심히 한다 그리고 책만 폈다",
+"야 잠깐만 보자 했는데 새벽까지 안끝났다",
+"배 안고프다 해놓고 내 음식까지 다 먹고갔다",
+"분명 안웃긴데 친구 표정 보고 빵터져버렸다",
+"야 한판만 하자더니 아침해 뜰때까지 게임했다",
+"오늘은 절대 안늦는다 그리고 또 뛰어가는중",
+"내일부터 운동 시작입니다 오늘은 마지막 치킨",
+"시험 망했다 했는데 꼭 그런애가 일등급이다",
+"야 너 어디야 거의 다왔어 아직 집이다",
+"한입만 할게 해놓고 절반을 가져가버렸다",
+"알람 분명 맞췄는데 왜 못들은건지 아직 의문",
+"엄마 나 안졸려 그리고 3초뒤 코골기 시작",
+"라면 하나만 먹는다 해놓고 김밥까지 추가했다",
+"게임 시작전 화장실은 세계 공통 국룰이다",
+"야 그거 비밀이다 해놓고 하루만에 다 퍼졌다",
+"나 진짜 화안났어 말투에서 이미 끝난상황이다",
+"오늘은 진짜 돈 안쓴다 그리고 배달앱 실행",
+"너 먼저 자 난 안졸려 그리고 먼저 잠들었다",
+"야 잠깐 나온다더니 세시간째 연락이 없다",
+"공부하자고 모였는데 과자만 네봉지 비워졌다",
+"이번엔 진짜 다이어트다 냉장고 문 열기전까지는",
+"내 폰 어디갔지 하면서 손에 들고 찾고있다",
+"야 너도 그생각 했지 우리 동시에 웃어버렸다",
+"딱 한곡만 듣는다 그리고 플레이리스트 끝까지감",
+"나 안무섭거든 귀신얘기 나오자마자 화장실 못감",
+"오늘은 일찍 잔다 해놓고 해뜨는거 구경중",
+"야 사진 찍는다 하나둘셋에서 다 딴데본다",
+"너가 골라줘 해놓고 결국 자기맘대로 산다",
+"엄마 나 배안고파 그리고 치킨 냄새에 흔들림",
+"이번 시험 쉽다더니 평균점수 처참하게 나왔다",
+"야 이거 절대 안들킨다 그리고 바로 걸렸다",
+"나 진짜 한입만 먹는다 그리고 반이 사라졌다",
+"분명 금방 끝난다 했는데 하루가 순삭됐다",
+"오늘은 폰 안본다 해놓고 십초뒤 다시 켰다",
+"야 너 왜웃어 그말에 더 터져버리는 상황",
+"딱 오분만 쉰다 그리고 한시간 지나있다",
+"안졸리다 해놓고 답장하다가 그대로 잠들었다",
+"야 너 목소리 왜그래 방금 일어난 티난다",
+"오늘은 진짜 집밖 안나간다 택배오면 예외다",
+"시험기간엔 평소 안보던 책도 재밌어보인다",
+"나 오늘은 진짜 참는다 그리고 야식 주문완료",
+"야 그게임 재미없다 해놓고 제일 오래한다",
+"카톡 답장하려다 유튜브 보고 까먹어버렸다",
+"이번엔 진짜 빨리간다 그리고 또 지각확정",
+"야 너도 배고프지 결국 둘다 편의점행이다",
+"분명 시원했는데 버스 타자마자 더워지기 시작"
 ];
 
 function show(id){
@@ -1041,10 +1078,13 @@ async function enterTypingLobby(){
       .eq("room_id","online")
       .eq("nickname",user.nickname);
 
-    await sb.from("typing_game_chats")
-      .delete()
-      .eq("room_id",roomId)
-      .eq("nickname",user.nickname);
+await sb.from("typing_game_chats")
+  .delete()
+  .eq("room_id",roomId)
+  .eq("nickname",user.nickname);
+
+lastChats = [];
+await loadChats();
 
     const { data: usedSeats } = await sb
       .from("typing_game_players")
@@ -1648,6 +1688,7 @@ async function leaveTyping(){
     .eq("nickname",user.nickname);
 
   lastChats = [];
+  await loadChats();
 
   await markOnline("대기방");
   openMenu();
