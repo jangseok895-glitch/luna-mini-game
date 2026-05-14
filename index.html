@@ -434,6 +434,62 @@ button:disabled{opacity:.38;cursor:not-allowed;filter:grayscale(.3)}
   vertical-align:middle;
   margin-right:4px;
 }
+
+  .game-seat-card{
+  position:relative;
+  width:95px;
+  height:150px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+}
+
+.game-seat-char{
+  width:72px;
+  height:72px;
+  object-fit:contain;
+  z-index:2;
+  margin-bottom:-8px;
+}
+
+.game-podium-wrap{
+  position:relative;
+  width:95px;
+  height:90px;
+}
+
+.game-podium-img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+}
+
+.game-podium-name{
+  position:absolute;
+  top:18px;
+  left:50%;
+  transform:translateX(-50%);
+  width:68px;
+  text-align:center;
+  font-size:13px;
+  color:#2563eb;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.game-podium-score{
+  position:absolute;
+  top:50px;
+  left:50%;
+  transform:translateX(-50%);
+  width:70px;
+  text-align:center;
+  font-size:26px;
+  font-weight:1000!important;
+  color:red;
+}
 </style>
 </head>
 
@@ -664,6 +720,7 @@ const CHARACTER_INFO = {
   }
 };
 
+  const PODIUM_IMG = "https://i.ibb.co/QFPTh1fH/image.png";
 
 function getCharMain(key){
   return CHARACTER_INFO[key]?.main || CHARACTER_INFO.dao.main;
@@ -1119,11 +1176,15 @@ function renderSeats(players){
     row.innerHTML+=`
       <div class="seat${activeCls}${elimCls}">
         ${chatHtml}
-        <div class="seat-char">
-          <img src="${getCharMain(p.character)}" alt="${escapeHtml(getCharName(p.character))}">
-        </div>
-        <div class="seat-name">${escapeHtml(p.nickname)}</div>
-        <div class="seat-score">현재점수 ${p.score||0}점</div>
+<div class="game-seat-card">
+  <img class="game-seat-char" src="${getCharMain(p.character)}">
+
+  <div class="game-podium-wrap">
+    <img class="game-podium-img" src="${PODIUM_IMG}">
+    <div class="game-podium-name">${escapeHtml(p.nickname)}</div>
+    <div class="game-podium-score">${p.score||0}</div>
+  </div>
+</div>
         <div class="ready-mark">
           ${
             eliminated
