@@ -1407,6 +1407,10 @@ function renderSidePlayers(players,viewers){
 }
 
 async function moveSeat(seatNo){
+
+    await clearMyRoomBubble();
+
+  const {data}=await sb.from("typing_game_players").select("nickname").eq("room_id",roomId).eq("seat_no",seatNo).maybeSingle();
   const {data}=await sb.from("typing_game_players").select("nickname").eq("room_id",roomId).eq("seat_no",seatNo).maybeSingle();
   if(data){alert("이미 사용 중인 자리입니다.");return}
 
@@ -2490,7 +2494,7 @@ async function clearViewerChatIfInactive(){
   }
 }
 
-  async function clearMyRoomBubble(){
+async function clearMyRoomBubble(){
   if(!user || !roomId) return;
 
   await sb
@@ -2499,7 +2503,7 @@ async function clearViewerChatIfInactive(){
     .eq("room_id", roomId)
     .eq("nickname", user.nickname);
 
-  lastChats = [];
+  lastChats = lastChats.filter(c => c.nickname !== user.nickname);
   await loadChats();
 }
 </script>
