@@ -646,6 +646,11 @@ button:disabled{opacity:.38;cursor:not-allowed;filter:grayscale(.3)}
 .name-color-6{color:#0891b2!important;}
 .name-color-7{color:#db2777!important;}
 .name-color-8{color:#475569!important;}
+
+  #loginScreen .main-img{
+  max-height:120px!important;
+  object-fit:contain!important;
+}
 </style>
 </head>
 
@@ -1431,11 +1436,17 @@ async function moveSeat(seatNo){
 }
 
 async function goSpectator(){
+    await clearMyRoomBubble();
+
+  myRole="viewer";
+  isReady=false;
+  
   myRole="viewer";isReady=false;
   await sb.from("typing_game_players").update({role:"viewer",ready:false,seat_no:null,current_place:gameName(currentGame),last_seen:new Date().toISOString()}).eq("room_id",roomId).eq("nickname",user.nickname);
   document.getElementById("readyBtn").classList.add("hidden");await loadPlayers();await checkReadyStart();
 }
 async function goPlayer(){
+  await clearMyRoomBubble();
   alert("빈 자리를 클릭하면 선수로 참가됩니다.");
 }
 
@@ -2477,6 +2488,19 @@ async function clearViewerChatIfInactive(){
       .delete()
       .eq("place","viewer_"+roomId);
   }
+}
+
+  async function clearMyRoomBubble(){
+  if(!user || !roomId) return;
+
+  await sb
+    .from("typing_game_chats")
+    .delete()
+    .eq("room_id", roomId)
+    .eq("nickname", user.nickname);
+
+  lastChats = [];
+  await loadChats();
 }
 </script>
 </body>
