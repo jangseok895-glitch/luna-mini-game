@@ -440,7 +440,7 @@ button:disabled{opacity:.38;cursor:not-allowed;filter:grayscale(.3)}
 <body>
 
 <div class="screen" id="loginScreen"><div class="wrap">
-<img class="main-img" src="https://i.ibb.co/btNSzps/image.png">
+  <img class="main-img" src="https://i.ibb.co/btNSzps/image.png">
   <h1>루칭방 미니게임</h1>
   <input id="nicknameInput" placeholder="아이디 / 닉네임">
   <div class="pin-wrap"><input id="pinInput" type="password" placeholder="PIN5 비밀번호" maxlength="5"><button type="button" class="eye-btn" onclick="togglePin()">보기</button></div>
@@ -664,6 +664,23 @@ const CHARACTER_INFO = {
   }
 };
 
+
+function getCharMain(key){
+  return CHARACTER_INFO[key]?.main || CHARACTER_INFO.dao.main;
+}
+
+function getCharSmall(key){
+  return CHARACTER_INFO[key]?.small || CHARACTER_INFO.dao.small;
+}
+
+function getCharName(key){
+  return CHARACTER_INFO[key]?.name || key || "";
+}
+
+function charSmallImg(key){
+  return `<img class="online-char" src="${getCharSmall(key)}" alt="${escapeHtml(getCharName(key))}">`;
+}
+
 const sentences=[
   "동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라 만세",
   "정확하게 입력해야 점수를 받을 수 있습니다",
@@ -881,7 +898,7 @@ async function markOnline(place){
 
 async function openMenu(){
   document.getElementById("menuChar").innerHTML =
-    `<img class="online-char" src="${getCharSmall(user.mini_character)}">`;
+    `<img class="online-char" src="${getCharSmall(user.mini_character)}" alt="${escapeHtml(getCharName(user.mini_character))}">`;
 
   document.getElementById("menuNick").textContent=user.nickname;
 
@@ -915,37 +932,77 @@ async function loadGameCounts(){
 }
 
 async function loadMenuOnline(){
-  const {data}=await sb.from("typing_game_players").select("nickname,character,current_place,room_id,role,last_seen,score").order("last_seen",{ascending:true});
+  const {data}=await sb
+    .from("typing_game_players")
+    .select("nickname,character,current_place,room_id,role,last_seen,score")
+    .order("last_seen",{ascending:true});
+
   const sm=await getIntegratedScoreMap();
   const box=document.getElementById("menuOnlineList");
   let htmlText="";
+
   let rows=(data||[]).filter((p,i,arr)=>arr.findIndex(x=>x.nickname===p.nickname)===i);
-  if(user){const me=rows.filter(p=>p.nickname===user.nickname), others=rows.filter(p=>p.nickname!==user.nickname);rows=[...others,...me]}
+
+  if(user){
+    const me=rows.filter(p=>p.nickname===user.nickname);
+    const others=rows.filter(p=>p.nickname!==user.nickname);
+    rows=[...others,...me];
+  }
+
   if(!rows.length){
     setHtmlIfChanged(box,`<div class="online-item">현재 접속자 없음</div>`);
     return;
   }
+
   rows.forEach(p=>{
-    let place=p.current_place||"대기방"; if(p.room_id==="typing_main")place="루칭방 타자타자"; if(p.room_id==="br31_main")place="베스킨라빈스31"; if(p.room_id==="burger_main")place="햄버거를 만들자";
+    let place=p.current_place||"대기방";
+
+    if(p.room_id==="typing_main") place="루칭방 타자타자";
+    if(p.room_id==="br31_main") place="베스킨라빈스31";
+    if(p.room_id==="burger_main") place="햄버거를 만들자";
+
     const score=sm[p.nickname]??p.score??0;
-    htmlText+=`<div class="online-item">${p.character||"🐰"} ${escapeHtml(p.nickname)} <span class="score-strong">[${score}점]</span><span class="place-line">[${place}]</span></div>`;
+
+    htmlText+=`
+      <div class="online-item">
+        ${charSmallImg(p.character)}
+        ${escapeHtml(p.nickname)}
+        <span class="score-strong">[${score}점]</span>
+        <span class="place-line">[${place}]</span>
+      </div>
+    `;
   });
+
   setHtmlIfChanged(box,htmlText);
 }
 
 async function loadTopRanks(){
   const box=document.getElementById("topRankList");
   let htmlText="";
+
   try{
-    const {data}=await sb.from("mini_game_scores").select("nickname,total_score,character").order("total_score",{ascending:false}).limit(30);
+    const {data}=await sb
+      .from("mini_game_scores")
+      .select("nickname,total_score,character")
+      .order("total_score",{ascending:false})
+      .limit(30);
+
     if(data&&data.length){
-      data.forEach((p,i)=>htmlText+=`<div class="rank-item">${i+1}위 ${p.character||"🐰"} ${escapeHtml(p.nickname)} <span class="score-strong">${p.total_score||0}점</span></div>`);
+      data.forEach((p,i)=>{
+        htmlText+=`
+          <div class="rank-item">
+            ${i+1}위 ${charSmallImg(p.character)}
+            ${escapeHtml(p.nickname)}
+            <span class="score-strong">${p.total_score||0}점</span>
+          </div>
+        `;
+      });
       setHtmlIfChanged(box,htmlText);
       return;
     }
   }catch(e){}
-  htmlText=`<div class="rank-item">아직 기록 없음</div>`;
-  setHtmlIfChanged(box,htmlText);
+
+  setHtmlIfChanged(box,`<div class="rank-item">아직 기록 없음</div>`);
 }
 
 async function sendMenuChat(){
@@ -953,8 +1010,26 @@ async function sendMenuChat(){
   await sb.from("mini_game_chats").insert({place:"menu",nickname:user.nickname,character:user.mini_character,message});await loadMenuChat();
 }
 async function loadMenuChat(){
-  const {data}=await sb.from("mini_game_chats").select("nickname,character,message,created_at").eq("place","menu").order("created_at",{ascending:false}).limit(30);
-  const box=document.getElementById("menuChatLog");box.innerHTML="";(data||[]).reverse().forEach(c=>box.innerHTML+=`<div class="menu-chat-line">${c.character||"🐰"} ${escapeHtml(c.nickname)} : ${escapeHtml(c.message)}</div>`);box.scrollTop=box.scrollHeight;
+  const {data}=await sb
+    .from("mini_game_chats")
+    .select("nickname,character,message,created_at")
+    .eq("place","menu")
+    .order("created_at",{ascending:false})
+    .limit(30);
+
+  const box=document.getElementById("menuChatLog");
+  box.innerHTML="";
+
+  (data||[]).reverse().forEach(c=>{
+    box.innerHTML+=`
+      <div class="menu-chat-line">
+        ${charSmallImg(c.character)}
+        ${escapeHtml(c.nickname)} : ${escapeHtml(c.message)}
+      </div>
+    `;
+  });
+
+  box.scrollTop=box.scrollHeight;
 }
 
 async function enterRoom(game){
@@ -998,14 +1073,6 @@ async function loadPlayers(){
 }
 
 function parseBubbleMessage(raw){try{const o=JSON.parse(raw||"");if(o&&o.__miniBubble===true)return o}catch(e){}return{__miniBubble:false,text:raw||"",result:"normal"}}
-
-function getCharMain(key){
-  return CHARACTER_INFO[key]?.main || CHARACTER_INFO.dao.main;
-}
-
-function getCharSmall(key){
-  return CHARACTER_INFO[key]?.small || CHARACTER_INFO.dao.small;
-}
 
 function renderSeats(players){
   const row=document.getElementById("seatRow");
@@ -1053,7 +1120,7 @@ function renderSeats(players){
       <div class="seat${activeCls}${elimCls}">
         ${chatHtml}
         <div class="seat-char">
-          <img src="${getCharMain(p.character)}">
+          <img src="${getCharMain(p.character)}" alt="${escapeHtml(getCharName(p.character))}">
         </div>
         <div class="seat-name">${escapeHtml(p.nickname)}</div>
         <div class="seat-score">현재점수 ${p.score||0}점</div>
@@ -1070,12 +1137,39 @@ function renderSeats(players){
 }
 
 function renderSidePlayers(players,viewers){
-  const pbox=document.getElementById("playerList"),vbox=document.getElementById("viewerList");
-  let pHtml="",vHtml="";
-  if(!players.length)pHtml=`<div class="online-item">선수 없음</div>`;
-  else players.forEach(p=>pHtml+=`<div class="online-item"><img class="online-char" src="${CHARACTER_INFO[p.character]?.small || ''}"> ${escapeHtml(p.nickname)} <span class="score-strong">[${p.score||0}점]</span></div>`);
-  if(!viewers.length)vHtml=`<div class="viewer-item">관전자 없음</div>`;
-  else viewers.forEach(p=>vHtml+=`<div class="viewer-item"><img class="online-char" src="${CHARACTER_INFO[p.character]?.small || ''}"> ${escapeHtml(p.nickname)} <span class="viewer-score">[${p.score||0}점]</span></div>`);
+  const pbox=document.getElementById("playerList");
+  const vbox=document.getElementById("viewerList");
+  let pHtml="";
+  let vHtml="";
+
+  if(!players.length){
+    pHtml=`<div class="online-item">선수 없음</div>`;
+  }else{
+    players.forEach(p=>{
+      pHtml+=`
+        <div class="online-item">
+          ${charSmallImg(p.character)}
+          ${escapeHtml(p.nickname)}
+          <span class="score-strong">[${p.score||0}점]</span>
+        </div>
+      `;
+    });
+  }
+
+  if(!viewers.length){
+    vHtml=`<div class="viewer-item">관전자 없음</div>`;
+  }else{
+    viewers.forEach(p=>{
+      vHtml+=`
+        <div class="viewer-item">
+          ${charSmallImg(p.character)}
+          ${escapeHtml(p.nickname)}
+          <span class="viewer-score">[${p.score||0}점]</span>
+        </div>
+      `;
+    });
+  }
+
   setHtmlIfChanged(pbox,pHtml);
   setHtmlIfChanged(vbox,vHtml);
 }
@@ -1788,10 +1882,31 @@ async function loadChats(){
 }
 async function showFinish(){
   show("finishScreen");
-  const {data}=await sb.from("typing_game_players").select("nickname,score,character,role").eq("room_id",roomId).eq("role","player").order("score",{ascending:false});
-  const box=document.getElementById("finalRank");box.innerHTML="<h2>게임종료</h2>";
-  (data||[]).forEach((p,i)=>box.innerHTML+=`<div class="rank-item">${i+1}위 ${p.character||"🐰"} ${escapeHtml(p.nickname)} - <span class="score-strong">${p.score||0}점</span></div>`);
-  if(!(data||[]).length)box.innerHTML+=`<div class="rank-item">선수 기록 없음</div>`;
+
+  const {data}=await sb
+    .from("typing_game_players")
+    .select("nickname,score,character,role")
+    .eq("room_id",roomId)
+    .eq("role","player")
+    .order("score",{ascending:false});
+
+  const box=document.getElementById("finalRank");
+  box.innerHTML="<h2>게임종료</h2>";
+
+  (data||[]).forEach((p,i)=>{
+    box.innerHTML+=`
+      <div class="rank-item">
+        ${i+1}위 ${charSmallImg(p.character)}
+        ${escapeHtml(p.nickname)} -
+        <span class="score-strong">${p.score||0}점</span>
+      </div>
+    `;
+  });
+
+  if(!(data||[]).length){
+    box.innerHTML+=`<div class="rank-item">선수 기록 없음</div>`;
+  }
+
   await loadTopRanks();
 }
 async function backToMenuAfterFinish(){await markOnline("대기방");openMenu()}
@@ -1855,7 +1970,12 @@ async function loadViewerChat(){
   box.innerHTML="";
 
   (data||[]).reverse().forEach(c=>{
-    box.innerHTML+=`<div class="viewer-chat-line">${c.character||"🐰"} ${escapeHtml(c.nickname)} : ${escapeHtml(c.message)}</div>`;
+    box.innerHTML+=`
+      <div class="viewer-chat-line">
+        ${charSmallImg(c.character)}
+        ${escapeHtml(c.nickname)} : ${escapeHtml(c.message)}
+      </div>
+    `;
   });
 
   box.scrollTop=box.scrollHeight;
@@ -1991,6 +2111,7 @@ async function loadAdminKickList(){
   (data||[]).forEach(p=>{
     if(seen.has(p.nickname)) return;
     seen.add(p.nickname);
+
     let place=p.current_place||"대기방";
     if(p.room_id==="typing_main") place="루칭방 타자타자";
     if(p.room_id==="br31_main") place="베스킨라빈스31";
@@ -1998,7 +2119,7 @@ async function loadAdminKickList(){
 
     const opt=document.createElement("option");
     opt.value=p.nickname;
-    opt.textContent=`${p.character||"🐰"} ${p.nickname} - ${place}`;
+    opt.textContent=`${getCharName(p.character)} ${p.nickname} - ${place}`;
     select.appendChild(opt);
   });
 
