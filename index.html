@@ -2889,7 +2889,7 @@ async function showFinish(){
     .order("score",{ascending:false});
 
   const box=document.getElementById("finalRank");
-  box.innerHTML="<h2>게임종료</h2><div class="rank-item">1등, 2등, 3등은 게임별 규칙에 따라 추가점수를 가지고 갑니다.</div>";
+  box.innerHTML=`<h2>게임종료</h2><div class="rank-item">1등, 2등, 3등은 게임별 규칙에 따라 추가점수를 가지고 갑니다.</div>`;
 
   (data||[]).forEach((p,i)=>{
     box.innerHTML+=`
