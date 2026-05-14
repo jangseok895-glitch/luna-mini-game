@@ -880,9 +880,19 @@ async function markOnline(place){
 }
 
 async function openMenu(){
-document.getElementById("menuChar").innerHTML =
-  `<img class="online-char" src="${CHARACTER_INFO[user.mini_character]?.small || ''}">`;document.getElementById("menuNick").textContent=user.nickname;
-  show("menuScreen");subscribe();startRealtimeRefresh();await markOnline("대기방");await loadMenuOnline();await loadTopRanks();await loadMenuChat();await loadGameCounts();
+  document.getElementById("menuChar").innerHTML =
+    `<img class="online-char" src="${getCharSmall(user.mini_character)}">`;
+
+  document.getElementById("menuNick").textContent=user.nickname;
+
+  show("menuScreen");
+  subscribe();
+  startRealtimeRefresh();
+  await markOnline("대기방");
+  await loadMenuOnline();
+  await loadTopRanks();
+  await loadMenuChat();
+  await loadGameCounts();
 }
 
 async function logout(){
@@ -989,20 +999,73 @@ async function loadPlayers(){
 
 function parseBubbleMessage(raw){try{const o=JSON.parse(raw||"");if(o&&o.__miniBubble===true)return o}catch(e){}return{__miniBubble:false,text:raw||"",result:"normal"}}
 
+function getCharMain(key){
+  return CHARACTER_INFO[key]?.main || CHARACTER_INFO.dao.main;
+}
+
+function getCharSmall(key){
+  return CHARACTER_INFO[key]?.small || CHARACTER_INFO.dao.small;
+}
+
 function renderSeats(players){
-  const row=document.getElementById("seatRow");row.innerHTML="";
-  const active=br31Local?.status==="playing"?br31Local.players?.[br31Local.turnIndex]:null;
+  const row=document.getElementById("seatRow");
+  row.innerHTML="";
+
+  const active=br31Local?.status==="playing"
+    ? br31Local.players?.[br31Local.turnIndex]
+    : null;
+
   for(let i=0;i<seatCount;i++){
-    const seatNo=i+1,p=players.find(x=>Number(x.seat_no)===seatNo);
-    if(!p){row.innerHTML+=`<div class="seat empty" onclick="moveSeat(${seatNo})"><div class="seat-char">＋</div><div class="seat-name">빈 자리</div></div>`;continue}
+    const seatNo=i+1;
+    const p=players.find(x=>Number(x.seat_no)===seatNo);
+
+    if(!p){
+      row.innerHTML+=`
+        <div class="seat empty" onclick="moveSeat(${seatNo})">
+          <div class="seat-char">＋</div>
+          <div class="seat-name">빈 자리</div>
+        </div>
+      `;
+      continue;
+    }
+
     const eliminated=br31Local?.eliminated?.includes(p.nickname);
-    const activeCls=active===p.nickname?" active-turn":"";
-    const elimCls=eliminated?" eliminated":"";
-    const chat=[...lastChats].reverse().find(c=>c.nickname===p.nickname);let chatHtml="";
-    if(chat){const parsed=parseBubbleMessage(chat.message), cls=parsed.result==="wrong"?"wrong":(parsed.result==="first"?"first":"");const label=parsed.result==="first"?`<div class="first-label">1등!</div>`:"";chatHtml=`<div class="seat-chat-wrap">${label}<div class="seat-chat ${cls}">${escapeHtml(parsed.text)}</div></div>`}
-    row.innerHTML+=`<div class="seat${activeCls}${elimCls}">${chatHtml<div class="seat-char">
-  <img src="${CHARACTER_INFO[p.character]?.main || ''}">
-</div><div class="seat-name">${escapeHtml(p.nickname)}</div><div class="seat-score">현재점수 ${p.score||0}점</div><div class="ready-mark">${eliminated?'<span class="elim-badge">탈락</span>':(p.ready?'<span class="ready-badge">준비</span>':'')}</div></div>`;
+    const activeCls=active===p.nickname ? " active-turn" : "";
+    const elimCls=eliminated ? " eliminated" : "";
+
+    const chat=[...lastChats].reverse().find(c=>c.nickname===p.nickname);
+    let chatHtml="";
+
+    if(chat){
+      const parsed=parseBubbleMessage(chat.message);
+      const cls=parsed.result==="wrong" ? "wrong" : (parsed.result==="first" ? "first" : "");
+      const label=parsed.result==="first" ? `<div class="first-label">1등!</div>` : "";
+
+      chatHtml=`
+        <div class="seat-chat-wrap">
+          ${label}
+          <div class="seat-chat ${cls}">${escapeHtml(parsed.text)}</div>
+        </div>
+      `;
+    }
+
+    row.innerHTML+=`
+      <div class="seat${activeCls}${elimCls}">
+        ${chatHtml}
+        <div class="seat-char">
+          <img src="${getCharMain(p.character)}">
+        </div>
+        <div class="seat-name">${escapeHtml(p.nickname)}</div>
+        <div class="seat-score">현재점수 ${p.score||0}점</div>
+        <div class="ready-mark">
+          ${
+            eliminated
+              ? '<span class="elim-badge">탈락</span>'
+              : (p.ready ? '<span class="ready-badge">준비</span>' : '')
+          }
+        </div>
+      </div>
+    `;
   }
 }
 
