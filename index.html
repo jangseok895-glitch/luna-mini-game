@@ -665,6 +665,12 @@ button:disabled{opacity:.38;cursor:not-allowed;filter:grayscale(.3)}
 </head>
 
 <body>
+<audio id="bgMusic" src="https://github.com/jangseok895-glitch/asia-ox-sound/raw/refs/heads/main/%EB%B0%B0%EA%B2%BD%EC%9D%8C%EC%95%85.mp3" loop></audio>
+
+<audio id="countSound" src="https://github.com/jangseok895-glitch/asia-ox-sound/raw/refs/heads/main/%EB%AF%B8%EB%8B%88%EA%B2%8C%EC%9E%84%EC%B9%B4%EC%9A%B4%ED%8A%B8.mp3"></audio>
+
+<audio id="startSound" src="https://github.com/jangseok895-glitch/luna-site/raw/refs/heads/main/kart1.mp3"></audio>
+  
 
 <div class="screen" id="loginScreen"><div class="wrap">
   <img class="main-img" src="https://i.ibb.co/btNSzps/image.png">
@@ -1127,6 +1133,8 @@ async function markOnline(place){
 }
 
 async function openMenu(){
+  startBgMusic();
+
   document.getElementById("menuChar").innerHTML =
     `<img class="online-char" src="${getCharSmall(user.mini_character)}" alt="${escapeHtml(getCharName(user.mini_character))}">`;
 
@@ -1150,6 +1158,7 @@ async function logout(){
   user=null;selectedChar="";isReady=false;myRole="player";currentRoom=null;lastChats=[];finishBonusApplied=false;handledWinnerKey="";
   document.getElementById("nicknameInput").value="";document.getElementById("pinInput").value="";
   show("loginScreen");
+  stopBgMusic();
 }
 
 async function loadGameCounts(){
@@ -1607,13 +1616,59 @@ function handleRoom(room){
 }
 
 function startLocalCountdown(roundNo){
-  if(startingCountdown)return;startingCountdown=true;let n=5;document.getElementById("countOverlay").classList.remove("hidden");document.getElementById("countText").textContent=n;clearInterval(countTimer);
+  if(startingCountdown) return;
+
+  startingCountdown=true;
+
+  let n=5;
+
+  document.getElementById("countOverlay").classList.remove("hidden");
+  document.getElementById("countText").textContent=n;
+
+  playSound("countSound");
+
+  clearInterval(countTimer);
+
   countTimer=setInterval(async()=>{
     const {players}=await loadPlayers();
     const host=players.find(p=>Number(p.seat_no)===1);
-    const allReady=!!host; // 테스트 버전: 1번 선수 1명만 있어도 진행
-    if(!allReady){clearInterval(countTimer);startingCountdown=false;document.getElementById("countOverlay").classList.add("hidden");await sb.from("typing_game_rooms").update({status:"waiting",updated_at:new Date().toISOString()}).eq("id",roomId);return}
-    n--; if(n>0)document.getElementById("countText").textContent=n; else{clearInterval(countTimer);startingCountdown=false;document.getElementById("countOverlay").classList.add("hidden");await sb.from("typing_game_rooms").update({status:"playing",round_started_at:new Date().toISOString(),updated_at:new Date().toISOString()}).eq("id",roomId)}
+    const allReady=!!host;
+
+    if(!allReady){
+      clearInterval(countTimer);
+      startingCountdown=false;
+      document.getElementById("countOverlay").classList.add("hidden");
+
+      await sb.from("typing_game_rooms")
+        .update({
+          status:"waiting",
+          updated_at:new Date().toISOString()
+        })
+        .eq("id",roomId);
+
+      return;
+    }
+
+    n--;
+
+    if(n>0){
+      document.getElementById("countText").textContent=n;
+      playSound("countSound");
+    }else{
+      clearInterval(countTimer);
+      startingCountdown=false;
+      document.getElementById("countOverlay").classList.add("hidden");
+
+      playSound("startSound");
+
+      await sb.from("typing_game_rooms")
+        .update({
+          status:"playing",
+          round_started_at:new Date().toISOString(),
+          updated_at:new Date().toISOString()
+        })
+        .eq("id",roomId);
+    }
   },1000);
 }
 
@@ -2526,6 +2581,30 @@ async function clearMyRoomBubble(){
 
   lastChats = lastChats.filter(c => c.nickname !== user.nickname);
   await loadChats();
+}
+
+  function playSound(id){
+  const audio=document.getElementById(id);
+  if(!audio) return;
+
+  audio.currentTime=0;
+  audio.play().catch(()=>{});
+}
+
+function startBgMusic(){
+  const bg=document.getElementById("bgMusic");
+  if(!bg) return;
+
+  bg.volume=0.35;
+  bg.play().catch(()=>{});
+}
+
+function stopBgMusic(){
+  const bg=document.getElementById("bgMusic");
+  if(!bg) return;
+
+  bg.pause();
+  bg.currentTime=0;
 }
 </script>
 </body>
