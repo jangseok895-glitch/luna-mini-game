@@ -402,6 +402,38 @@ button:disabled{opacity:.38;cursor:not-allowed;filter:grayscale(.3)}
 @media(max-width:1100px){.seat-row{grid-template-columns:repeat(4,1fr)}.room-bubble-chat{width:90%}}
 @media(max-width:760px){.menu-layout,.game-layout{grid-template-columns:1fr}.game-side{min-height:auto}.seat-row{grid-template-columns:repeat(4,1fr)}}
 @media(max-width:600px){h1{font-size:32px}.character-grid{grid-template-columns:repeat(5,1fr)}.seat-row{grid-template-columns:repeat(2,1fr)}.bottom-buttons{grid-template-columns:1fr}.room-bubble-chat{width:100%}.person{font-size:48px}.br31-buttons button{font-size:22px}}
+
+.char{
+  padding:10px;
+  border-radius:18px;
+  background:#eff6ff;
+  border:3px solid transparent;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  height:120px;
+}
+
+.char img{
+  width:90px;
+  height:90px;
+  object-fit:contain;
+}
+
+.seat-char img{
+  width:68px;
+  height:68px;
+  object-fit:contain;
+}
+
+.online-char{
+  width:34px;
+  height:34px;
+  object-fit:contain;
+  vertical-align:middle;
+  margin-right:4px;
+}
 </style>
 </head>
 
@@ -571,7 +603,66 @@ let playerHtmlCache="";
 let viewerHtmlCache="";
 let lastLocalActivity=Date.now();
 
-const characters=["🐰","🐱","🐶","🐻","🐼","🐥","🦊","🐯","🐵","🐧"];
+const characters = [
+  "dao",
+  "dizni",
+  "mos",
+  "marid",
+  "bazzi",
+  "keffy",
+  "etti",
+  "wolhee"
+];
+
+const CHARACTER_INFO = {
+  dao:{
+    name:"다오",
+    main:"https://i.ibb.co/wNMg3y5h/image.png",
+    small:"https://i.ibb.co/PsFVrT7m/333.png"
+  },
+
+  dizni:{
+    name:"디지니",
+    main:"https://i.ibb.co/mCMkS7jv/444.png",
+    small:"https://i.ibb.co/WWP4NNBz/44.png"
+  },
+
+  mos:{
+    name:"모스",
+    main:"https://i.ibb.co/0VshkHRr/22.png",
+    small:"https://i.ibb.co/k6MfGnDr/2.png"
+  },
+
+  marid:{
+    name:"마리드",
+    main:"https://i.ibb.co/1JMYwq2R/image.png",
+    small:"https://i.ibb.co/DP7RxJYs/1.png"
+  },
+
+  bazzi:{
+    name:"배찌",
+    main:"https://i.ibb.co/k2xt1Myg/66.png",
+    small:"https://i.ibb.co/1fZQc8NB/66.png"
+  },
+
+  keffy:{
+    name:"케피",
+    main:"https://i.ibb.co/hFxtN8c0/77.png",
+    small:"https://i.ibb.co/BK4w28Kp/77.png"
+  },
+
+  etti:{
+    name:"에띠",
+    main:"https://i.ibb.co/67ZZfFvw/88.png",
+    small:"https://i.ibb.co/bMhpJJ2W/99.png"
+  },
+
+  wolhee:{
+    name:"월희",
+    main:"https://i.ibb.co/XrhZD6KN/55.png",
+    small:"https://i.ibb.co/m5NMH61b/55.png"
+  }
+};
 
 const sentences=[
   "동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라 만세",
@@ -677,8 +768,28 @@ async function refreshReadyStartButton(){
 }
 
 function renderCharacters(){
-  const box=document.getElementById("characterGrid");box.innerHTML="";
-  characters.forEach(c=>{const d=document.createElement("div");d.className="char"+(selectedChar===c?" selected":"");d.textContent=c;d.onclick=()=>{selectedChar=c;renderCharacters()};box.appendChild(d)})
+  const box=document.getElementById("characterGrid");
+  box.innerHTML="";
+
+  characters.forEach(key=>{
+
+    const info=CHARACTER_INFO[key];
+
+    const d=document.createElement("div");
+
+    d.className="char"+(selectedChar===key?" selected":"");
+
+    d.innerHTML=`
+      <img src="${info.main}">
+    `;
+
+    d.onclick=()=>{
+      selectedChar=key;
+      renderCharacters();
+    };
+
+    box.appendChild(d);
+  });
 }
 
 async function login(){
@@ -769,7 +880,8 @@ async function markOnline(place){
 }
 
 async function openMenu(){
-  document.getElementById("menuChar").textContent=user.mini_character;document.getElementById("menuNick").textContent=user.nickname;
+document.getElementById("menuChar").innerHTML =
+  `<img class="online-char" src="${CHARACTER_INFO[user.mini_character]?.small || ''}">`;document.getElementById("menuNick").textContent=user.nickname;
   show("menuScreen");subscribe();startRealtimeRefresh();await markOnline("대기방");await loadMenuOnline();await loadTopRanks();await loadMenuChat();await loadGameCounts();
 }
 
@@ -888,7 +1000,9 @@ function renderSeats(players){
     const elimCls=eliminated?" eliminated":"";
     const chat=[...lastChats].reverse().find(c=>c.nickname===p.nickname);let chatHtml="";
     if(chat){const parsed=parseBubbleMessage(chat.message), cls=parsed.result==="wrong"?"wrong":(parsed.result==="first"?"first":"");const label=parsed.result==="first"?`<div class="first-label">1등!</div>`:"";chatHtml=`<div class="seat-chat-wrap">${label}<div class="seat-chat ${cls}">${escapeHtml(parsed.text)}</div></div>`}
-    row.innerHTML+=`<div class="seat${activeCls}${elimCls}">${chatHtml}<div class="seat-char">${p.character||"🐰"}</div><div class="seat-name">${escapeHtml(p.nickname)}</div><div class="seat-score">현재점수 ${p.score||0}점</div><div class="ready-mark">${eliminated?'<span class="elim-badge">탈락</span>':(p.ready?'<span class="ready-badge">준비</span>':'')}</div></div>`;
+    row.innerHTML+=`<div class="seat${activeCls}${elimCls}">${chatHtml<div class="seat-char">
+  <img src="${CHARACTER_INFO[p.character]?.main || ''}">
+</div><div class="seat-name">${escapeHtml(p.nickname)}</div><div class="seat-score">현재점수 ${p.score||0}점</div><div class="ready-mark">${eliminated?'<span class="elim-badge">탈락</span>':(p.ready?'<span class="ready-badge">준비</span>':'')}</div></div>`;
   }
 }
 
@@ -896,9 +1010,9 @@ function renderSidePlayers(players,viewers){
   const pbox=document.getElementById("playerList"),vbox=document.getElementById("viewerList");
   let pHtml="",vHtml="";
   if(!players.length)pHtml=`<div class="online-item">선수 없음</div>`;
-  else players.forEach(p=>pHtml+=`<div class="online-item">${p.character||"🐰"} ${escapeHtml(p.nickname)} <span class="score-strong">[${p.score||0}점]</span></div>`);
+  else players.forEach(p=>pHtml+=`<div class="online-item"><img class="online-char" src="${CHARACTER_INFO[p.character]?.small || ''}"> ${escapeHtml(p.nickname)} <span class="score-strong">[${p.score||0}점]</span></div>`);
   if(!viewers.length)vHtml=`<div class="viewer-item">관전자 없음</div>`;
-  else viewers.forEach(p=>vHtml+=`<div class="viewer-item">${p.character||"🐰"} ${escapeHtml(p.nickname)} <span class="viewer-score">[${p.score||0}점]</span></div>`);
+  else viewers.forEach(p=>vHtml+=`<div class="viewer-item"><img class="online-char" src="${CHARACTER_INFO[p.character]?.small || ''}"> ${escapeHtml(p.nickname)} <span class="viewer-score">[${p.score||0}점]</span></div>`);
   setHtmlIfChanged(pbox,pHtml);
   setHtmlIfChanged(vbox,vHtml);
 }
