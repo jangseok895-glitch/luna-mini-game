@@ -1355,17 +1355,19 @@ function renderSeats(players){
     row.innerHTML+=`
       <div class="seat${activeCls}${elimCls}">
         ${chatHtml}
-<div class="game-seat-card">
-  <img class="game-seat-char" src="${getCharMain(p.character)}">
 
-  <div class="game-podium-wrap">
-    <img class="game-podium-img" src="${PODIUM_IMG}">
-<div class="game-podium-name name-color-${seatNo}">
-  ${escapeHtml(p.nickname)}
-</div>
-    <div class="game-podium-score">${p.score||0}</div>
-  </div>
-</div>
+        <div class="game-seat-card">
+          <img class="game-seat-char" src="${getCharMain(p.character)}">
+
+          <div class="game-podium-wrap">
+            <img class="game-podium-img" src="${PODIUM_IMG}">
+            <div class="game-podium-name name-color-${seatNo}">
+              ${escapeHtml(p.nickname)}
+            </div>
+            <div class="game-podium-score">${p.score||0}</div>
+          </div>
+        </div>
+
         <div class="ready-mark">
           ${
             eliminated
