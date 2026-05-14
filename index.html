@@ -1419,14 +1419,22 @@ function renderSidePlayers(players,viewers){
 }
 
 async function moveSeat(seatNo){
+  await clearMyRoomBubble();
 
-    await clearMyRoomBubble();
+  const {data:seatData}=await sb
+    .from("typing_game_players")
+    .select("nickname")
+    .eq("room_id",roomId)
+    .eq("seat_no",seatNo)
+    .maybeSingle();
 
-  const {data}=await sb.from("typing_game_players").select("nickname").eq("room_id",roomId).eq("seat_no",seatNo).maybeSingle();
-  const {data}=await sb.from("typing_game_players").select("nickname").eq("room_id",roomId).eq("seat_no",seatNo).maybeSingle();
-  if(data){alert("이미 사용 중인 자리입니다.");return}
+  if(seatData){
+    alert("이미 사용 중인 자리입니다.");
+    return;
+  }
 
-  const {error}=await sb.from("typing_game_players")
+  const {error}=await sb
+    .from("typing_game_players")
     .update({
       role:"player",
       ready:false,
@@ -1444,8 +1452,9 @@ async function moveSeat(seatNo){
 
   myRole="player";
   isReady=false;
+
   document.getElementById("readyBtn").classList.remove("hidden");
-  document.getElementById("readyBtn").textContent=seatNo===1?"시작":"준비";
+  document.getElementById("readyBtn").textContent=seatNo===1 ? "시작" : "준비";
   document.getElementById("readyBtn").className="cute-ready ready-btn";
 
   await loadPlayers();
