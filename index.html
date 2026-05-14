@@ -632,6 +632,20 @@ button:disabled{opacity:.38;cursor:not-allowed;filter:grayscale(.3)}
   bottom:178px!important;
   z-index:99!important;
 }
+
+  .game-podium-name{
+  font-size:12px!important;
+  font-weight:1000!important;
+}
+
+  .name-color-1{color:#2563eb!important;}
+.name-color-2{color:#e11d48!important;}
+.name-color-3{color:#16a34a!important;}
+.name-color-4{color:#9333ea!important;}
+.name-color-5{color:#ea580c!important;}
+.name-color-6{color:#0891b2!important;}
+.name-color-7{color:#db2777!important;}
+.name-color-8{color:#475569!important;}
 </style>
 </head>
 
@@ -1243,7 +1257,13 @@ async function enterRoom(game){
     const maxR = game==="typing" ? maxRound : (game==="burger" ? 10 : 31);
     await sb.from("typing_game_rooms").upsert({id:roomId,status:"waiting",round:0,max_round:maxR,current_text:null,round_started_at:null,updated_at:new Date().toISOString()},{onConflict:"id"});
     await sb.from("typing_game_players").delete().eq("room_id","online").eq("nickname",user.nickname);
-    await sb.from("typing_game_chats").delete().eq("room_id",roomId).eq("nickname",user.nickname);
+await sb
+  .from("typing_game_chats")
+  .delete()
+  .eq("room_id",roomId)
+  .eq("nickname",user.nickname);
+lastChats = [];
+    
     lastChats=[];
     const {data:usedSeats}=await sb.from("typing_game_players").select("seat_no").eq("room_id",roomId).not("seat_no","is",null);
     const used=(usedSeats||[]).map(x=>Number(x.seat_no));let mySeat=1;for(let i=1;i<=8;i++){if(!used.includes(i)){mySeat=i;break}}
@@ -1263,7 +1283,7 @@ async function enterRoom(game){
     myRole="viewer";
     isReady=false;
     document.getElementById("readyBtn").classList.add("hidden");
-    show("gameScreen");subscribe();startRealtimeRefresh();await loadPlayers();await loadChats();await loadViewerChat();await loadRoom();
+    show("gameScreen");subscribe();startRealtimeRefresh();await loadPlayers();await loadChats();await clearViewerChatIfInactive();await loadViewerChat();await loadRoom();
   }catch(e){alert("입장 오류: "+e.message)}
 }
 
@@ -1325,7 +1345,9 @@ function renderSeats(players){
 
   <div class="game-podium-wrap">
     <img class="game-podium-img" src="${PODIUM_IMG}">
-    <div class="game-podium-name">${escapeHtml(p.nickname)}</div>
+<div class="game-podium-name name-color-${seatNo}">
+  ${escapeHtml(p.nickname)}
+</div>
     <div class="game-podium-score">${p.score||0}</div>
   </div>
 </div>
@@ -2435,6 +2457,27 @@ document.getElementById("pinInput")?.addEventListener("keydown",e=>{
 });
 
 setInterval(()=>{if(user){const isGame=!document.getElementById("gameScreen").classList.contains("hidden"),isMenu=!document.getElementById("menuScreen").classList.contains("hidden");if(isMenu)markOnline("대기방");if(isGame)sb.from("typing_game_players").update({current_place:gameName(currentGame),last_seen:new Date().toISOString()}).eq("room_id",roomId).eq("nickname",user.nickname)}},15000);
+
+async function clearViewerChatIfInactive(){
+  const {data}=await sb
+    .from("mini_game_chats")
+    .select("created_at")
+    .eq("place","viewer_"+roomId)
+    .order("created_at",{ascending:false})
+    .limit(1);
+
+  if(!data || !data.length) return;
+
+  const lastTime=new Date(data[0].created_at).getTime();
+  const now=Date.now();
+
+  if(now-lastTime >= 60*60*1000){
+    await sb
+      .from("mini_game_chats")
+      .delete()
+      .eq("place","viewer_"+roomId);
+  }
+}
 </script>
 </body>
 </html>
