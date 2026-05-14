@@ -903,10 +903,12 @@ async function login(){
 
     if(dupError) throw dupError;
 
-    if(onlineDup&&onlineDup.length){
-      msg.textContent="중복 로그인입니다. 잠시후 다시 시도해주세요.";
-      return;
-    }
+if(onlineDup&&onlineDup.length){
+  await sb
+    .from("typing_game_players")
+    .delete()
+    .eq("nickname",loginUser.nickname);
+}
 
     user=loginUser;
     selectedChar=user.mini_character||localStorage.getItem("mini_character_"+user.nickname)||"";
