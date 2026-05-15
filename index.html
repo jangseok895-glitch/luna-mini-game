@@ -653,8 +653,8 @@ button:disabled{opacity:.38;cursor:not-allowed;filter:grayscale(.3)}
 }
 
 #loginScreen .main-img{
-  width:320px!important;
-  max-width:85%!important;
+  width:430px!important;
+  max-width:95%!important;
   height:auto!important;
   max-height:none!important;
   object-fit:contain!important;
@@ -794,7 +794,7 @@ button:disabled{opacity:.38;cursor:not-allowed;filter:grayscale(.3)}
 
 
 
-/* 추가 게임: 글자색을 맞춰라 / 퀴즈풀자 */
+/* 추가 게임: 색깔을 맞춰라 / 퀴즈풀자 */
 .game-local-score{position:absolute;top:14px;right:18px;background:#fff;border:3px solid #bfdbfe;border-radius:999px;padding:6px 14px;color:#ef4444;font-size:15px;font-weight:1000!important;box-shadow:0 4px 12px rgba(59,130,246,.15)}
 .color-board,.quiz-board{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:8px 0 4px;gap:14px}
 .color-status,.quiz-status{font-size:22px;color:#2563eb;text-align:center;font-weight:1000!important}
@@ -839,6 +839,137 @@ button:disabled{opacity:.38;cursor:not-allowed;filter:grayscale(.3)}
 .ox-choice-player{display:flex;align-items:center;justify-content:center;gap:4px;font-size:12px;font-weight:1000!important;margin:2px 0;}
 .ox-choice-player img{width:28px;height:28px;object-fit:contain;}
 .color-card{color:#fff;}
+
+
+/* 2026 수정: 색깔을 맞춰라 카드/글자 동시 표시 */
+.color-card{
+  width:min(620px,94%)!important;
+  min-height:150px!important;
+  gap:18px!important;
+  padding:18px!important;
+  background:linear-gradient(135deg,#ffffff,#eff6ff,#fdf2f8)!important;
+  color:#1e293b!important;
+}
+.color-sample-card{
+  width:150px;
+  height:110px;
+  border-radius:24px;
+  border:5px solid #ffffff;
+  box-shadow:0 12px 28px rgba(15,23,42,.18);
+  flex:0 0 auto;
+}
+.color-word-sample{
+  min-width:210px;
+  min-height:110px;
+  border-radius:24px;
+  border:5px solid #bfdbfe;
+  background:#ffffff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:58px;
+  font-weight:1000!important;
+  text-shadow:1px 1px 0 rgba(255,255,255,.65);
+}
+.color-type-label{
+  display:inline-block;
+  margin-top:6px;
+  padding:4px 12px;
+  border-radius:999px;
+  background:#fff;
+  border:2px solid #bfdbfe;
+  color:#ef4444;
+  font-size:15px;
+  font-weight:1000!important;
+}
+
+/* 2026 수정: OX 잔디판 + 캐릭터 이동 */
+.ox-stage{
+  position:relative!important;
+  background:linear-gradient(180deg,#d9f99d,#86efac,#22c55e)!important;
+  border:5px solid #65a30d!important;
+  box-shadow:inset 0 0 0 5px rgba(255,255,255,.25),0 16px 36px rgba(34,197,94,.2);
+}
+.ox-zone{
+  background:linear-gradient(180deg,#bbf7d0,#4ade80)!important;
+  border:4px dashed rgba(255,255,255,.8);
+  color:#ffffff!important;
+  text-shadow:2px 2px 0 rgba(22,101,52,.45)!important;
+  overflow:hidden;
+}
+.ox-zone-x::before,.ox-zone-o::before{
+  content:"";
+  position:absolute;
+  top:16px;
+  width:6px;
+  height:80px;
+  background:#78350f;
+  border-radius:6px;
+  box-shadow:2px 2px 4px rgba(0,0,0,.18);
+}
+.ox-zone-x::before{left:30px;}
+.ox-zone-o::before{right:30px;}
+.ox-zone-x::after,.ox-zone-o::after{
+  position:absolute;
+  top:18px;
+  width:70px;
+  height:42px;
+  line-height:42px;
+  border-radius:8px 16px 16px 8px;
+  background:#ffffff;
+  color:#166534;
+  font-size:28px;
+  font-weight:1000!important;
+  text-shadow:none;
+  box-shadow:0 4px 10px rgba(0,0,0,.18);
+}
+.ox-zone-x::after{content:"X";left:36px;}
+.ox-zone-o::after{content:"O";right:36px;}
+.ox-zone-x,.ox-zone-o{font-size:0!important;}
+.ox-token-layer{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:20;
+}
+.ox-player-token{
+  position:absolute;
+  width:38px;
+  height:48px;
+  transform:translate(-50%,-50%);
+  transition:left .75s cubic-bezier(.22,1,.36,1), top .75s cubic-bezier(.22,1,.36,1);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  filter:drop-shadow(0 5px 6px rgba(22,101,52,.28));
+}
+.ox-player-token img{
+  width:30px;
+  height:30px;
+  object-fit:contain;
+}
+.ox-token-name{
+  max-width:58px;
+  padding:1px 4px;
+  border-radius:999px;
+  background:rgba(255,255,255,.86);
+  color:#14532d;
+  font-size:9px;
+  line-height:12px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.ox-choice-list{display:none!important;}
+@media(max-width:760px){
+  .color-card{flex-direction:column;}
+  .color-sample-card{width:130px;height:84px;}
+  .color-word-sample{min-width:170px;min-height:82px;font-size:44px;}
+  .ox-player-token{width:30px;height:40px;}
+  .ox-player-token img{width:24px;height:24px;}
+}
+
 </style>
 </head>
 
@@ -875,7 +1006,7 @@ button:disabled{opacity:.38;cursor:not-allowed;filter:grayscale(.3)}
       <button class="game-btn" onclick="enterRoom('burger')"><div class="game-title">햄버거를 만들자</div><div class="game-count" id="burgerBtnCount">선수 : 0<br>관전자 : 0</div></button>
       <button class="game-btn" onclick="enterRoom('memory')"><div class="game-title">기억하자</div><div class="game-count" id="memoryBtnCount">선수 : 0<br>관전자 : 0</div></button>
       <button class="game-btn" onclick="enterRoom('ox')"><div class="game-title">OX 게임</div><div class="game-count" id="oxBtnCount">선수 : 0<br>관전자 : 0</div></button>
-      <button class="game-btn" onclick="enterRoom('color')"><div class="game-title">글자색을 맞춰라</div><div class="game-count" id="colorBtnCount">선수 : 0<br>관전자 : 0</div></button>
+      <button class="game-btn" onclick="enterRoom('color')"><div class="game-title">색깔을 맞춰라</div><div class="game-count" id="colorBtnCount">선수 : 0<br>관전자 : 0</div></button>
       <button class="game-btn" onclick="enterRoom('quiz')"><div class="game-title">퀴즈풀자</div><div class="game-count" id="quizBtnCount">선수 : 0<br>관전자 : 0</div></button>
       <button class="game-btn" onclick="alert('준비중입니다')"><div class="game-title">준비중</div></button>
       <button class="game-btn" onclick="alert('준비중입니다')"><div class="game-title">준비중</div></button>
@@ -951,7 +1082,7 @@ button:disabled{opacity:.38;cursor:not-allowed;filter:grayscale(.3)}
 
     <div id="colorBoard" class="color-board hidden">
       <div class="color-status" id="colorStatus">게임 준비중입니다. <span id="colorTimer" class="round-timer hidden">3초</span></div>
-      <div class="color-card" id="colorCard">초록</div>
+      <div class="color-card" id="colorCard"><div class="color-sample-card"></div><div class="color-word-sample">초록</div></div>
       <div class="color-buttons" id="colorButtons">
         <button onclick="chooseColorText('red')" class="color-red">빨강</button>
         <button onclick="chooseColorText('orange')" class="color-orange">주황</button>
@@ -1062,6 +1193,9 @@ let realtimeRefreshTimer=null;
 let realtimeBusy=false;
 let typingRoundKey="";
 let burgerRoundKey="";
+let memoryRoundKey="";
+let colorRoundKey="";
+let quizRoundKey="";
 let br31MoveTick=-1;
 let roundTimerId=null;
 let roundTimerKey="";
@@ -1249,7 +1383,7 @@ function gameName(g){
   if(g==="burger") return "햄버거를 만들자";
   if(g==="memory") return "기억하자";
   if(g==="ox") return "OX 게임";
-  if(g==="color") return "글자색을 맞춰라";
+  if(g==="color") return "색깔을 맞춰라";
   if(g==="quiz") return "퀴즈풀자";
   return "루칭방 타자타자";
 }
@@ -1482,7 +1616,7 @@ async function loadMenuOnline(){
     if(p.room_id==="burger_main") place="햄버거를 만들자";
     if(p.room_id==="memory_main") place="기억하자";
     if(p.room_id==="ox_main") place="OX 게임";
-    if(p.room_id==="color_main") place="글자색을 맞춰라";
+    if(p.room_id==="color_main") place="색깔을 맞춰라";
     if(p.room_id==="quiz_main") place="퀴즈풀자";
 
     const score=sm[p.nickname]??p.score??0;
@@ -1906,6 +2040,7 @@ function handleRoom(room){
     else if(currentGame==="burger") renderBurgerWaiting();
     else if(currentGame==="memory") renderMemoryWaiting();
     else if(currentGame==="ox") renderOxWaiting();
+    else if(currentGame==="color") renderColorWaiting();
     document.getElementById("chatInput").disabled=false;document.getElementById("chatInput").placeholder="말풍선 채팅 입력 40자 이내";document.getElementById("chatInput").maxLength=40;show("gameScreen");
   }
   if(room.status==="countdown"){
@@ -1921,6 +2056,8 @@ function handleRoom(room){
       renderMemoryBoard(false);
     }else if(currentGame==="ox"){
       renderOxBoard(false);
+    }else if(currentGame==="color"){
+      renderColorWaiting();
     }
     document.getElementById("chatInput").placeholder="잠시 후 게임이 시작됩니다";
     startLocalCountdown(room.round);
@@ -2280,6 +2417,7 @@ function renderBurgerBoard(showAll=true){
   clearTimeout(burgerShowingTimer);
   burgerRoundKey=showAll ? key : "";
   burgerInputSeq=[];
+  clearMyBurgerStack();
   document.getElementById("burgerStatus").innerHTML=`라운드 ${st.round||1} / 10<br>햄버거 순서를 기억하세요! <span id="burgerTimer" class="round-timer hidden">15초</span>`;
   document.getElementById("burgerStack").innerHTML="";
   document.getElementById("burgerAnswer").textContent="문제를 보여주는 중입니다.";
@@ -2482,23 +2620,28 @@ async function makeMemoryRoundState(roundNo){
   const len=memoryLength(roundNo);
   const seq=[];
   for(let i=0;i<len;i++) seq.push(MEMORY_COLORS[Math.floor(Math.random()*MEMORY_COLORS.length)]);
-  return {game:"memory",round:roundNo,sequence:seq,winner:null,finished:false,showing:true};
+  return {game:"memory",round:roundNo,sequence:seq,winner:null,finished:false,closed:false};
 }
 function parseMemoryState(txt){try{memoryLocal=JSON.parse(txt||"{}")}catch(e){memoryLocal=null}return memoryLocal}
 function renderMemoryWaiting(){
-  document.getElementById("memoryStatus").textContent="게임 준비중입니다.";
+  clearTimeout(memoryShowingTimer);
+  memoryRoundKey="";
+  memoryInputSeq=[];
+  document.getElementById("memoryStatus").innerHTML='게임 준비중입니다. <span id="memoryTimer" class="round-timer hidden">15초</span>';
   document.getElementById("memoryCardRow").innerHTML="";
   document.getElementById("memoryAnswer").textContent="순서를 기억한 뒤 버튼을 눌러주세요.";
+  document.getElementById("memoryAnswer").className="burger-answer";
   setMemoryButtons(false);
 }
 function renderMemoryBoard(showCards){
   const st=memoryLocal||{};
-  document.getElementById("memoryStatus").textContent=`라운드 ${currentRoom?.round||st.round||1} / 10 · 카드를 기억하세요`;
+  document.getElementById("memoryStatus").innerHTML=`라운드 ${currentRoom?.round||st.round||1} / 10 · 카드를 기억하세요 <span id="memoryTimer" class="round-timer hidden">15초</span>`;
   const row=document.getElementById("memoryCardRow");
   row.innerHTML="";
   if(showCards){
     (st.sequence||[]).forEach((c,i)=>{
       setTimeout(()=>{
+        if(currentGame!=="memory") return;
         row.innerHTML+=`<div class="memory-card ${MEMORY_CLASS[c]}"></div>`;
       },i*130);
     });
@@ -2513,45 +2656,64 @@ function setMemoryButtons(on){
 function startMemoryRound(room){
   show("gameScreen");
   parseMemoryState(room.current_text);
-  memoryInputSeq=[];
-  renderMemoryBoard(true);
-  clearTimeout(memoryShowingTimer);
-  quizAnsweredKey="";
   const key=`${roomId}-${room.round}-${room.current_text||""}`;
+
+  // 같은 라운드 realtime 갱신 때 카드가 다시 사라지거나 입력이 초기화되는 오류 방지
+  if(memoryRoundKey===key){
+    const dead=!!memoryLocal?.winner;
+    setMemoryButtons(currentGame==="memory" && currentRoom?.status==="playing" && myRole==="player" && !dead);
+    loadPlayers();
+    return;
+  }
+
+  memoryRoundKey=key;
+  memoryInputSeq=[];
+  clearTimeout(memoryShowingTimer);
+  renderMemoryBoard(true);
+  document.getElementById("memoryAnswer").textContent="문제를 보여주는 중입니다.";
+  document.getElementById("memoryAnswer").className="burger-answer";
+
   memoryShowingTimer=setTimeout(()=>{
     if(currentGame!=="memory"||!currentRoom||currentRoom.status!=="playing") return;
+    if(memoryRoundKey!==key) return;
     renderMemoryBoard(false);
     document.getElementById("memoryAnswer").textContent="이제 순서대로 눌러주세요.";
     setMemoryButtons(myRole==="player" && !memoryLocal?.winner);
     startRoundTimer(15,"memoryTimer",key,async()=>{
       await memoryTimeoutNext(room.round,key);
     });
-  },1500+Number((memoryLocal?.sequence||[]).length)*120);
+  },1600+Number((memoryLocal?.sequence||[]).length)*140);
   loadPlayers();
 }
 async function chooseMemory(color){
+  markLocalActivity();
   if(currentGame!=="memory"||!currentRoom||currentRoom.status!=="playing"||!memoryLocal)return;
   if(myRole!=="player"||memoryLocal.winner)return;
+  if(document.querySelector("#memoryButtons button")?.disabled) return;
+
   memoryInputSeq.push(color);
   const seq=memoryLocal.sequence||[];
   const idx=memoryInputSeq.length-1;
   const answer=document.getElementById("memoryAnswer");
   answer.textContent=memoryInputSeq.map(x=>MEMORY_LABEL[x]).join(" → ");
   answer.className="burger-answer";
+
   if(seq[idx]!==color){
     answer.textContent="순서가 틀렸습니다!";
     answer.className="burger-answer wrong";
     await insertBubble("오답","wrong");
     setMemoryButtons(false);
     setTimeout(()=>{
+      if(currentGame!=="memory"||memoryLocal?.winner) return;
       memoryInputSeq=[];
       answer.textContent="다시 처음부터 눌러주세요.";
       answer.className="burger-answer";
-      setMemoryButtons(true);
+      setMemoryButtons(myRole==="player");
     },700);
     return;
   }
   if(memoryInputSeq.length===seq.length){
+    setMemoryButtons(false);
     await finishMemoryRound(user.nickname);
   }
 }
@@ -2561,7 +2723,7 @@ async function finishMemoryRound(winner){
   const {data:roomNow}=await sb.from("typing_game_rooms").select("current_text,round,status").eq("id",roomId).single();
   let latest=null;try{latest=JSON.parse(roomNow?.current_text||"{}")}catch(e){}
   if(latest?.winner){memoryLocal=latest;return;}
-  memoryLocal.winner=winner;memoryLocal.finished=true;
+  memoryLocal.winner=winner;memoryLocal.finished=true;memoryLocal.closed=true;
   await sb.from("typing_game_rooms").update({current_text:JSON.stringify(memoryLocal),updated_at:new Date().toISOString()}).eq("id",roomId);
   const {data:p}=await sb.from("typing_game_players").select("score,character").eq("room_id",roomId).eq("nickname",winner).maybeSingle();
   await sb.from("typing_game_players").update({score:Number(p?.score||0)+8}).eq("room_id",roomId).eq("nickname",winner);
@@ -2575,12 +2737,15 @@ async function finishMemoryRound(winner){
     setTimeout(finishAndKickPlayers,900);
     return;
   }
+  memoryRoundKey="";
   setTimeout(()=>startCountdownRoom(Number(currentRoom.round||1)+1),1200);
 }
 async function memoryTimeoutNext(roundNo,key){
   if(currentGame!=="memory"||!currentRoom||currentRoom.status!=="playing") return;
   if(memoryLocal?.winner) return;
   if(key&&roundTimerKey!==key) return;
+  setMemoryButtons(false);
+  memoryRoundKey="";
   if(Number(roundNo)>=10){
     await applyMemoryFinishBonus();
     await sb.from("typing_game_rooms").update({status:"finished",updated_at:new Date().toISOString()}).eq("id",roomId);
@@ -2598,6 +2763,9 @@ async function applyMemoryFinishBonus(){
     await addIntegratedScore(top.nickname,top.character||"🐰",30);
   }
 }
+
+
+
 
 const OX_QUESTIONS=[
   ["번개가 친 뒤 천둥 소리가 늦게 들리는 이유는 빛보다 소리가 느리기 때문이다.","O"],
@@ -2764,36 +2932,80 @@ const COLOR_TEXTS=[
   {key:"purple",label:"보라",css:"#9333ea"}
 ];
 const COLOR_POINT=[3,2,1,0,0,-0.2,-0.2,-0.3];
+const COLOR_TYPES=[
+  {key:"card",label:"카드 색상은?"},
+  {key:"word",label:"현재 글자가 말하는 색은?"},
+  {key:"ink",label:"현재 글씨가 무슨색으로 되어있나요?"}
+];
 function randomColorObj(){return COLOR_TEXTS[Math.floor(Math.random()*COLOR_TEXTS.length)]}
+function colorObjByKey(key){return COLOR_TEXTS.find(c=>c.key===key)||COLOR_TEXTS[0]}
 async function makeColorRoundState(roundNo){
+  const card=randomColorObj();
   const word=randomColorObj();
   const ink=randomColorObj();
-  return {game:"color",round:roundNo,word:word.key,wordLabel:word.label,ink:ink.key,inkCss:ink.css,submissions:{},closed:false};
+  const type=COLOR_TYPES[Math.floor(Math.random()*COLOR_TYPES.length)];
+  const answer=type.key==="card" ? card.key : (type.key==="word" ? word.key : ink.key);
+  return {
+    game:"color",
+    round:roundNo,
+    card:card.key,
+    cardLabel:card.label,
+    cardCss:card.css,
+    word:word.key,
+    wordLabel:word.label,
+    ink:ink.key,
+    inkCss:ink.css,
+    questionType:type.key,
+    questionLabel:type.label,
+    answer,
+    submissions:{},
+    closed:false
+  };
 }
 function parseColorState(txt){try{colorLocal=JSON.parse(txt||"{}")}catch(e){colorLocal=null}return colorLocal}
-function renderColorWaiting(){document.getElementById("colorStatus").textContent="게임 준비중입니다.";document.getElementById("colorCard").textContent="초록";document.getElementById("colorCard").style.color="#22c55e";document.getElementById("colorRank").textContent="순위가 여기에 표시됩니다.";setColorButtons(false)}
+function renderColorWaiting(){
+  colorRoundKey="";
+  document.getElementById("colorStatus").innerHTML='게임 준비중입니다. <span id="colorTimer" class="round-timer hidden">3초</span>';
+  const card=document.getElementById("colorCard");
+  if(card){
+    card.innerHTML=`<div class="color-sample-card" style="background:#ef4444"></div><div class="color-word-sample" style="color:#facc15">주황</div>`;
+  }
+  document.getElementById("colorRank").textContent="순위가 여기에 표시됩니다.";
+  setColorButtons(false);
+}
 function renderColorBoard(active){
   const st=colorLocal||{};
-  document.getElementById("colorStatus").innerHTML=`라운드 ${currentRoom?.round||st.round||1} / 20 · 글자에 맞는 색을 누르세요 <span id="colorTimer" class="round-timer">3초</span>`;
+  document.getElementById("colorStatus").innerHTML=`라운드 ${currentRoom?.round||st.round||1} / 20 · <span class="color-type-label">${escapeHtml(st.questionLabel||"카드 색상은?")}</span> <span id="colorTimer" class="round-timer">3초</span>`;
   const card=document.getElementById("colorCard");
-  card.textContent=st.wordLabel||"초록";
-  card.style.color=st.inkCss||"#22c55e";
-  document.getElementById("colorRank").textContent="먼저 누른 사람부터 순위가 표시됩니다.";
-  setColorButtons(active && myRole==="player" && !st.submissions?.[user?.nickname]);
+  if(card){
+    card.innerHTML=`
+      <div class="color-sample-card" title="카드 색상" style="background:${st.cardCss||colorObjByKey(st.card).css}"></div>
+      <div class="color-word-sample" title="글자와 글씨 색상" style="color:${st.inkCss||colorObjByKey(st.ink).css}">${escapeHtml(st.wordLabel||colorObjByKey(st.word).label)}</div>
+    `;
+  }
+  document.getElementById("colorRank").textContent="문제 유형에 맞는 정답 색깔을 누르세요.";
+  setColorButtons(active && myRole==="player" && !st.submissions?.[user?.nickname] && !st.closed);
 }
 function setColorButtons(on){document.querySelectorAll("#colorButtons button").forEach(b=>b.disabled=!on)}
 function startColorRound(room){
   show("gameScreen");
   parseColorState(room.current_text);
-  renderColorBoard(true);
   const key=`${roomId}-${room.round}-${room.current_text||""}`;
+  if(colorRoundKey===key){
+    renderColorBoard(currentRoom?.status==="playing");
+    loadPlayers();
+    return;
+  }
+  colorRoundKey=key;
+  renderColorBoard(true);
   roundStart=Date.now();
   startRoundTimer(3,"colorTimer",key,async()=>{await finishColorRound(room.round,key)});
   loadPlayers();
 }
 async function chooseColorText(color){
+  markLocalActivity();
   if(currentGame!=="color"||!currentRoom||currentRoom.status!=="playing"||!colorLocal)return;
-  if(myRole!=="player"||colorLocal.submissions?.[user.nickname])return;
+  if(myRole!=="player"||colorLocal.submissions?.[user.nickname]||colorLocal.closed)return;
   colorLocal.submissions=colorLocal.submissions||{};
   colorLocal.submissions[user.nickname]={choice:color,elapsed:Date.now()-roundStart};
   await sb.from("typing_game_rooms").update({current_text:JSON.stringify(colorLocal),updated_at:new Date().toISOString()}).eq("id",roomId);
@@ -2804,21 +3016,25 @@ async function finishColorRound(roundNo,key){
   if(key&&roundTimerKey!==key)return;
   const {data:roomNow}=await sb.from("typing_game_rooms").select("current_text,round,status").eq("id",roomId).single();
   let st=null;try{st=JSON.parse(roomNow?.current_text||"{}")}catch(e){st=colorLocal||{}};
-  if(st.closed)return;st.closed=true;
+  if(st.closed)return;
+  st.closed=true;
   const {data:players}=await sb.from("typing_game_players").select("nickname,score,character,role").eq("room_id",roomId).eq("role","player");
   const subs=st.submissions||{};
-  const correct=(players||[]).filter(p=>subs[p.nickname]?.choice===st.word).sort((a,b)=>(subs[a.nickname].elapsed||999999)-(subs[b.nickname].elapsed||999999));
+  const answer=st.answer || (st.questionType==="card" ? st.card : (st.questionType==="ink" ? st.ink : st.word));
+  const correct=(players||[]).filter(p=>subs[p.nickname]?.choice===answer).sort((a,b)=>(subs[a.nickname].elapsed||999999)-(subs[b.nickname].elapsed||999999));
   const wrongOrLate=(players||[]).filter(p=>!correct.find(c=>c.nickname===p.nickname));
   const order=[...correct,...wrongOrLate];
-  let html="";
+  const answerLabel=colorObjByKey(answer).label;
+  let html=`정답 : <b>${answerLabel}</b><br>`;
   for(let i=0;i<order.length;i++){
     const p=order[i]; const point=COLOR_POINT[i]??-0.3;
     await addPlayerScoreDelta(p.nickname,point);
-    html+=`${i+1}등 : ${escapeHtml(p.nickname)} ${point>=0?"+":""}${point}점<br>`;
+    html+=`${i+1}등 : ${escapeHtml(p.nickname)} ${point>=0?"+":""}${fmtScore(point)}점<br>`;
   }
   document.getElementById("colorRank").innerHTML=html||"참가자 없음";
   colorLocal=st;
   await sb.from("typing_game_rooms").update({current_text:JSON.stringify(st),updated_at:new Date().toISOString()}).eq("id",roomId);
+  colorRoundKey="";
   if(Number(roundNo)>=20){await applyColorFinishBonus();await sb.from("typing_game_rooms").update({status:"finished",updated_at:new Date().toISOString()}).eq("id",roomId);setTimeout(finishAndKickPlayers,900);return;}
   setTimeout(()=>startCountdownRoom(Number(roundNo)+1),1200);
 }
@@ -2873,22 +3089,29 @@ async function applyQuizFinishBonus(){if(finishBonusApplied)return;finishBonusAp
 function renderOxChoices(){
   const st=oxLocal||{};
   const choices=st.choices||{};
-  document.querySelectorAll('.ox-choice-list').forEach(e=>e.remove());
-  const x=document.querySelector('.ox-zone-x');
-  const o=document.querySelector('.ox-zone-o');
+  document.querySelectorAll('.ox-token-layer').forEach(e=>e.remove());
+  const stage=document.querySelector('.ox-stage');
+  if(!stage) return;
 
-  const makeList=(choice)=>{
-    return Object.entries(choices)
-      .filter(([n,c])=>c===choice)
-      .map(([n])=>{
-        const p=(window.__lastPlayers||[]).find(pp=>pp.nickname===n);
-        const ch=p?.character || user?.mini_character || "dao";
-        return `<div class="ox-choice-player"><img src="${getCharSmall(ch)}"> <span>${escapeHtml(n)}</span></div>`;
-      }).join('');
-  };
+  const players=(window.__lastPlayers||[]).filter(p=>!(st.eliminated||[]).includes(p.nickname));
+  const layer=document.createElement('div');
+  layer.className='ox-token-layer';
 
-  if(x) x.insertAdjacentHTML('beforeend',`<div class="ox-choice-list">${makeList('X')}</div>`);
-  if(o) o.insertAdjacentHTML('beforeend',`<div class="ox-choice-list">${makeList('O')}</div>`);
+  players.forEach((p,i)=>{
+    const choice=choices[p.nickname];
+    let left=50;
+    if(choice==='X') left=24;
+    if(choice==='O') left=76;
+    const top=58 + ((i%5)-2)*10;
+    const token=document.createElement('div');
+    token.className='ox-player-token';
+    token.style.left=left+'%';
+    token.style.top=Math.max(24,Math.min(84,top))+'%';
+    token.innerHTML=`<img src="${getCharSmall(p.character)}" alt="${escapeHtml(p.nickname)}"><div class="ox-token-name">${escapeHtml(p.nickname)}</div>`;
+    layer.appendChild(token);
+  });
+
+  stage.appendChild(layer);
 }
 
 async function resetCurrentRoomToWaiting(){
@@ -2997,9 +3220,9 @@ async function leaveGame(){
   if(!user)return;
 
   if(currentRoom && (currentRoom.status==="playing" || currentRoom.status==="countdown")){
-    const ok=confirm("게임 도중에 나가면 -0.2점이 차감됩니다. 그래도 나가시겠습니까?");
+    const ok=confirm("게임 도중에 나가면 -3.0점이 차감됩니다. 그래도 나가시겠습니까?");
     if(!ok) return;
-    await addPlayerScoreDelta(user.nickname,-0.2);
+    await addPlayerScoreDelta(user.nickname,-3);
   }
   stopGameMusic();
   startBgMusic();
@@ -3204,7 +3427,7 @@ async function loadAdminKickList(){
     if(p.room_id==="burger_main") place="햄버거를 만들자";
     if(p.room_id==="memory_main") place="기억하자";
     if(p.room_id==="ox_main") place="OX 게임";
-    if(p.room_id==="color_main") place="글자색을 맞춰라";
+    if(p.room_id==="color_main") place="색깔을 맞춰라";
     if(p.room_id==="quiz_main") place="퀴즈풀자";
 
     const opt=document.createElement("option");
