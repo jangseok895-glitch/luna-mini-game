@@ -653,8 +653,8 @@ button:disabled{opacity:.38;cursor:not-allowed;filter:grayscale(.3)}
 }
 
 #loginScreen .main-img{
-  width:430px!important;
-  max-width:95%!important;
+  width:420px!important;
+  max-width:92%!important;
   height:auto!important;
   max-height:none!important;
   object-fit:contain!important;
@@ -841,134 +841,11 @@ button:disabled{opacity:.38;cursor:not-allowed;filter:grayscale(.3)}
 .color-card{color:#fff;}
 
 
-/* 2026 수정: 색깔을 맞춰라 카드/글자 동시 표시 */
-.color-card{
-  width:min(620px,94%)!important;
-  min-height:150px!important;
-  gap:18px!important;
-  padding:18px!important;
-  background:linear-gradient(135deg,#ffffff,#eff6ff,#fdf2f8)!important;
-  color:#1e293b!important;
-}
-.color-sample-card{
-  width:150px;
-  height:110px;
-  border-radius:24px;
-  border:5px solid #ffffff;
-  box-shadow:0 12px 28px rgba(15,23,42,.18);
-  flex:0 0 auto;
-}
-.color-word-sample{
-  min-width:210px;
-  min-height:110px;
-  border-radius:24px;
-  border:5px solid #bfdbfe;
-  background:#ffffff;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:58px;
-  font-weight:1000!important;
-  text-shadow:1px 1px 0 rgba(255,255,255,.65);
-}
-.color-type-label{
-  display:inline-block;
-  margin-top:6px;
-  padding:4px 12px;
-  border-radius:999px;
-  background:#fff;
-  border:2px solid #bfdbfe;
-  color:#ef4444;
-  font-size:15px;
-  font-weight:1000!important;
-}
-
-/* 2026 수정: OX 잔디판 + 캐릭터 이동 */
-.ox-stage{
-  position:relative!important;
-  background:linear-gradient(180deg,#d9f99d,#86efac,#22c55e)!important;
-  border:5px solid #65a30d!important;
-  box-shadow:inset 0 0 0 5px rgba(255,255,255,.25),0 16px 36px rgba(34,197,94,.2);
-}
-.ox-zone{
-  background:linear-gradient(180deg,#bbf7d0,#4ade80)!important;
-  border:4px dashed rgba(255,255,255,.8);
-  color:#ffffff!important;
-  text-shadow:2px 2px 0 rgba(22,101,52,.45)!important;
-  overflow:hidden;
-}
-.ox-zone-x::before,.ox-zone-o::before{
-  content:"";
-  position:absolute;
-  top:16px;
-  width:6px;
-  height:80px;
-  background:#78350f;
-  border-radius:6px;
-  box-shadow:2px 2px 4px rgba(0,0,0,.18);
-}
-.ox-zone-x::before{left:30px;}
-.ox-zone-o::before{right:30px;}
-.ox-zone-x::after,.ox-zone-o::after{
-  position:absolute;
-  top:18px;
-  width:70px;
-  height:42px;
-  line-height:42px;
-  border-radius:8px 16px 16px 8px;
-  background:#ffffff;
-  color:#166534;
-  font-size:28px;
-  font-weight:1000!important;
-  text-shadow:none;
-  box-shadow:0 4px 10px rgba(0,0,0,.18);
-}
-.ox-zone-x::after{content:"X";left:36px;}
-.ox-zone-o::after{content:"O";right:36px;}
-.ox-zone-x,.ox-zone-o{font-size:0!important;}
-.ox-token-layer{
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-  z-index:20;
-}
-.ox-player-token{
-  position:absolute;
-  width:38px;
-  height:48px;
-  transform:translate(-50%,-50%);
-  transition:left .75s cubic-bezier(.22,1,.36,1), top .75s cubic-bezier(.22,1,.36,1);
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  filter:drop-shadow(0 5px 6px rgba(22,101,52,.28));
-}
-.ox-player-token img{
-  width:30px;
-  height:30px;
-  object-fit:contain;
-}
-.ox-token-name{
-  max-width:58px;
-  padding:1px 4px;
-  border-radius:999px;
-  background:rgba(255,255,255,.86);
-  color:#14532d;
-  font-size:9px;
-  line-height:12px;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-.ox-choice-list{display:none!important;}
-@media(max-width:760px){
-  .color-card{flex-direction:column;}
-  .color-sample-card{width:130px;height:84px;}
-  .color-word-sample{min-width:170px;min-height:82px;font-size:44px;}
-  .ox-player-token{width:30px;height:40px;}
-  .ox-player-token img{width:24px;height:24px;}
-}
+/* 이번 수정: 상단 알림/색깔 강조/OX 잔디판/제로 게임 */
+.typing-first-banner,.br31-action-banner,.burger-complete-banner{min-height:44px;margin:4px auto 8px;width:min(680px,96%);display:flex;align-items:center;justify-content:center;border-radius:22px;background:linear-gradient(135deg,#fff7ed,#fef3c7,#dbeafe);border:3px solid #f9a8d4;color:#ef4444;font-size:28px;font-weight:1000!important;box-shadow:0 10px 24px rgba(236,72,153,.18)}
+.typing-first-banner:empty,.br31-action-banner:empty,.burger-complete-banner:empty{visibility:hidden}.color-status{width:min(760px,96%);padding:12px 18px;border-radius:24px;border:4px solid #f9a8d4;background:linear-gradient(135deg,#fff,#fef3c7,#eff6ff);color:#111827!important;font-size:28px!important;text-shadow:1px 1px 0 #fff}.color-card{gap:18px!important;min-height:150px!important;font-size:42px!important;padding:18px!important}.color-real-card{width:130px;height:96px;border-radius:24px;border:6px solid #fff;box-shadow:0 10px 24px rgba(15,23,42,.22);flex:0 0 auto}.color-word-box{min-width:180px;padding:18px 24px;border-radius:22px;background:#fff;border:4px solid #bfdbfe;text-align:center;font-size:50px;font-weight:1000!important}
+.ox-stage{background:linear-gradient(180deg,#bbf7d0,#86efac,#4ade80)!important;border-color:#22c55e!important}.ox-zone{background:linear-gradient(180deg,#bbf7d0,#86efac,#22c55e)!important;color:#1e293b!important;text-shadow:none!important;border:4px solid rgba(255,255,255,.9);position:relative;overflow:hidden}.ox-zone::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,255,255,.15) 0 8px,rgba(22,163,74,.08) 8px 16px)}.ox-flag{position:absolute;top:14px;left:50%;transform:translateX(-50%);font-size:54px;z-index:2}.ox-choice-list{display:none!important}.ox-mover-layer{position:absolute;inset:0;z-index:5;pointer-events:none}.ox-mover{position:absolute;width:34px;height:34px;transition:left .9s cubic-bezier(.22,1,.36,1),top .9s cubic-bezier(.22,1,.36,1);transform:translate(-50%,-50%);filter:drop-shadow(0 3px 4px rgba(0,0,0,.25))}.ox-mover img{width:100%;height:100%;object-fit:contain}
+.zero-board{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:8px 0 4px;gap:12px}.zero-status{width:min(720px,96%);padding:12px;border-radius:24px;background:#fff;border:4px solid #bfdbfe;color:#2563eb;font-size:24px;font-weight:1000!important;text-align:center}.zero-table{width:min(860px,98%);display:grid;grid-template-columns:190px minmax(230px,1fr) 190px;gap:12px;align-items:center}.zero-side{display:grid;grid-template-rows:repeat(4,90px);gap:8px}.zero-seat{border:3px solid #bfdbfe;border-radius:20px;background:#eff6ff;display:flex;align-items:center;gap:8px;padding:8px;position:relative}.zero-seat.turn{border-color:#ef4444;box-shadow:0 0 0 4px rgba(239,68,68,.18)}.zero-seat img{width:42px;height:42px;object-fit:contain}.zero-seat-name{font-size:13px;font-weight:1000!important;word-break:break-all}.zero-seat-score{font-size:12px;color:#ef4444;font-weight:1000!important}.zero-hand{position:absolute;right:8px;bottom:6px;font-size:24px}.zero-center{min-height:390px;border:4px dashed #bfdbfe;border-radius:30px;background:linear-gradient(135deg,#fff,#eff6ff,#fdf2f8);padding:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}.zero-result{min-height:46px;font-size:30px;color:#ef4444;font-weight:1000!important;text-align:center}.zero-push{width:min(260px,90%);height:78px;border-radius:999px;font-size:32px!important;background:linear-gradient(135deg,#f97316,#ec4899,#60a5fa)!important;box-shadow:0 10px 0 rgba(59,130,246,.24)!important}.zero-hand-buttons,.zero-call-buttons{display:grid;gap:8px;width:min(520px,96%)}.zero-hand-buttons{grid-template-columns:1fr 1fr}.zero-call-buttons{grid-template-columns:repeat(9,1fr)}.zero-hand-buttons button,.zero-call-buttons button{margin:0;padding:12px 6px;font-size:18px;border-radius:18px}.zero-rank{width:min(520px,96%);min-height:92px;background:#fff;border:3px solid #dbeafe;border-radius:20px;padding:10px;text-align:left;font-size:14px;line-height:24px}@media(max-width:900px){.zero-table{grid-template-columns:1fr}.zero-side{grid-template-rows:none;grid-template-columns:repeat(2,1fr)}.zero-seat{min-height:72px}.zero-call-buttons{grid-template-columns:repeat(5,1fr)}}
 
 </style>
 </head>
@@ -1008,7 +885,7 @@ button:disabled{opacity:.38;cursor:not-allowed;filter:grayscale(.3)}
       <button class="game-btn" onclick="enterRoom('ox')"><div class="game-title">OX 게임</div><div class="game-count" id="oxBtnCount">선수 : 0<br>관전자 : 0</div></button>
       <button class="game-btn" onclick="enterRoom('color')"><div class="game-title">색깔을 맞춰라</div><div class="game-count" id="colorBtnCount">선수 : 0<br>관전자 : 0</div></button>
       <button class="game-btn" onclick="enterRoom('quiz')"><div class="game-title">퀴즈풀자</div><div class="game-count" id="quizBtnCount">선수 : 0<br>관전자 : 0</div></button>
-      <button class="game-btn" onclick="alert('준비중입니다')"><div class="game-title">준비중</div></button>
+      <button class="game-btn" onclick="enterRoom('zero')"><div class="game-title">제로</div><div class="game-count" id="zeroBtnCount">선수 : 0<br>관전자 : 0</div></button>
       <button class="game-btn" onclick="alert('준비중입니다')"><div class="game-title">준비중</div></button>
     </div>
     <div class="menu-chat-box"><div id="menuChatLog" class="menu-chat-log"></div><div class="menu-chat-row"><input id="menuChatInput" placeholder="대기방 채팅 입력" maxlength="80" onkeydown="if(event.key==='Enter')sendMenuChat()"><button onclick="sendMenuChat()">전송</button></div></div>
@@ -1022,11 +899,13 @@ button:disabled{opacity:.38;cursor:not-allowed;filter:grayscale(.3)}
     <div class="game-local-score">이 게임 점수 <span id="localScoreText">0</span>점</div>
 
     <div id="typingBoard">
+      <div class="typing-first-banner" id="typingFirstBanner"></div>
       <div class="center-message"><div class="message-box" id="centerMessage">곧 메세지가 나올 공간입니다.</div></div>
       <div id="problemArea" class="hidden"><p class="problem-info">라운드 <span id="roundText">1</span> / 10 · 내 현재점수 <span id="scoreText">0</span>점 <span id="typingTimer" class="round-timer">15초</span></p></div>
     </div>
 
     <div id="br31Board" class="br31-board hidden">
+      <div class="br31-action-banner" id="br31ActionBanner"></div>
       <div class="br31-status" id="br31Status">게임 준비중입니다. <span id="br31Timer" class="round-timer hidden">15초</span></div>
       <div class="silhouette-wrap"><div class="silhouette-line" id="silhouetteLine"></div></div>
       <div class="br31-buttons">
@@ -1038,6 +917,7 @@ button:disabled{opacity:.38;cursor:not-allowed;filter:grayscale(.3)}
     </div>
 
     <div id="burgerBoard" class="burger-board hidden">
+      <div class="burger-complete-banner" id="burgerCompleteBanner"></div>
       <div class="burger-status" id="burgerStatus">게임 준비중입니다. <span id="burgerTimer" class="round-timer hidden">15초</span></div>
       <div class="burger-stage">
         <div class="my-burger-area"><div class="my-burger-title">내가 쌓은 햄버거</div><div class="my-burger-stack" id="myBurgerStack"></div></div>
@@ -1070,8 +950,9 @@ button:disabled{opacity:.38;cursor:not-allowed;filter:grayscale(.3)}
       <div class="ox-status" id="oxStatus">게임 준비중입니다. <span id="oxTimer" class="round-timer hidden">10초</span></div>
       <div class="ox-question" id="oxQuestion">문제가 나올 공간입니다.</div>
       <div class="ox-stage">
-        <div class="ox-zone ox-zone-x">X</div>
-        <div class="ox-zone ox-zone-o">O</div>
+        <div class="ox-zone ox-zone-x"><div class="ox-flag">🚩 X</div></div>
+        <div class="ox-zone ox-zone-o"><div class="ox-flag">🚩 O</div></div>
+        <div class="ox-mover-layer" id="oxMoverLayer"></div>
       </div>
       <div class="ox-buttons" id="oxButtons">
         <button class="ox-btn-x" onclick="chooseOx('X')">X</button>
@@ -1082,7 +963,7 @@ button:disabled{opacity:.38;cursor:not-allowed;filter:grayscale(.3)}
 
     <div id="colorBoard" class="color-board hidden">
       <div class="color-status" id="colorStatus">게임 준비중입니다. <span id="colorTimer" class="round-timer hidden">3초</span></div>
-      <div class="color-card" id="colorCard"><div class="color-sample-card"></div><div class="color-word-sample">초록</div></div>
+      <div class="color-card" id="colorCard">초록</div>
       <div class="color-buttons" id="colorButtons">
         <button onclick="chooseColorText('red')" class="color-red">빨강</button>
         <button onclick="chooseColorText('orange')" class="color-orange">주황</button>
@@ -1100,6 +981,25 @@ button:disabled{opacity:.38;cursor:not-allowed;filter:grayscale(.3)}
       <div class="quiz-status" id="quizStatus">게임 준비중입니다. <span id="quizTimer" class="round-timer hidden">10초</span></div>
       <div class="quiz-question" id="quizQuestion" oncopy="return false" oncut="return false" oncontextmenu="return false">문제가 나올 공간입니다.</div>
       <div class="quiz-answer-info" id="quizAnswerInfo">정답을 채팅창에 입력하세요.</div>
+    </div>
+
+
+    <div id="zeroBoard" class="zero-board hidden">
+      <div class="zero-status" id="zeroStatus">게임 준비중입니다.</div>
+      <div class="zero-table">
+        <div class="zero-side" id="zeroLeftSeats"></div>
+        <div class="zero-center">
+          <div class="zero-result" id="zeroResult">본인 차례가 오면 손 모양과 숫자를 선택하세요.</div>
+          <button class="zero-push" id="zeroPushBtn" onclick="zeroPush()">PUSH</button>
+          <div class="zero-hand-buttons">
+            <button onclick="chooseZeroHand(0)">✊ 주먹</button>
+            <button onclick="chooseZeroHand(1)">☝️ 손가락 하나</button>
+          </div>
+          <div class="zero-call-buttons" id="zeroCallButtons"></div>
+          <div class="zero-rank" id="zeroRank">PUSH 순위가 여기에 표시됩니다.</div>
+        </div>
+        <div class="zero-side" id="zeroRightSeats"></div>
+      </div>
     </div>
 
     <div class="seat-row" id="seatRow"></div>
@@ -1193,9 +1093,6 @@ let realtimeRefreshTimer=null;
 let realtimeBusy=false;
 let typingRoundKey="";
 let burgerRoundKey="";
-let memoryRoundKey="";
-let colorRoundKey="";
-let quizRoundKey="";
 let br31MoveTick=-1;
 let roundTimerId=null;
 let roundTimerKey="";
@@ -2040,7 +1937,6 @@ function handleRoom(room){
     else if(currentGame==="burger") renderBurgerWaiting();
     else if(currentGame==="memory") renderMemoryWaiting();
     else if(currentGame==="ox") renderOxWaiting();
-    else if(currentGame==="color") renderColorWaiting();
     document.getElementById("chatInput").disabled=false;document.getElementById("chatInput").placeholder="말풍선 채팅 입력 40자 이내";document.getElementById("chatInput").maxLength=40;show("gameScreen");
   }
   if(room.status==="countdown"){
@@ -2056,8 +1952,6 @@ function handleRoom(room){
       renderMemoryBoard(false);
     }else if(currentGame==="ox"){
       renderOxBoard(false);
-    }else if(currentGame==="color"){
-      renderColorWaiting();
     }
     document.getElementById("chatInput").placeholder="잠시 후 게임이 시작됩니다";
     startLocalCountdown(room.round);
@@ -2417,7 +2311,6 @@ function renderBurgerBoard(showAll=true){
   clearTimeout(burgerShowingTimer);
   burgerRoundKey=showAll ? key : "";
   burgerInputSeq=[];
-  clearMyBurgerStack();
   document.getElementById("burgerStatus").innerHTML=`라운드 ${st.round||1} / 10<br>햄버거 순서를 기억하세요! <span id="burgerTimer" class="round-timer hidden">15초</span>`;
   document.getElementById("burgerStack").innerHTML="";
   document.getElementById("burgerAnswer").textContent="문제를 보여주는 중입니다.";
@@ -2620,28 +2513,23 @@ async function makeMemoryRoundState(roundNo){
   const len=memoryLength(roundNo);
   const seq=[];
   for(let i=0;i<len;i++) seq.push(MEMORY_COLORS[Math.floor(Math.random()*MEMORY_COLORS.length)]);
-  return {game:"memory",round:roundNo,sequence:seq,winner:null,finished:false,closed:false};
+  return {game:"memory",round:roundNo,sequence:seq,winner:null,finished:false,showing:true};
 }
 function parseMemoryState(txt){try{memoryLocal=JSON.parse(txt||"{}")}catch(e){memoryLocal=null}return memoryLocal}
 function renderMemoryWaiting(){
-  clearTimeout(memoryShowingTimer);
-  memoryRoundKey="";
-  memoryInputSeq=[];
-  document.getElementById("memoryStatus").innerHTML='게임 준비중입니다. <span id="memoryTimer" class="round-timer hidden">15초</span>';
+  document.getElementById("memoryStatus").textContent="게임 준비중입니다.";
   document.getElementById("memoryCardRow").innerHTML="";
   document.getElementById("memoryAnswer").textContent="순서를 기억한 뒤 버튼을 눌러주세요.";
-  document.getElementById("memoryAnswer").className="burger-answer";
   setMemoryButtons(false);
 }
 function renderMemoryBoard(showCards){
   const st=memoryLocal||{};
-  document.getElementById("memoryStatus").innerHTML=`라운드 ${currentRoom?.round||st.round||1} / 10 · 카드를 기억하세요 <span id="memoryTimer" class="round-timer hidden">15초</span>`;
+  document.getElementById("memoryStatus").textContent=`라운드 ${currentRoom?.round||st.round||1} / 10 · 카드를 기억하세요`;
   const row=document.getElementById("memoryCardRow");
   row.innerHTML="";
   if(showCards){
     (st.sequence||[]).forEach((c,i)=>{
       setTimeout(()=>{
-        if(currentGame!=="memory") return;
         row.innerHTML+=`<div class="memory-card ${MEMORY_CLASS[c]}"></div>`;
       },i*130);
     });
@@ -2656,64 +2544,45 @@ function setMemoryButtons(on){
 function startMemoryRound(room){
   show("gameScreen");
   parseMemoryState(room.current_text);
-  const key=`${roomId}-${room.round}-${room.current_text||""}`;
-
-  // 같은 라운드 realtime 갱신 때 카드가 다시 사라지거나 입력이 초기화되는 오류 방지
-  if(memoryRoundKey===key){
-    const dead=!!memoryLocal?.winner;
-    setMemoryButtons(currentGame==="memory" && currentRoom?.status==="playing" && myRole==="player" && !dead);
-    loadPlayers();
-    return;
-  }
-
-  memoryRoundKey=key;
   memoryInputSeq=[];
-  clearTimeout(memoryShowingTimer);
   renderMemoryBoard(true);
-  document.getElementById("memoryAnswer").textContent="문제를 보여주는 중입니다.";
-  document.getElementById("memoryAnswer").className="burger-answer";
-
+  clearTimeout(memoryShowingTimer);
+  quizAnsweredKey="";
+  const key=`${roomId}-${room.round}-${room.current_text||""}`;
   memoryShowingTimer=setTimeout(()=>{
     if(currentGame!=="memory"||!currentRoom||currentRoom.status!=="playing") return;
-    if(memoryRoundKey!==key) return;
     renderMemoryBoard(false);
     document.getElementById("memoryAnswer").textContent="이제 순서대로 눌러주세요.";
     setMemoryButtons(myRole==="player" && !memoryLocal?.winner);
     startRoundTimer(15,"memoryTimer",key,async()=>{
       await memoryTimeoutNext(room.round,key);
     });
-  },1600+Number((memoryLocal?.sequence||[]).length)*140);
+  },1500+Number((memoryLocal?.sequence||[]).length)*120);
   loadPlayers();
 }
 async function chooseMemory(color){
-  markLocalActivity();
   if(currentGame!=="memory"||!currentRoom||currentRoom.status!=="playing"||!memoryLocal)return;
   if(myRole!=="player"||memoryLocal.winner)return;
-  if(document.querySelector("#memoryButtons button")?.disabled) return;
-
   memoryInputSeq.push(color);
   const seq=memoryLocal.sequence||[];
   const idx=memoryInputSeq.length-1;
   const answer=document.getElementById("memoryAnswer");
   answer.textContent=memoryInputSeq.map(x=>MEMORY_LABEL[x]).join(" → ");
   answer.className="burger-answer";
-
   if(seq[idx]!==color){
     answer.textContent="순서가 틀렸습니다!";
     answer.className="burger-answer wrong";
     await insertBubble("오답","wrong");
     setMemoryButtons(false);
     setTimeout(()=>{
-      if(currentGame!=="memory"||memoryLocal?.winner) return;
       memoryInputSeq=[];
       answer.textContent="다시 처음부터 눌러주세요.";
       answer.className="burger-answer";
-      setMemoryButtons(myRole==="player");
+      setMemoryButtons(true);
     },700);
     return;
   }
   if(memoryInputSeq.length===seq.length){
-    setMemoryButtons(false);
     await finishMemoryRound(user.nickname);
   }
 }
@@ -2723,7 +2592,7 @@ async function finishMemoryRound(winner){
   const {data:roomNow}=await sb.from("typing_game_rooms").select("current_text,round,status").eq("id",roomId).single();
   let latest=null;try{latest=JSON.parse(roomNow?.current_text||"{}")}catch(e){}
   if(latest?.winner){memoryLocal=latest;return;}
-  memoryLocal.winner=winner;memoryLocal.finished=true;memoryLocal.closed=true;
+  memoryLocal.winner=winner;memoryLocal.finished=true;
   await sb.from("typing_game_rooms").update({current_text:JSON.stringify(memoryLocal),updated_at:new Date().toISOString()}).eq("id",roomId);
   const {data:p}=await sb.from("typing_game_players").select("score,character").eq("room_id",roomId).eq("nickname",winner).maybeSingle();
   await sb.from("typing_game_players").update({score:Number(p?.score||0)+8}).eq("room_id",roomId).eq("nickname",winner);
@@ -2737,15 +2606,12 @@ async function finishMemoryRound(winner){
     setTimeout(finishAndKickPlayers,900);
     return;
   }
-  memoryRoundKey="";
   setTimeout(()=>startCountdownRoom(Number(currentRoom.round||1)+1),1200);
 }
 async function memoryTimeoutNext(roundNo,key){
   if(currentGame!=="memory"||!currentRoom||currentRoom.status!=="playing") return;
   if(memoryLocal?.winner) return;
   if(key&&roundTimerKey!==key) return;
-  setMemoryButtons(false);
-  memoryRoundKey="";
   if(Number(roundNo)>=10){
     await applyMemoryFinishBonus();
     await sb.from("typing_game_rooms").update({status:"finished",updated_at:new Date().toISOString()}).eq("id",roomId);
@@ -2763,9 +2629,6 @@ async function applyMemoryFinishBonus(){
     await addIntegratedScore(top.nickname,top.character||"🐰",30);
   }
 }
-
-
-
 
 const OX_QUESTIONS=[
   ["번개가 친 뒤 천둥 소리가 늦게 들리는 이유는 빛보다 소리가 느리기 때문이다.","O"],
@@ -2932,80 +2795,36 @@ const COLOR_TEXTS=[
   {key:"purple",label:"보라",css:"#9333ea"}
 ];
 const COLOR_POINT=[3,2,1,0,0,-0.2,-0.2,-0.3];
-const COLOR_TYPES=[
-  {key:"card",label:"카드 색상은?"},
-  {key:"word",label:"현재 글자가 말하는 색은?"},
-  {key:"ink",label:"현재 글씨가 무슨색으로 되어있나요?"}
-];
 function randomColorObj(){return COLOR_TEXTS[Math.floor(Math.random()*COLOR_TEXTS.length)]}
-function colorObjByKey(key){return COLOR_TEXTS.find(c=>c.key===key)||COLOR_TEXTS[0]}
 async function makeColorRoundState(roundNo){
-  const card=randomColorObj();
   const word=randomColorObj();
   const ink=randomColorObj();
-  const type=COLOR_TYPES[Math.floor(Math.random()*COLOR_TYPES.length)];
-  const answer=type.key==="card" ? card.key : (type.key==="word" ? word.key : ink.key);
-  return {
-    game:"color",
-    round:roundNo,
-    card:card.key,
-    cardLabel:card.label,
-    cardCss:card.css,
-    word:word.key,
-    wordLabel:word.label,
-    ink:ink.key,
-    inkCss:ink.css,
-    questionType:type.key,
-    questionLabel:type.label,
-    answer,
-    submissions:{},
-    closed:false
-  };
+  return {game:"color",round:roundNo,word:word.key,wordLabel:word.label,ink:ink.key,inkCss:ink.css,submissions:{},closed:false};
 }
 function parseColorState(txt){try{colorLocal=JSON.parse(txt||"{}")}catch(e){colorLocal=null}return colorLocal}
-function renderColorWaiting(){
-  colorRoundKey="";
-  document.getElementById("colorStatus").innerHTML='게임 준비중입니다. <span id="colorTimer" class="round-timer hidden">3초</span>';
-  const card=document.getElementById("colorCard");
-  if(card){
-    card.innerHTML=`<div class="color-sample-card" style="background:#ef4444"></div><div class="color-word-sample" style="color:#facc15">주황</div>`;
-  }
-  document.getElementById("colorRank").textContent="순위가 여기에 표시됩니다.";
-  setColorButtons(false);
-}
+function renderColorWaiting(){document.getElementById("colorStatus").textContent="게임 준비중입니다.";document.getElementById("colorCard").textContent="초록";document.getElementById("colorCard").style.color="#22c55e";document.getElementById("colorRank").textContent="순위가 여기에 표시됩니다.";setColorButtons(false)}
 function renderColorBoard(active){
   const st=colorLocal||{};
-  document.getElementById("colorStatus").innerHTML=`라운드 ${currentRoom?.round||st.round||1} / 20 · <span class="color-type-label">${escapeHtml(st.questionLabel||"카드 색상은?")}</span> <span id="colorTimer" class="round-timer">3초</span>`;
+  document.getElementById("colorStatus").innerHTML=`라운드 ${currentRoom?.round||st.round||1} / 20 · 글자에 맞는 색을 누르세요 <span id="colorTimer" class="round-timer">3초</span>`;
   const card=document.getElementById("colorCard");
-  if(card){
-    card.innerHTML=`
-      <div class="color-sample-card" title="카드 색상" style="background:${st.cardCss||colorObjByKey(st.card).css}"></div>
-      <div class="color-word-sample" title="글자와 글씨 색상" style="color:${st.inkCss||colorObjByKey(st.ink).css}">${escapeHtml(st.wordLabel||colorObjByKey(st.word).label)}</div>
-    `;
-  }
-  document.getElementById("colorRank").textContent="문제 유형에 맞는 정답 색깔을 누르세요.";
-  setColorButtons(active && myRole==="player" && !st.submissions?.[user?.nickname] && !st.closed);
+  card.textContent=st.wordLabel||"초록";
+  card.style.color=st.inkCss||"#22c55e";
+  document.getElementById("colorRank").textContent="먼저 누른 사람부터 순위가 표시됩니다.";
+  setColorButtons(active && myRole==="player" && !st.submissions?.[user?.nickname]);
 }
 function setColorButtons(on){document.querySelectorAll("#colorButtons button").forEach(b=>b.disabled=!on)}
 function startColorRound(room){
   show("gameScreen");
   parseColorState(room.current_text);
-  const key=`${roomId}-${room.round}-${room.current_text||""}`;
-  if(colorRoundKey===key){
-    renderColorBoard(currentRoom?.status==="playing");
-    loadPlayers();
-    return;
-  }
-  colorRoundKey=key;
   renderColorBoard(true);
+  const key=`${roomId}-${room.round}-${room.current_text||""}`;
   roundStart=Date.now();
   startRoundTimer(3,"colorTimer",key,async()=>{await finishColorRound(room.round,key)});
   loadPlayers();
 }
 async function chooseColorText(color){
-  markLocalActivity();
   if(currentGame!=="color"||!currentRoom||currentRoom.status!=="playing"||!colorLocal)return;
-  if(myRole!=="player"||colorLocal.submissions?.[user.nickname]||colorLocal.closed)return;
+  if(myRole!=="player"||colorLocal.submissions?.[user.nickname])return;
   colorLocal.submissions=colorLocal.submissions||{};
   colorLocal.submissions[user.nickname]={choice:color,elapsed:Date.now()-roundStart};
   await sb.from("typing_game_rooms").update({current_text:JSON.stringify(colorLocal),updated_at:new Date().toISOString()}).eq("id",roomId);
@@ -3016,25 +2835,21 @@ async function finishColorRound(roundNo,key){
   if(key&&roundTimerKey!==key)return;
   const {data:roomNow}=await sb.from("typing_game_rooms").select("current_text,round,status").eq("id",roomId).single();
   let st=null;try{st=JSON.parse(roomNow?.current_text||"{}")}catch(e){st=colorLocal||{}};
-  if(st.closed)return;
-  st.closed=true;
+  if(st.closed)return;st.closed=true;
   const {data:players}=await sb.from("typing_game_players").select("nickname,score,character,role").eq("room_id",roomId).eq("role","player");
   const subs=st.submissions||{};
-  const answer=st.answer || (st.questionType==="card" ? st.card : (st.questionType==="ink" ? st.ink : st.word));
-  const correct=(players||[]).filter(p=>subs[p.nickname]?.choice===answer).sort((a,b)=>(subs[a.nickname].elapsed||999999)-(subs[b.nickname].elapsed||999999));
+  const correct=(players||[]).filter(p=>subs[p.nickname]?.choice===st.word).sort((a,b)=>(subs[a.nickname].elapsed||999999)-(subs[b.nickname].elapsed||999999));
   const wrongOrLate=(players||[]).filter(p=>!correct.find(c=>c.nickname===p.nickname));
   const order=[...correct,...wrongOrLate];
-  const answerLabel=colorObjByKey(answer).label;
-  let html=`정답 : <b>${answerLabel}</b><br>`;
+  let html="";
   for(let i=0;i<order.length;i++){
     const p=order[i]; const point=COLOR_POINT[i]??-0.3;
     await addPlayerScoreDelta(p.nickname,point);
-    html+=`${i+1}등 : ${escapeHtml(p.nickname)} ${point>=0?"+":""}${fmtScore(point)}점<br>`;
+    html+=`${i+1}등 : ${escapeHtml(p.nickname)} ${point>=0?"+":""}${point}점<br>`;
   }
   document.getElementById("colorRank").innerHTML=html||"참가자 없음";
   colorLocal=st;
   await sb.from("typing_game_rooms").update({current_text:JSON.stringify(st),updated_at:new Date().toISOString()}).eq("id",roomId);
-  colorRoundKey="";
   if(Number(roundNo)>=20){await applyColorFinishBonus();await sb.from("typing_game_rooms").update({status:"finished",updated_at:new Date().toISOString()}).eq("id",roomId);setTimeout(finishAndKickPlayers,900);return;}
   setTimeout(()=>startCountdownRoom(Number(roundNo)+1),1200);
 }
@@ -3089,29 +2904,22 @@ async function applyQuizFinishBonus(){if(finishBonusApplied)return;finishBonusAp
 function renderOxChoices(){
   const st=oxLocal||{};
   const choices=st.choices||{};
-  document.querySelectorAll('.ox-token-layer').forEach(e=>e.remove());
-  const stage=document.querySelector('.ox-stage');
-  if(!stage) return;
+  document.querySelectorAll('.ox-choice-list').forEach(e=>e.remove());
+  const x=document.querySelector('.ox-zone-x');
+  const o=document.querySelector('.ox-zone-o');
 
-  const players=(window.__lastPlayers||[]).filter(p=>!(st.eliminated||[]).includes(p.nickname));
-  const layer=document.createElement('div');
-  layer.className='ox-token-layer';
+  const makeList=(choice)=>{
+    return Object.entries(choices)
+      .filter(([n,c])=>c===choice)
+      .map(([n])=>{
+        const p=(window.__lastPlayers||[]).find(pp=>pp.nickname===n);
+        const ch=p?.character || user?.mini_character || "dao";
+        return `<div class="ox-choice-player"><img src="${getCharSmall(ch)}"> <span>${escapeHtml(n)}</span></div>`;
+      }).join('');
+  };
 
-  players.forEach((p,i)=>{
-    const choice=choices[p.nickname];
-    let left=50;
-    if(choice==='X') left=24;
-    if(choice==='O') left=76;
-    const top=58 + ((i%5)-2)*10;
-    const token=document.createElement('div');
-    token.className='ox-player-token';
-    token.style.left=left+'%';
-    token.style.top=Math.max(24,Math.min(84,top))+'%';
-    token.innerHTML=`<img src="${getCharSmall(p.character)}" alt="${escapeHtml(p.nickname)}"><div class="ox-token-name">${escapeHtml(p.nickname)}</div>`;
-    layer.appendChild(token);
-  });
-
-  stage.appendChild(layer);
+  if(x) x.insertAdjacentHTML('beforeend',`<div class="ox-choice-list">${makeList('X')}</div>`);
+  if(o) o.insertAdjacentHTML('beforeend',`<div class="ox-choice-list">${makeList('O')}</div>`);
 }
 
 async function resetCurrentRoomToWaiting(){
@@ -3220,9 +3028,9 @@ async function leaveGame(){
   if(!user)return;
 
   if(currentRoom && (currentRoom.status==="playing" || currentRoom.status==="countdown")){
-    const ok=confirm("게임 도중에 나가면 -3.0점이 차감됩니다. 그래도 나가시겠습니까?");
+    const ok=confirm("게임 도중에 나가면 -0.2점이 차감됩니다. 그래도 나가시겠습니까?");
     if(!ok) return;
-    await addPlayerScoreDelta(user.nickname,-3);
+    await addPlayerScoreDelta(user.nickname,-0.2);
   }
   stopGameMusic();
   startBgMusic();
@@ -3625,6 +3433,365 @@ function stopGameMusic(){
   gm.pause();
   gm.currentTime=0;
 }
+
+/* ===== 2026-05-15 종합 수정 오버라이드 ===== */
+var zeroLocal=null;
+var zeroRoundKey="";
+var zeroAutoTimer=null;
+const ZERO_WIN_SCORE=30;
+const ZERO_PUSH_POINTS=[8,6,5,3,1,0,-1,-3];
+
+function gameName(g){
+  if(g==="br31") return "베스킨라빈스31";
+  if(g==="burger") return "햄버거를 만들자";
+  if(g==="memory") return "기억하자";
+  if(g==="ox") return "OX 게임";
+  if(g==="color") return "색깔을 맞춰라";
+  if(g==="quiz") return "퀴즈풀자";
+  if(g==="zero") return "제로";
+  return "루칭방 타자타자";
+}
+function getRoomId(g){
+  if(g==="br31") return "br31_main";
+  if(g==="burger") return "burger_main";
+  if(g==="memory") return "memory_main";
+  if(g==="ox") return "ox_main";
+  if(g==="color") return "color_main";
+  if(g==="quiz") return "quiz_main";
+  if(g==="zero") return "zero_main";
+  return "typing_main";
+}
+
+async function loadGameCounts(){
+  const ids=["typing_main","br31_main","burger_main","memory_main","ox_main","color_main","quiz_main","zero_main"];
+  const {data}=await sb.from("typing_game_players").select("room_id,role").in("room_id",ids);
+  const cnt={}; ids.forEach(id=>cnt[id]={p:0,v:0});
+  (data||[]).forEach(x=>{if(!cnt[x.room_id])return;if((x.role||"player")==="viewer")cnt[x.room_id].v++;else cnt[x.room_id].p++});
+  const set=(id,key)=>{const el=document.getElementById(id); if(el) el.innerHTML=`선수:${cnt[key].p} / 관전자:${cnt[key].v}`;};
+  set("typingBtnCount","typing_main"); set("br31BtnCount","br31_main"); set("burgerBtnCount","burger_main");
+  set("memoryBtnCount","memory_main"); set("oxBtnCount","ox_main"); set("colorBtnCount","color_main");
+  set("quizBtnCount","quiz_main"); set("zeroBtnCount","zero_main");
+}
+
+async function loadMenuOnline(){
+  const {data}=await sb.from("typing_game_players").select("nickname,character,current_place,room_id,role,last_seen,score").order("last_seen",{ascending:true});
+  const sm=await getIntegratedScoreMap();
+  const box=document.getElementById("menuOnlineList");
+  let rows=(data||[]).filter((p,i,arr)=>arr.findIndex(x=>x.nickname===p.nickname)===i);
+  if(user){
+    const me=rows.filter(p=>p.nickname===user.nickname);
+    const others=rows.filter(p=>p.nickname!==user.nickname);
+    rows=[...others,...me];
+  }
+  if(!rows.length){setHtmlIfChanged(box,`<div class="online-item">현재 접속자 없음</div>`);return;}
+  let htmlText="";
+  rows.forEach(p=>{
+    let place=p.current_place||"대기방";
+    if(p.room_id&&p.room_id!=="online"){
+      const g=p.room_id.replace("_main","");
+      place=gameName(g);
+    }
+    const score=sm[p.nickname]??p.score??0;
+    htmlText+=`<div class="online-item">${charSmallImg(p.character)}${escapeHtml(p.nickname)} <span class="score-strong">[${fmtScore(score)}점]</span><span class="place-line">[${place}]</span></div>`;
+  });
+  setHtmlIfChanged(box,htmlText);
+}
+
+async function enterRoom(game){
+  try{
+    currentGame=game; roomId=getRoomId(game); finishBonusApplied=false; handledWinnerKey=""; br31Local=null; zeroLocal=null;
+    document.getElementById("gameTitle").textContent=gameName(game);
+    ["typing","br31","burger","memory","ox","color","quiz","zero"].forEach(g=>{
+      const el=document.getElementById(g+"Board"); if(el) el.classList.toggle("hidden",game!==g);
+    });
+    const seatRow=document.getElementById("seatRow"); if(seatRow) seatRow.classList.toggle("hidden",game==="zero");
+    const maxR = game==="color" ? 20 : (game==="br31" ? 31 : (game==="zero" ? 999 : 10));
+    await sb.from("typing_game_rooms").upsert({id:roomId,status:"waiting",round:0,max_round:maxR,current_text:null,round_started_at:null,updated_at:new Date().toISOString()},{onConflict:"id"});
+    await sb.from("typing_game_players").delete().eq("room_id","online").eq("nickname",user.nickname);
+    await sb.from("typing_game_chats").delete().eq("room_id",roomId).eq("nickname",user.nickname);
+    lastChats=[];
+    const _scoreMapForStart=await getIntegratedScoreMap();
+    gameStartScore=Number(_scoreMapForStart[user.nickname]||0);
+    updateLocalScoreDisplay(gameStartScore);
+    await sb.from("typing_game_players").upsert({room_id:roomId,nickname:user.nickname,pin5:user.pin5,character:user.mini_character,score:gameStartScore,ready:false,role:"viewer",seat_no:null,current_place:gameName(game),last_seen:new Date().toISOString()},{onConflict:"room_id,nickname"});
+    myRole="viewer"; isReady=false;
+    document.getElementById("readyBtn").classList.add("hidden");
+    show("gameScreen"); subscribe(); startRealtimeRefresh();
+    await loadPlayers(); await loadChats(); await clearViewerChatIfInactive(); await loadViewerChat(); await loadRoom();
+  }catch(e){alert("입장 오류: "+e.message)}
+}
+
+async function startCountdownRoom(roundNo){
+  typingRoundKey=""; burgerRoundKey=""; memoryRoundKey=""; colorRoundKey=""; quizRoundKey=""; zeroRoundKey=""; handledWinnerKey="";
+  stopRoundTimer(); if(zeroAutoTimer){clearTimeout(zeroAutoTimer); zeroAutoTimer=null;}
+  let text=null;
+  if(currentGame==="typing") text=sentences[Math.floor(Math.random()*sentences.length)];
+  else if(currentGame==="br31") text=JSON.stringify(await makeBr31InitialState());
+  else if(currentGame==="burger") text=JSON.stringify(await makeBurgerRoundState(roundNo));
+  else if(currentGame==="memory") text=JSON.stringify(await makeMemoryRoundState(roundNo));
+  else if(currentGame==="ox") text=JSON.stringify(await makeOxRoundState(roundNo));
+  else if(currentGame==="color") text=JSON.stringify(await makeColorRoundState(roundNo));
+  else if(currentGame==="quiz") text=JSON.stringify(await makeQuizRoundState(roundNo));
+  else if(currentGame==="zero") text=JSON.stringify(await makeZeroInitialState());
+  const {data,error}=await sb.from("typing_game_rooms").update({status:"countdown",round:roundNo,current_text:text,round_started_at:null,updated_at:new Date().toISOString()}).eq("id",roomId).select().single();
+  if(error){alert("게임 시작 오류: "+error.message);return;}
+  if(data) handleRoom(data); else await loadRoom();
+}
+
+function handleRoom(room){
+  currentRoom=room;
+  if(currentGame==="br31")parseBr31State(room.current_text);
+  if(currentGame==="burger")parseBurgerState(room.current_text);
+  if(currentGame==="memory")parseMemoryState(room.current_text);
+  if(currentGame==="ox")parseOxState(room.current_text);
+  if(currentGame==="color")parseColorState(room.current_text);
+  if(currentGame==="quiz")parseQuizState(room.current_text);
+  if(currentGame==="zero")parseZeroState(room.current_text);
+  const seatRow=document.getElementById("seatRow"); if(seatRow) seatRow.classList.toggle("hidden",currentGame==="zero");
+  if(room.status==="waiting"){
+    clearInterval(countTimer); startingCountdown=false; document.getElementById("countOverlay").classList.add("hidden");
+    const tban=document.getElementById("typingFirstBanner"); if(tban) tban.textContent="";
+    const bban=document.getElementById("br31ActionBanner"); if(bban) bban.textContent="";
+    const uban=document.getElementById("burgerCompleteBanner"); if(uban) uban.textContent="";
+    if(currentGame==="typing"){
+      const msg=document.getElementById("centerMessage"); document.getElementById("problemArea").classList.add("hidden"); msg.textContent="곧 메세지가 나올 공간입니다."; msg.classList.add("waiting"); msg.classList.remove("problem-text");
+    } else if(currentGame==="br31") renderBr31Waiting();
+    else if(currentGame==="burger") renderBurgerWaiting();
+    else if(currentGame==="memory") renderMemoryWaiting();
+    else if(currentGame==="ox") renderOxWaiting();
+    else if(currentGame==="color") renderColorWaiting();
+    else if(currentGame==="quiz") renderQuizWaiting();
+    else if(currentGame==="zero") renderZeroWaiting();
+    document.getElementById("chatInput").disabled=false; document.getElementById("chatInput").placeholder="말풍선 채팅 입력 40자 이내"; document.getElementById("chatInput").maxLength=40; show("gameScreen");
+  }
+  if(room.status==="countdown"){
+    show("gameScreen");
+    if(currentGame==="typing"){document.getElementById("problemArea").classList.add("hidden");document.getElementById("centerMessage").textContent="곧 메세지가 나올 공간입니다."; const tban=document.getElementById("typingFirstBanner"); if(tban)tban.textContent="";}
+    else if(currentGame==="br31") renderBr31Board();
+    else if(currentGame==="burger") renderBurgerBoard(false);
+    else if(currentGame==="memory") renderMemoryBoard(false);
+    else if(currentGame==="ox") renderOxBoard(false);
+    else if(currentGame==="color") renderColorBoard(false);
+    else if(currentGame==="quiz") renderQuizBoard(false);
+    else if(currentGame==="zero") renderZeroBoard(false);
+    document.getElementById("chatInput").placeholder="잠시 후 게임이 시작됩니다";
+    startLocalCountdown(room.round);
+  }
+  if(room.status==="playing"){
+    startingCountdown=false; document.getElementById("countOverlay").classList.add("hidden");
+    if(currentGame==="typing") startTypingRound(room);
+    else if(currentGame==="br31") startBr31Round(room);
+    else if(currentGame==="burger") startBurgerRound(room);
+    else if(currentGame==="memory") startMemoryRound(room);
+    else if(currentGame==="ox") startOxRound(room);
+    else if(currentGame==="color") startColorRound(room);
+    else if(currentGame==="quiz") startQuizRound(room);
+    else if(currentGame==="zero") startZeroRound(room);
+  }
+  if(room.status==="finished"){stopRoundTimer(); if(zeroAutoTimer){clearTimeout(zeroAutoTimer);zeroAutoTimer=null;} startingCountdown=false; document.getElementById("countOverlay").classList.add("hidden"); showFinish();}
+}
+
+function startTypingRound(room){
+  show("gameScreen");
+  const key=`${roomId}-${room.round}-${room.current_text||""}`;
+  const firstOpen=typingRoundKey!==key;
+  if(firstOpen){
+    typingRoundKey=key; submittedRound=null; roundStart=Date.now();
+    const ban=document.getElementById("typingFirstBanner"); if(ban) ban.textContent="";
+    document.getElementById("problemArea").classList.remove("hidden");
+    const msg=document.getElementById("centerMessage"); msg.textContent=room.current_text||"문제가 없습니다."; msg.classList.remove("waiting"); msg.classList.add("problem-text");
+    document.getElementById("roundText").textContent=room.round;
+    const input=document.getElementById("chatInput"); input.value=""; input.disabled=myRole!=="player"; input.placeholder=myRole==="player"?"정답을 입력하세요":"관전자는 정답을 제출할 수 없습니다"; input.maxLength=300; if(myRole==="player")input.focus();
+    startRoundTimer(15,"typingTimer",key,async()=>{await typingTimeoutNext(room.round);});
+  }
+  loadMyScore(); loadPlayers();
+}
+async function checkTypingWinner(){
+  if(!currentRoom)return; const key=`${roomId}-${currentRoom.round}`; if(handledWinnerKey===key)return;
+  const {data}=await sb.from("typing_game_answers").select("*").eq("room_id",roomId).eq("round",currentRoom.round).eq("is_correct",true).order("elapsed_ms",{ascending:true}).limit(1);
+  if(!data||!data.length)return; handledWinnerKey=key;
+  const winner=data[0].nickname, answerText=data[0].answer;
+  const {data:p}=await sb.from("typing_game_players").select("score,character").eq("room_id",roomId).eq("nickname",winner).single();
+  await sb.from("typing_game_players").update({score:Number(p?.score||0)+ROUND_SCORE}).eq("room_id",roomId).eq("nickname",winner);
+  await addIntegratedScore(winner,p?.character||"🐰",ROUND_SCORE); await penalizeOtherPlayers(winner,-0.3);
+  await insertBubble(answerText,"first",winner,p?.character||"🐰");
+  const ban=document.getElementById("typingFirstBanner"); if(ban) ban.textContent=`${winner}님 1등`;
+  setTimeout(nextTypingRound,1200);
+}
+
+function renderBr31Waiting(){const ban=document.getElementById("br31ActionBanner");if(ban)ban.textContent="";document.getElementById("br31Status").textContent="게임 준비중입니다.";renderSilhouettes(0);setBr31Buttons(false);document.getElementById("br31ElimMsg").classList.add("hidden")}
+function renderBr31Board(){
+  const st=br31Local||{}; const active=st.players?.[st.turnIndex]; const ban=document.getElementById("br31ActionBanner");
+  if(ban) ban.textContent=st.lastActor&&st.lastChoice?`${st.lastActor}님께서 ${st.lastChoice}을 선택하셨습니다`:(active?`${active}님 차례입니다`:"");
+  document.getElementById("br31Status").textContent=st.finished?(st.winner?`${st.winner} 우승!`:"게임종료"):`현재 숫자 ${st.count||0} / 31`;
+  renderSilhouettes(st.count||0); setBr31Buttons(false); document.getElementById("br31ElimMsg").classList.toggle("hidden",!st.lastEliminated);
+}
+async function chooseBr31(n){
+  stopRoundTimer(); if(currentGame!=="br31"||!currentRoom||currentRoom.status!=="playing"||!br31Local)return;
+  const st={...br31Local}; if(st.players?.[st.turnIndex]!==user.nickname)return; if(Number(st.lastChoice)===n)return;
+  await addIntegratedScore(user.nickname,user.mini_character,BR31_CLICK_SCORE);
+  const {data:p}=await sb.from("typing_game_players").select("score").eq("room_id",roomId).eq("nickname",user.nickname).single();
+  await sb.from("typing_game_players").update({score:Number(p?.score||0)+BR31_CLICK_SCORE}).eq("room_id",roomId).eq("nickname",user.nickname);
+  st.count=Number(st.count||0)+Number(n); st.lastChoice=n; st.lastActor=user.nickname; st.moveTick=Number(st.moveTick||0)+1; st.lastEliminated=null;
+  await insertBubble(String(n),"normal");
+  if(st.count>=31){
+    const loser=user.nickname; st.lastEliminated=loser; st.eliminated=[...(st.eliminated||[]),loser]; st.players=(st.players||[]).filter(x=>x!==loser); await addPlayerScoreDelta(loser,-0.5); await insertBubble("탈락","wrong",loser,user.mini_character);
+    if(st.players.length<=1){st.finished=true; st.winner=st.players[0]||null; if(st.winner){const {data:wp}=await sb.from("typing_game_players").select("character,score").eq("room_id",roomId).eq("nickname",st.winner).maybeSingle(); await sb.from("typing_game_players").update({score:Number(wp?.score||0)+BR31_WIN_BONUS}).eq("room_id",roomId).eq("nickname",st.winner); await addIntegratedScore(st.winner,wp?.character||"🐰",BR31_WIN_BONUS);} await sb.from("typing_game_rooms").update({status:"finished",current_text:JSON.stringify(st),updated_at:new Date().toISOString()}).eq("id",roomId); setTimeout(finishAndKickPlayers,900); return;}
+    st.count=0; st.turnIndex=0; st.lastChoice=null;
+  }else st.turnIndex=(Number(st.turnIndex||0)+1)%(st.players||[]).length;
+  await sb.from("typing_game_rooms").update({current_text:JSON.stringify(st),updated_at:new Date().toISOString()}).eq("id",roomId);
+}
+
+function renderBurgerWaiting(){clearTimeout(burgerShowingTimer);burgerInputSeq=[];clearMyBurgerStack();const ban=document.getElementById("burgerCompleteBanner");if(ban)ban.textContent="";document.getElementById("burgerStatus").textContent="게임 준비중입니다.";document.getElementById("burgerStack").innerHTML="";document.getElementById("burgerAnswer").textContent="게임이 시작되면 떨어진 순서대로 버튼을 누르세요.";document.getElementById("burgerAnswer").className="burger-answer";setBurgerButtons(false)}
+function renderBurgerBoard(showAll=true){
+  const st=burgerLocal||{}; const key=`${roomId}-${st.round||1}-${(st.sequence||[]).join(",")}`; const alreadySame=burgerRoundKey===key&&showAll; if(alreadySame)return;
+  clearTimeout(burgerShowingTimer); burgerRoundKey=showAll?key:""; burgerInputSeq=[]; clearMyBurgerStack(); const ban=document.getElementById("burgerCompleteBanner"); if(ban)ban.textContent="";
+  document.getElementById("burgerStatus").innerHTML=`라운드 ${st.round||1} / 10<br>햄버거 순서를 기억하세요! <span id="burgerTimer" class="round-timer hidden">15초</span>`;
+  document.getElementById("burgerStack").innerHTML=""; document.getElementById("burgerAnswer").textContent="문제를 보여주는 중입니다."; document.getElementById("burgerAnswer").className="burger-answer"; setBurgerButtons(false);
+  if(!showAll)return; const seq=st.sequence||[]; let i=0; const showNext=()=>{if(i>=seq.length){document.getElementById("burgerAnswer").textContent="이제 순서대로 버튼을 눌러주세요."; updateBurgerButtons(); startRoundTimer(15,"burgerTimer",key,async()=>{await burgerTimeoutNext(st.round||1,key);}); return;} appendBurgerPiece(seq[i]); i++; burgerShowingTimer=setTimeout(showNext,Math.max(180,Math.floor(2000/Math.max(seq.length,1))));}; showNext();
+}
+async function finishBurgerRound(winner){
+  stopRoundTimer(); if(!burgerLocal||burgerLocal.winner)return;
+  const {data:roomNow,error:roomErr}=await sb.from("typing_game_rooms").select("current_text,round,status").eq("id",roomId).single(); if(roomErr){console.warn("햄버거 우승 확인 오류:",roomErr.message);return;}
+  let latest=null; try{latest=JSON.parse(roomNow?.current_text||"{}");}catch(e){latest=null;} if(latest?.winner){burgerLocal=latest;return;}
+  burgerLocal.winner=winner; burgerLocal.finished=true;
+  await sb.from("typing_game_rooms").update({current_text:JSON.stringify(burgerLocal),updated_at:new Date().toISOString()}).eq("id",roomId);
+  await addPlayerScoreDelta(winner,3); await penalizeOtherPlayers(winner,-0.3);
+  const ban=document.getElementById("burgerCompleteBanner"); if(ban) ban.textContent=`${winner}님 완성`;
+  document.getElementById("burgerStatus").textContent=`햄버거 완성! +3점`;
+  if(Number(currentRoom.round||1)>=10){await applyBurgerFinishBonus(); await sb.from("typing_game_rooms").update({status:"finished",current_text:JSON.stringify(burgerLocal),updated_at:new Date().toISOString()}).eq("id",roomId); setTimeout(finishAndKickPlayers,900); return;}
+  setTimeout(()=>startCountdownRoom(Number(currentRoom.round||1)+1),1200);
+}
+
+async function sendNormalChat(){
+  const input=document.getElementById("chatInput"); let message=input.value.trim(); if(!message||!user)return; if(message.length>40)message=message.slice(0,40); input.value="";
+  lastChats.push({nickname:user.nickname,character:user.mini_character,message,created_at:new Date().toISOString()});
+  if(!document.getElementById("gameScreen").classList.contains("hidden")) await loadPlayers();
+  await sb.from("typing_game_chats").insert({room_id:roomId,nickname:user.nickname,character:user.mini_character,message});
+  if(currentRoom&&currentRoom.status==="playing") await touchRoomActivity();
+  await loadChats();
+}
+
+async function makeColorRoundState(roundNo){
+  const card=randomColorObj(); const word=randomColorObj(); const ink=randomColorObj();
+  const types=["card","word","ink"]; const qtype=types[Math.floor(Math.random()*types.length)];
+  return {game:"color",round:roundNo,card:card.key,cardCss:card.css,cardLabel:card.label,word:word.key,wordLabel:word.label,ink:ink.key,inkCss:ink.css,type:qtype,submissions:{},closed:false};
+}
+function colorQuestionLabel(type){if(type==="card")return "카드 색상은?"; if(type==="word")return "현재 글자가 말하는 색은?"; return "현재 글씨가 무슨색으로 되어있나요?";}
+function colorCorrectKey(st){return st.type==="card"?st.card:(st.type==="word"?st.word:st.ink);}
+function renderColorWaiting(){document.getElementById("colorStatus").textContent="게임 준비중입니다.";document.getElementById("colorCard").innerHTML="색깔";document.getElementById("colorRank").textContent="순위가 여기에 표시됩니다.";setColorButtons(false)}
+function renderColorBoard(active){
+  const st=colorLocal||{}; document.getElementById("colorStatus").innerHTML=`라운드 ${currentRoom?.round||st.round||1} / 20 · <b>${colorQuestionLabel(st.type)}</b> <span id="colorTimer" class="round-timer">3초</span>`;
+  const card=document.getElementById("colorCard"); card.innerHTML=`<div class="color-real-card" style="background:${st.cardCss||'#ef4444'}"></div><div class="color-word-box" style="color:${st.inkCss||'#facc15'}">${escapeHtml(st.wordLabel||'주황')}</div>`;
+  document.getElementById("colorRank").textContent="카드색 / 글자가 가리키는 색 / 글씨색을 잘 보고 선택하세요.";
+  setColorButtons(active && myRole==="player" && !st.submissions?.[user?.nickname]);
+}
+async function finishColorRound(roundNo,key){
+  if(currentGame!=="color"||!currentRoom||currentRoom.status!=="playing")return; if(key&&roundTimerKey!==key)return;
+  const {data:roomNow}=await sb.from("typing_game_rooms").select("current_text,round,status").eq("id",roomId).single(); let st=null; try{st=JSON.parse(roomNow?.current_text||"{}");}catch(e){st=colorLocal||{}};
+  if(st.closed)return; st.closed=true;
+  const {data:players}=await sb.from("typing_game_players").select("nickname,score,character,role").eq("room_id",roomId).eq("role","player");
+  const subs=st.submissions||{}; const answer=colorCorrectKey(st);
+  const correct=(players||[]).filter(p=>subs[p.nickname]?.choice===answer).sort((a,b)=>(subs[a.nickname].elapsed||999999)-(subs[b.nickname].elapsed||999999));
+  const wrongOrLate=(players||[]).filter(p=>!correct.find(c=>c.nickname===p.nickname)); const order=[...correct,...wrongOrLate]; let html=`정답 : ${escapeHtml((COLOR_TEXTS.find(c=>c.key===answer)||{}).label||answer)}<br>`;
+  for(let i=0;i<order.length;i++){const p=order[i]; const point=correct.find(c=>c.nickname===p.nickname)?(COLOR_POINT[i]??0): -0.2; await addPlayerScoreDelta(p.nickname,point); html+=`${i+1}등 : ${escapeHtml(p.nickname)} ${point>=0?"+":""}${fmtScore(point)}점<br>`;}
+  document.getElementById("colorRank").innerHTML=html||"참가자 없음"; colorLocal=st; await sb.from("typing_game_rooms").update({current_text:JSON.stringify(st),updated_at:new Date().toISOString()}).eq("id",roomId); setColorButtons(false);
+  if(Number(roundNo)>=20){await applyColorFinishBonus(); await sb.from("typing_game_rooms").update({status:"finished",current_text:JSON.stringify(st),updated_at:new Date().toISOString()}).eq("id",roomId); setTimeout(finishAndKickPlayers,900); return;}
+  setTimeout(()=>startCountdownRoom(Number(roundNo)+1),900);
+}
+
+function renderOxChoices(){
+  const layer=document.getElementById("oxMoverLayer"); if(!layer)return; layer.innerHTML="";
+  const players=window.__lastPlayers||[]; const st=oxLocal||{};
+  players.forEach((p,i)=>{
+    if((st.eliminated||[]).includes(p.nickname)) return;
+    const choice=st.choices?.[p.nickname];
+    let left=50, top=52+(i-3.5)*7;
+    if(choice==="X"){left=25; top=58+(i%4)*8;} else if(choice==="O"){left=75; top=58+(i%4)*8;}
+    layer.innerHTML+=`<div class="ox-mover" style="left:${left}%;top:${top}%"><img src="${getCharSmall(p.character)}" title="${escapeHtml(p.nickname)}"></div>`;
+  });
+}
+function renderOxWaiting(){document.getElementById("oxStatus").textContent="게임 준비중입니다.";document.getElementById("oxQuestion").textContent="문제가 나올 공간입니다.";const layer=document.getElementById("oxMoverLayer");if(layer)layer.innerHTML="";setOxButtons(false)}
+function renderOxBoard(active){const st=oxLocal||{};document.getElementById("oxStatus").textContent=`라운드 ${currentRoom?.round||st.round||1} / 10 · 10초 안에 O 또는 X를 선택하세요`;document.getElementById("oxQuestion").textContent=st.question||"문제가 없습니다.";renderOxChoices();const dead=(st.eliminated||[]).includes(user?.nickname);setOxButtons(active&&myRole==="player"&&!dead)}
+async function chooseOx(choice){
+  if(currentGame!=="ox"||!currentRoom||currentRoom.status!=="playing"||!oxLocal)return; if(myRole!=="player")return; if((oxLocal.eliminated||[]).includes(user.nickname))return;
+  oxLocal.choices=oxLocal.choices||{}; oxLocal.choices[user.nickname]=choice; renderOxBoard(true);
+  await sb.from("typing_game_rooms").update({current_text:JSON.stringify(oxLocal),updated_at:new Date().toISOString()}).eq("id",roomId);
+}
+
+async function makeZeroInitialState(){
+  const {players}=await loadPlayers(); const names=players.map(p=>p.nickname);
+  return {game:"zero",turnIndex:0,hands:{},call:null,caller:null,match:false,pushes:[],message:"1번 선수부터 시작합니다.",round:1,finished:false};
+}
+function parseZeroState(txt){try{zeroLocal=JSON.parse(txt||"{}")}catch(e){zeroLocal=null}return zeroLocal}
+function renderZeroWaiting(){
+  const st=document.getElementById("zeroStatus"); if(st)st.textContent="게임 준비중입니다.";
+  const res=document.getElementById("zeroResult"); if(res)res.textContent="본인 차례가 오면 손 모양과 숫자를 선택하세요.";
+  const rank=document.getElementById("zeroRank"); if(rank)rank.textContent="PUSH 순위가 여기에 표시됩니다.";
+  renderZeroSeats(); renderZeroButtons(false);
+}
+function renderZeroSeats(){
+  const players=window.__lastPlayers||[]; const left=document.getElementById("zeroLeftSeats"), right=document.getElementById("zeroRightSeats"); if(!left||!right)return; left.innerHTML=""; right.innerHTML="";
+  const active=players[zeroLocal?.turnIndex||0]?.nickname;
+  for(let i=0;i<8;i++){
+    const p=players[i]; const hand=p?zeroLocal?.hands?.[p.nickname]:null; const html=p?`<div class="zero-seat ${active===p.nickname?'turn':''}"><img src="${getCharSmall(p.character)}"><div><div class="zero-seat-name">${escapeHtml(p.nickname)}</div><div class="zero-seat-score">${fmtScore(p.score)}점</div></div><div class="zero-hand">${hand===1?'☝️':hand===0?'✊':''}</div></div>`:`<div class="zero-seat"><div class="zero-seat-name">[빈자리]</div></div>`;
+    (i<4?left:right).innerHTML+=html;
+  }
+}
+function renderZeroButtons(active){
+  const players=window.__lastPlayers||[]; const me=user?.nickname; const turn=players[zeroLocal?.turnIndex||0]?.nickname; const isTurn=active&&myRole==="player"&&turn===me&&!zeroLocal?.call;
+  const callBox=document.getElementById("zeroCallButtons"); if(callBox){callBox.innerHTML=""; const max=Math.max(0,players.length); for(let i=0;i<=8;i++){callBox.innerHTML+=`<button onclick="chooseZeroCall(${i})" ${(!isTurn||i>max)?'disabled':''}>${i}</button>`;}}
+  document.querySelectorAll(".zero-hand-buttons button").forEach(b=>b.disabled=!(active&&myRole==="player")||!!zeroLocal?.call);
+  const push=document.getElementById("zeroPushBtn"); if(push) push.disabled=!(active&&myRole==="player") || !!(zeroLocal?.pushes||[]).find(x=>x.nickname===user?.nickname);
+}
+function renderZeroBoard(active){
+  const players=window.__lastPlayers||[]; const turn=players[zeroLocal?.turnIndex||0]?.nickname;
+  const status=document.getElementById("zeroStatus"); if(status)status.textContent=zeroLocal?.call!==null?`${zeroLocal.caller}님이 ${zeroLocal.call}을 외쳤습니다.`:(turn?`${turn}님 차례입니다.`:"플레이어를 기다리는 중입니다.");
+  const result=document.getElementById("zeroResult"); if(result)result.textContent=zeroLocal?.message||"손 모양을 선택하세요.";
+  const rank=document.getElementById("zeroRank"); if(rank){rank.innerHTML=(zeroLocal?.pushes||[]).length?(zeroLocal.pushes.map((x,i)=>`${i+1}등 : ${escapeHtml(x.nickname)} ${x.point>=0?'+':''}${fmtScore(x.point)}점`).join("<br>")):"PUSH 순위가 여기에 표시됩니다.";}
+  renderZeroSeats(); renderZeroButtons(active);
+}
+function startZeroRound(room){show("gameScreen");parseZeroState(room.current_text);renderZeroBoard(true);loadPlayers().then(()=>renderZeroBoard(true));const key=`${roomId}-${room.updated_at||''}-${room.current_text||''}`; if(zeroRoundKey!==key){zeroRoundKey=key; if(zeroAutoTimer)clearTimeout(zeroAutoTimer); zeroAutoTimer=setTimeout(()=>zeroNextTurn(),12000);}}
+async function chooseZeroHand(v){
+  if(currentGame!=="zero"||!currentRoom||currentRoom.status!=="playing"||!zeroLocal||myRole!=="player"||zeroLocal.call!==null)return;
+  zeroLocal.hands=zeroLocal.hands||{}; zeroLocal.hands[user.nickname]=Number(v); zeroLocal.message=`${user.nickname}님 선택 완료`; renderZeroBoard(true);
+  await sb.from("typing_game_rooms").update({current_text:JSON.stringify(zeroLocal),updated_at:new Date().toISOString()}).eq("id",roomId);
+}
+async function chooseZeroCall(num){
+  if(currentGame!=="zero"||!currentRoom||currentRoom.status!=="playing"||!zeroLocal)return; const players=window.__lastPlayers||[]; const turn=players[zeroLocal.turnIndex||0]?.nickname; if(myRole!=="player"||turn!==user.nickname||zeroLocal.call!==null)return;
+  if(!zeroLocal.hands||zeroLocal.hands[user.nickname]===undefined){alert("먼저 주먹 또는 손가락 하나를 선택해주세요.");return;}
+  const sum=players.reduce((a,p)=>a+Number(zeroLocal.hands?.[p.nickname]||0),0); zeroLocal.call=Number(num); zeroLocal.caller=user.nickname; zeroLocal.match=sum===Number(num); zeroLocal.pushes=[]; zeroLocal.message=zeroLocal.match?`일치! 합계 ${sum}입니다. 모두 PUSH!`:`불일치! 합계는 ${sum}입니다.`; renderZeroBoard(true);
+  await sb.from("typing_game_rooms").update({current_text:JSON.stringify(zeroLocal),updated_at:new Date().toISOString()}).eq("id",roomId);
+  if(!zeroLocal.match) setTimeout(()=>zeroNextTurn(),1500);
+}
+async function zeroPush(){
+  if(currentGame!=="zero"||!currentRoom||currentRoom.status!=="playing"||!zeroLocal||myRole!=="player")return;
+  if(!zeroLocal.match){await addPlayerScoreDelta(user.nickname,-2); zeroLocal.message=`${user.nickname}님 MISS  -2점 차감`; await sb.from("typing_game_rooms").update({current_text:JSON.stringify(zeroLocal),updated_at:new Date().toISOString()}).eq("id",roomId); renderZeroBoard(true);return;}
+  zeroLocal.pushes=zeroLocal.pushes||[]; if(zeroLocal.pushes.find(x=>x.nickname===user.nickname))return; const idx=zeroLocal.pushes.length; const point=ZERO_PUSH_POINTS[idx]??-3; zeroLocal.pushes.push({nickname:user.nickname,point}); await addPlayerScoreDelta(user.nickname,point); zeroLocal.message=`${user.nickname}님 PUSH ${idx+1}등`;
+  await sb.from("typing_game_rooms").update({current_text:JSON.stringify(zeroLocal),updated_at:new Date().toISOString()}).eq("id",roomId); renderZeroBoard(true); await checkZeroWinner(); const players=window.__lastPlayers||[]; if(zeroLocal.pushes.length>=players.length) setTimeout(()=>zeroNextTurn(),900);
+}
+async function checkZeroWinner(){
+  const {data}=await sb.from("typing_game_players").select("nickname,score,character,role").eq("room_id",roomId).eq("role","player").order("score",{ascending:false}).limit(1); const top=(data||[])[0];
+  if(top&&Number(top.score||0)>=ZERO_WIN_SCORE){zeroLocal.finished=true; zeroLocal.message=`${top.nickname}님 30점 달성! 게임 종료`; await sb.from("typing_game_rooms").update({status:"finished",current_text:JSON.stringify(zeroLocal),updated_at:new Date().toISOString()}).eq("id",roomId); setTimeout(finishAndKickPlayers,900);}
+}
+async function zeroNextTurn(){
+  if(currentGame!=="zero"||!currentRoom||currentRoom.status!=="playing"||!zeroLocal||zeroLocal.finished)return; const {players}=await loadPlayers(); if(!players.length)return;
+  zeroLocal.turnIndex=(Number(zeroLocal.turnIndex||0)+1)%players.length; zeroLocal.hands={}; zeroLocal.call=null; zeroLocal.caller=null; zeroLocal.match=false; zeroLocal.pushes=[]; zeroLocal.round=Number(zeroLocal.round||1)+1; zeroLocal.message=`${players[zeroLocal.turnIndex]?.nickname||''}님 차례입니다.`;
+  await sb.from("typing_game_rooms").update({current_text:JSON.stringify(zeroLocal),updated_at:new Date().toISOString()}).eq("id",roomId);
+}
+
+async function leaveGame(){
+  if(!user)return;
+  if(currentRoom&&(currentRoom.status==="playing"||currentRoom.status==="countdown")){
+    const ok=confirm("게임 도중에 나가면 -3점이 차감됩니다. 그래도 나가시겠습니까?"); if(!ok)return; await addPlayerScoreDelta(user.nickname,-3);
+  }
+  stopGameMusic(); startBgMusic();
+  await sb.from("typing_game_chats").delete().eq("room_id",roomId).eq("nickname",user.nickname);
+  await sb.from("typing_game_players").delete().eq("room_id",roomId).eq("nickname",user.nickname);
+  lastChats=[]; await loadChats(); const {players}=await loadPlayers(); if(!players.length&&currentRoom&&currentRoom.status!=="waiting") await resetCurrentRoomToWaiting(); await markOnline("대기방"); openMenu();
+}
+
+
 </script>
 </body>
 </html>
