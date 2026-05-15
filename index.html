@@ -847,6 +847,56 @@ button:disabled{opacity:.38;cursor:not-allowed;filter:grayscale(.3)}
 .ox-stage{background:linear-gradient(180deg,#bbf7d0,#86efac,#4ade80)!important;border-color:#22c55e!important}.ox-zone{background:linear-gradient(180deg,#bbf7d0,#86efac,#22c55e)!important;color:#1e293b!important;text-shadow:none!important;border:4px solid rgba(255,255,255,.9);position:relative;overflow:hidden}.ox-zone::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,255,255,.15) 0 8px,rgba(22,163,74,.08) 8px 16px)}.ox-flag{position:absolute;top:14px;left:50%;transform:translateX(-50%);font-size:54px;z-index:2}.ox-choice-list{display:none!important}.ox-mover-layer{position:absolute;inset:0;z-index:5;pointer-events:none}.ox-mover{position:absolute;width:34px;height:34px;transition:left .9s cubic-bezier(.22,1,.36,1),top .9s cubic-bezier(.22,1,.36,1);transform:translate(-50%,-50%);filter:drop-shadow(0 3px 4px rgba(0,0,0,.25))}.ox-mover img{width:100%;height:100%;object-fit:contain}
 .zero-board{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:8px 0 4px;gap:12px}.zero-status{width:min(720px,96%);padding:12px;border-radius:24px;background:#fff;border:4px solid #bfdbfe;color:#2563eb;font-size:24px;font-weight:1000!important;text-align:center}.zero-table{width:min(860px,98%);display:grid;grid-template-columns:190px minmax(230px,1fr) 190px;gap:12px;align-items:center}.zero-side{display:grid;grid-template-rows:repeat(4,90px);gap:8px}.zero-seat{border:3px solid #bfdbfe;border-radius:20px;background:#eff6ff;display:flex;align-items:center;gap:8px;padding:8px;position:relative}.zero-seat.turn{border-color:#ef4444;box-shadow:0 0 0 4px rgba(239,68,68,.18)}.zero-seat img{width:42px;height:42px;object-fit:contain}.zero-seat-name{font-size:13px;font-weight:1000!important;word-break:break-all}.zero-seat-score{font-size:12px;color:#ef4444;font-weight:1000!important}.zero-hand{position:absolute;right:8px;bottom:6px;font-size:24px}.zero-center{min-height:390px;border:4px dashed #bfdbfe;border-radius:30px;background:linear-gradient(135deg,#fff,#eff6ff,#fdf2f8);padding:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}.zero-result{min-height:46px;font-size:30px;color:#ef4444;font-weight:1000!important;text-align:center}.zero-push{width:min(260px,90%);height:78px;border-radius:999px;font-size:32px!important;background:linear-gradient(135deg,#f97316,#ec4899,#60a5fa)!important;box-shadow:0 10px 0 rgba(59,130,246,.24)!important}.zero-hand-buttons,.zero-call-buttons{display:grid;gap:8px;width:min(520px,96%)}.zero-hand-buttons{grid-template-columns:1fr 1fr}.zero-call-buttons{grid-template-columns:repeat(9,1fr)}.zero-hand-buttons button,.zero-call-buttons button{margin:0;padding:12px 6px;font-size:18px;border-radius:18px}.zero-rank{width:min(520px,96%);min-height:92px;background:#fff;border:3px solid #dbeafe;border-radius:20px;padding:10px;text-align:left;font-size:14px;line-height:24px}@media(max-width:900px){.zero-table{grid-template-columns:1fr}.zero-side{grid-template-rows:none;grid-template-columns:repeat(2,1fr)}.zero-seat{min-height:72px}.zero-call-buttons{grid-template-columns:repeat(5,1fr)}}
 
+/* 이번 수정: 게임선택 버튼 색상 + 음각 이모티콘 */
+.game-grid .game-btn:nth-child(1){background:linear-gradient(135deg,#93c5fd,#dbeafe)!important;}
+.game-grid .game-btn:nth-child(2){background:linear-gradient(135deg,#f9a8d4,#fde68a)!important;}
+.game-grid .game-btn:nth-child(3){background:linear-gradient(135deg,#fdba74,#fef3c7)!important;}
+.game-grid .game-btn:nth-child(4){background:linear-gradient(135deg,#a7f3d0,#bfdbfe)!important;}
+.game-grid .game-btn:nth-child(5){background:linear-gradient(135deg,#c4b5fd,#bfdbfe)!important;}
+.game-grid .game-btn:nth-child(6){background:linear-gradient(135deg,#fecaca,#fde68a)!important;}
+.game-grid .game-btn:nth-child(7){background:linear-gradient(135deg,#ddd6fe,#fbcfe8)!important;}
+.game-grid .game-btn:nth-child(8){background:linear-gradient(135deg,#99f6e4,#bae6fd)!important;}
+.game-grid .game-btn:nth-child(9){background:linear-gradient(135deg,#e5e7eb,#cbd5e1)!important;}
+.game-emoji{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:28px;
+  height:28px;
+  margin-right:6px;
+  border-radius:10px;
+  background:rgba(255,255,255,.28);
+  box-shadow:inset 2px 2px 4px rgba(15,23,42,.25), inset -2px -2px 4px rgba(255,255,255,.65);
+  text-shadow:1px 1px 0 rgba(255,255,255,.65), -1px -1px 0 rgba(15,23,42,.22);
+  vertical-align:middle;
+}
+.ox-mover{
+  width:54px!important;
+  height:auto!important;
+  text-align:center;
+}
+.ox-mover img{
+  width:34px!important;
+  height:34px!important;
+  display:block;
+  margin:0 auto;
+}
+.ox-mover-name{
+  margin-top:1px;
+  padding:1px 5px;
+  border-radius:999px;
+  background:rgba(255,255,255,.9);
+  border:1px solid rgba(37,99,235,.35);
+  color:#1e293b;
+  font-size:10px;
+  font-weight:1000!important;
+  line-height:14px;
+  max-width:54px;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+}
+
 </style>
 </head>
 
@@ -878,15 +928,15 @@ button:disabled{opacity:.38;cursor:not-allowed;filter:grayscale(.3)}
     <button class="menu-logout-btn" onclick="logout()">로그아웃</button>
     <h1>게임 선택</h1><p><span id="menuChar"></span> <span id="menuNick"></span> 님 환영합니다</p>
     <div class="game-grid">
-      <button class="game-btn" onclick="enterRoom('typing')"><div class="game-title">루칭방 타자타자</div><div class="game-count" id="typingBtnCount">선수 : 0<br>관전자 : 0</div></button>
-      <button class="game-btn" onclick="enterRoom('br31')"><div class="game-title">베스킨라빈스31</div><div class="game-count" id="br31BtnCount">선수 : 0<br>관전자 : 0</div></button>
-      <button class="game-btn" onclick="enterRoom('burger')"><div class="game-title">햄버거를 만들자</div><div class="game-count" id="burgerBtnCount">선수 : 0<br>관전자 : 0</div></button>
-      <button class="game-btn" onclick="enterRoom('memory')"><div class="game-title">기억하자</div><div class="game-count" id="memoryBtnCount">선수 : 0<br>관전자 : 0</div></button>
-      <button class="game-btn" onclick="enterRoom('ox')"><div class="game-title">OX 게임</div><div class="game-count" id="oxBtnCount">선수 : 0<br>관전자 : 0</div></button>
-      <button class="game-btn" onclick="enterRoom('color')"><div class="game-title">색깔을 맞춰라</div><div class="game-count" id="colorBtnCount">선수 : 0<br>관전자 : 0</div></button>
-      <button class="game-btn" onclick="enterRoom('quiz')"><div class="game-title">퀴즈풀자</div><div class="game-count" id="quizBtnCount">선수 : 0<br>관전자 : 0</div></button>
-      <button class="game-btn" onclick="enterRoom('zero')"><div class="game-title">제로</div><div class="game-count" id="zeroBtnCount">선수 : 0<br>관전자 : 0</div></button>
-      <button class="game-btn" onclick="alert('준비중입니다')"><div class="game-title">준비중</div></button>
+      <button class="game-btn" onclick="enterRoom('typing')"><div class="game-title"><span class="game-emoji">⌨️</span>루칭방 타자타자</div><div class="game-count" id="typingBtnCount">선수 : 0<br>관전자 : 0</div></button>
+      <button class="game-btn" onclick="enterRoom('br31')"><div class="game-title"><span class="game-emoji">🍦</span>베스킨라빈스31</div><div class="game-count" id="br31BtnCount">선수 : 0<br>관전자 : 0</div></button>
+      <button class="game-btn" onclick="enterRoom('burger')"><div class="game-title"><span class="game-emoji">🍔</span>햄버거를 만들자</div><div class="game-count" id="burgerBtnCount">선수 : 0<br>관전자 : 0</div></button>
+      <button class="game-btn" onclick="enterRoom('memory')"><div class="game-title"><span class="game-emoji">🧠</span>기억하자</div><div class="game-count" id="memoryBtnCount">선수 : 0<br>관전자 : 0</div></button>
+      <button class="game-btn" onclick="enterRoom('ox')"><div class="game-title"><span class="game-emoji">⭕</span>OX 게임</div><div class="game-count" id="oxBtnCount">선수 : 0<br>관전자 : 0</div></button>
+      <button class="game-btn" onclick="enterRoom('color')"><div class="game-title"><span class="game-emoji">🎨</span>색깔을 맞춰라</div><div class="game-count" id="colorBtnCount">선수 : 0<br>관전자 : 0</div></button>
+      <button class="game-btn" onclick="enterRoom('quiz')"><div class="game-title"><span class="game-emoji">❓</span>퀴즈풀자</div><div class="game-count" id="quizBtnCount">선수 : 0<br>관전자 : 0</div></button>
+      <button class="game-btn" onclick="enterRoom('zero')"><div class="game-title"><span class="game-emoji">✊</span>제로</div><div class="game-count" id="zeroBtnCount">선수 : 0<br>관전자 : 0</div></button>
+      <button class="game-btn" onclick="alert('준비중입니다')"><div class="game-title"><span class="game-emoji">🔒</span>준비중</div></button>
     </div>
     <div class="menu-chat-box"><div id="menuChatLog" class="menu-chat-log"></div><div class="menu-chat-row"><input id="menuChatInput" placeholder="대기방 채팅 입력" maxlength="80" onkeydown="if(event.key==='Enter')sendMenuChat()"><button onclick="sendMenuChat()">전송</button></div></div>
   </div>
@@ -1093,6 +1143,9 @@ let realtimeRefreshTimer=null;
 let realtimeBusy=false;
 let typingRoundKey="";
 let burgerRoundKey="";
+let memoryRoundKey="";
+let colorRoundKey="";
+let quizRoundKey="";
 let br31MoveTick=-1;
 let roundTimerId=null;
 let roundTimerKey="";
@@ -1254,6 +1307,7 @@ async function touchRoomActivity(){
   }
 }
 function startRoundTimer(seconds, elId, key, onExpire){
+  if(roundTimerId && roundTimerKey===key) return;
   stopRoundTimer();
   roundTimerKey=key;
   let remain=seconds;
@@ -1282,6 +1336,7 @@ function gameName(g){
   if(g==="ox") return "OX 게임";
   if(g==="color") return "색깔을 맞춰라";
   if(g==="quiz") return "퀴즈풀자";
+  if(g==="zero") return "제로";
   return "루칭방 타자타자";
 }
 function getRoomId(g){
@@ -1291,6 +1346,7 @@ function getRoomId(g){
   if(g==="ox") return "ox_main";
   if(g==="color") return "color_main";
   if(g==="quiz") return "quiz_main";
+  if(g==="zero") return "zero_main";
   return "typing_main";
 }
 
@@ -1598,7 +1654,8 @@ async function enterRoom(game){
     document.getElementById("oxBoard").classList.toggle("hidden",game!=="ox");
     document.getElementById("colorBoard").classList.toggle("hidden",game!=="color");
     document.getElementById("quizBoard").classList.toggle("hidden",game!=="quiz");
-    const maxR = game==="color" ? 20 : ((game==="typing"||game==="burger"||game==="memory"||game==="ox"||game==="quiz") ? 10 : 31);
+    document.getElementById("zeroBoard").classList.toggle("hidden",game!=="zero");
+    const maxR = game==="color" ? 20 : (game==="zero" ? 30 : ((game==="typing"||game==="burger"||game==="memory"||game==="ox"||game==="quiz") ? 10 : 31));
     await sb.from("typing_game_rooms").upsert({id:roomId,status:"waiting",round:0,max_round:maxR,current_text:null,round_started_at:null,updated_at:new Date().toISOString()},{onConflict:"id"});
     await sb.from("typing_game_players").delete().eq("room_id","online").eq("nickname",user.nickname);
 await sb
@@ -1754,6 +1811,17 @@ function renderSidePlayers(players,viewers){
 async function moveSeat(seatNo){
   await clearMyRoomBubble();
 
+  const {data:roomNow}=await sb
+    .from("typing_game_rooms")
+    .select("status")
+    .eq("id",roomId)
+    .maybeSingle();
+
+  if(roomNow && (roomNow.status==="countdown" || roomNow.status==="playing")){
+    alert("이미 게임이 시작된 상황에서는 자리 이동을 할 수 없습니다.");
+    return;
+  }
+
   const {data:seatData}=await sb
     .from("typing_game_players")
     .select("nickname")
@@ -1791,6 +1859,7 @@ async function moveSeat(seatNo){
   document.getElementById("readyBtn").className="cute-ready ready-btn";
 
   await loadPlayers();
+  if(currentGame==="zero") renderZeroBoard(false);
 }
 
 async function goSpectator(){
@@ -1880,6 +1949,8 @@ async function startCountdownRoom(roundNo){
     text=JSON.stringify(await makeColorRoundState(roundNo));
   }else if(currentGame==="quiz"){
     text=JSON.stringify(await makeQuizRoundState(roundNo));
+  }else if(currentGame==="zero"){
+    text=JSON.stringify(await makeZeroInitialState());
   }
 
   const {data,error}=await sb
@@ -1924,8 +1995,14 @@ function handleRoom(room){
   if(currentGame==="ox")parseOxState(room.current_text);
   if(currentGame==="color")parseColorState(room.current_text);
   if(currentGame==="quiz")parseQuizState(room.current_text);
+  if(currentGame==="zero")parseZeroState(room.current_text);
+
   if(room.status==="waiting"){
-    clearInterval(countTimer);startingCountdown=false;document.getElementById("countOverlay").classList.add("hidden");
+    clearInterval(countTimer);
+    startingCountdown=false;
+    stopRoundTimer();
+    document.getElementById("countOverlay").classList.add("hidden");
+
     if(currentGame==="typing"){
       const msg=document.getElementById("centerMessage");
       document.getElementById("problemArea").classList.add("hidden");
@@ -1937,10 +2014,20 @@ function handleRoom(room){
     else if(currentGame==="burger") renderBurgerWaiting();
     else if(currentGame==="memory") renderMemoryWaiting();
     else if(currentGame==="ox") renderOxWaiting();
-    document.getElementById("chatInput").disabled=false;document.getElementById("chatInput").placeholder="말풍선 채팅 입력 40자 이내";document.getElementById("chatInput").maxLength=40;show("gameScreen");
+    else if(currentGame==="color") renderColorWaiting();
+    else if(currentGame==="quiz") renderQuizWaiting();
+    else if(currentGame==="zero") renderZeroBoard(false);
+
+    document.getElementById("chatInput").disabled=false;
+    document.getElementById("chatInput").placeholder="말풍선 채팅 입력 40자 이내";
+    document.getElementById("chatInput").maxLength=40;
+    show("gameScreen");
   }
+
   if(room.status==="countdown"){
     show("gameScreen");
+    stopRoundTimer();
+
     if(currentGame==="typing"){
       document.getElementById("problemArea").classList.add("hidden");
       document.getElementById("centerMessage").textContent="곧 메세지가 나올 공간입니다.";
@@ -1952,10 +2039,20 @@ function handleRoom(room){
       renderMemoryBoard(false);
     }else if(currentGame==="ox"){
       renderOxBoard(false);
+    }else if(currentGame==="color"){
+      renderColorWaiting();
+    }else if(currentGame==="quiz"){
+      renderQuizWaiting();
+      const q=document.getElementById("quizQuestion");
+      if(q) q.textContent="카운트가 끝나면 문제가 나옵니다.";
+    }else if(currentGame==="zero"){
+      renderZeroBoard(false);
     }
+
     document.getElementById("chatInput").placeholder="잠시 후 게임이 시작됩니다";
     startLocalCountdown(room.round);
   }
+
   if(room.status==="playing"){
     startingCountdown=false;
     document.getElementById("countOverlay").classList.add("hidden");
@@ -1966,8 +2063,15 @@ function handleRoom(room){
     else if(currentGame==="ox") startOxRound(room);
     else if(currentGame==="color") startColorRound(room);
     else if(currentGame==="quiz") startQuizRound(room);
+    else if(currentGame==="zero") startZeroRound(room);
   }
-  if(room.status==="finished"){stopRoundTimer();startingCountdown=false;document.getElementById("countOverlay").classList.add("hidden");showFinish()}
+
+  if(room.status==="finished"){
+    stopRoundTimer();
+    startingCountdown=false;
+    document.getElementById("countOverlay").classList.add("hidden");
+    showFinish();
+  }
 }
 
 function startLocalCountdown(roundNo){
@@ -2544,20 +2648,29 @@ function setMemoryButtons(on){
 function startMemoryRound(room){
   show("gameScreen");
   parseMemoryState(room.current_text);
-  memoryInputSeq=[];
-  renderMemoryBoard(true);
-  clearTimeout(memoryShowingTimer);
-  quizAnsweredKey="";
   const key=`${roomId}-${room.round}-${room.current_text||""}`;
+
+  if(memoryRoundKey===key){
+    return;
+  }
+
+  memoryRoundKey=key;
+  memoryInputSeq=[];
+  clearTimeout(memoryShowingTimer);
+  renderMemoryBoard(true);
+  quizAnsweredKey="";
+
   memoryShowingTimer=setTimeout(()=>{
     if(currentGame!=="memory"||!currentRoom||currentRoom.status!=="playing") return;
+    if(memoryRoundKey!==key) return;
     renderMemoryBoard(false);
     document.getElementById("memoryAnswer").textContent="이제 순서대로 눌러주세요.";
     setMemoryButtons(myRole==="player" && !memoryLocal?.winner);
     startRoundTimer(15,"memoryTimer",key,async()=>{
       await memoryTimeoutNext(room.round,key);
     });
-  },1500+Number((memoryLocal?.sequence||[]).length)*120);
+  },4000);
+
   loadPlayers();
 }
 async function chooseMemory(color){
@@ -2696,7 +2809,7 @@ function renderOxBoard(active){
   const st=oxLocal||{};
   document.getElementById("oxStatus").textContent=`라운드 ${currentRoom?.round||st.round||1} / 10 · 10초 안에 O 또는 X를 선택하세요`;
   document.getElementById("oxQuestion").textContent=st.question||"문제가 없습니다.";
-  renderOxChoices();
+  renderOxMovers();
   const dead=(st.eliminated||[]).includes(user?.nickname);
   setOxButtons(active && myRole==="player" && !dead);
 }
@@ -2709,6 +2822,33 @@ function startOxRound(room){
   startRoundTimer(10,"oxTimer",key,async()=>{await finishOxQuestion(room.round,key)});
   loadPlayers();
 }
+function renderOxMovers(){
+  const layer=document.getElementById("oxMoverLayer");
+  if(!layer) return;
+  const st=oxLocal||{};
+  const players=window.__lastPlayers||[];
+  const choices=st.choices||{};
+  const eliminated=st.eliminated||[];
+  layer.innerHTML="";
+
+  players.forEach((p,idx)=>{
+    if(eliminated.includes(p.nickname)) return;
+    const choice=choices[p.nickname];
+    const baseLeft=choice==="O" ? 75 : (choice==="X" ? 25 : 50);
+    const rowOffset=(idx%4)*18;
+    const colOffset=Math.floor(idx/4)*7;
+    const top=42+rowOffset;
+    const left=baseLeft+colOffset-3;
+
+    layer.innerHTML+=`
+      <div class="ox-mover" style="left:${left}%;top:${top}%;">
+        <img src="${getCharSmall(p.character)}" alt="${escapeHtml(p.nickname)}">
+        <div class="ox-mover-name">${escapeHtml(p.nickname)}</div>
+      </div>
+    `;
+  });
+}
+
 async function chooseOx(choice){
   if(currentGame!=="ox"||!currentRoom||currentRoom.status!=="playing"||!oxLocal)return;
   if(myRole!=="player")return;
@@ -2816,8 +2956,15 @@ function setColorButtons(on){document.querySelectorAll("#colorButtons button").f
 function startColorRound(room){
   show("gameScreen");
   parseColorState(room.current_text);
-  renderColorBoard(true);
   const key=`${roomId}-${room.round}-${room.current_text||""}`;
+
+  if(colorRoundKey===key){
+    renderColorBoard(true);
+    return;
+  }
+
+  colorRoundKey=key;
+  renderColorBoard(true);
   roundStart=Date.now();
   startRoundTimer(3,"colorTimer",key,async()=>{await finishColorRound(room.round,key)});
   loadPlayers();
@@ -2867,7 +3014,22 @@ async function makeQuizRoundState(roundNo){const q=QUIZ_QUESTIONS[Math.floor(Mat
 function parseQuizState(txt){try{quizLocal=JSON.parse(txt||"{}")}catch(e){quizLocal=null}return quizLocal}
 function renderQuizWaiting(){document.getElementById("quizWinnerBanner").textContent="";document.getElementById("quizStatus").textContent="게임 준비중입니다.";document.getElementById("quizQuestion").textContent="문제가 나올 공간입니다.";document.getElementById("quizAnswerInfo").textContent="정답을 채팅창에 입력하세요."}
 function renderQuizBoard(active){const st=quizLocal||{};document.getElementById("quizWinnerBanner").textContent=st.winner?`${st.winner}님 정답!`:"";document.getElementById("quizStatus").innerHTML=`라운드 ${currentRoom?.round||st.round||1} / 10 · 제한시간 <span id="quizTimer" class="round-timer">10초</span>`;document.getElementById("quizQuestion").textContent=st.question||"문제가 없습니다.";document.getElementById("quizAnswerInfo").textContent="정답을 채팅창에 입력하세요.";const input=document.getElementById("chatInput");input.disabled=!(active&&myRole==="player");input.placeholder=myRole==="player"?"정답 입력":"관전자는 정답을 제출할 수 없습니다";}
-function startQuizRound(room){show("gameScreen");parseQuizState(room.current_text);quizAnsweredKey="";renderQuizBoard(true);const key=`${roomId}-${room.round}-${room.current_text||""}`;startRoundTimer(10,"quizTimer",key,async()=>{await quizTimeoutNext(room.round,key)});loadPlayers();}
+function startQuizRound(room){
+  show("gameScreen");
+  parseQuizState(room.current_text);
+  const key=`${roomId}-${room.round}-${room.current_text||""}`;
+
+  if(quizRoundKey===key){
+    renderQuizBoard(true);
+    return;
+  }
+
+  quizRoundKey=key;
+  quizAnsweredKey="";
+  renderQuizBoard(true);
+  startRoundTimer(10,"quizTimer",key,async()=>{await quizTimeoutNext(room.round,key)});
+  loadPlayers();
+}
 function normalizeAnswer(v){return String(v||"").replace(/\s+/g,"").toLowerCase();}
 async function submitQuizAnswer(){
   if(currentGame!=="quiz"||!currentRoom||currentRoom.status!=="playing"||!quizLocal)return;
@@ -3713,6 +3875,33 @@ function renderOxChoices(){
 }
 function renderOxWaiting(){document.getElementById("oxStatus").textContent="게임 준비중입니다.";document.getElementById("oxQuestion").textContent="문제가 나올 공간입니다.";const layer=document.getElementById("oxMoverLayer");if(layer)layer.innerHTML="";setOxButtons(false)}
 function renderOxBoard(active){const st=oxLocal||{};document.getElementById("oxStatus").textContent=`라운드 ${currentRoom?.round||st.round||1} / 10 · 10초 안에 O 또는 X를 선택하세요`;document.getElementById("oxQuestion").textContent=st.question||"문제가 없습니다.";renderOxChoices();const dead=(st.eliminated||[]).includes(user?.nickname);setOxButtons(active&&myRole==="player"&&!dead)}
+function renderOxMovers(){
+  const layer=document.getElementById("oxMoverLayer");
+  if(!layer) return;
+  const st=oxLocal||{};
+  const players=window.__lastPlayers||[];
+  const choices=st.choices||{};
+  const eliminated=st.eliminated||[];
+  layer.innerHTML="";
+
+  players.forEach((p,idx)=>{
+    if(eliminated.includes(p.nickname)) return;
+    const choice=choices[p.nickname];
+    const baseLeft=choice==="O" ? 75 : (choice==="X" ? 25 : 50);
+    const rowOffset=(idx%4)*18;
+    const colOffset=Math.floor(idx/4)*7;
+    const top=42+rowOffset;
+    const left=baseLeft+colOffset-3;
+
+    layer.innerHTML+=`
+      <div class="ox-mover" style="left:${left}%;top:${top}%;">
+        <img src="${getCharSmall(p.character)}" alt="${escapeHtml(p.nickname)}">
+        <div class="ox-mover-name">${escapeHtml(p.nickname)}</div>
+      </div>
+    `;
+  });
+}
+
 async function chooseOx(choice){
   if(currentGame!=="ox"||!currentRoom||currentRoom.status!=="playing"||!oxLocal)return; if(myRole!=="player")return; if((oxLocal.eliminated||[]).includes(user.nickname))return;
   oxLocal.choices=oxLocal.choices||{}; oxLocal.choices[user.nickname]=choice; renderOxBoard(true);
@@ -3720,7 +3909,7 @@ async function chooseOx(choice){
 }
 
 async function makeZeroInitialState(){
-  const {players}=await loadPlayers(); const names=players.map(p=>p.nickname);
+  const {players}=await loadPlayers();
   return {game:"zero",turnIndex:0,hands:{},call:null,caller:null,match:false,pushes:[],message:"1번 선수부터 시작합니다.",round:1,finished:false};
 }
 function parseZeroState(txt){try{zeroLocal=JSON.parse(txt||"{}")}catch(e){zeroLocal=null}return zeroLocal}
@@ -3731,10 +3920,29 @@ function renderZeroWaiting(){
   renderZeroSeats(); renderZeroButtons(false);
 }
 function renderZeroSeats(){
-  const players=window.__lastPlayers||[]; const left=document.getElementById("zeroLeftSeats"), right=document.getElementById("zeroRightSeats"); if(!left||!right)return; left.innerHTML=""; right.innerHTML="";
+  const players=window.__lastPlayers||[];
+  const left=document.getElementById("zeroLeftSeats"), right=document.getElementById("zeroRightSeats");
+  if(!left||!right)return;
+  left.innerHTML="";
+  right.innerHTML="";
   const active=players[zeroLocal?.turnIndex||0]?.nickname;
+
   for(let i=0;i<8;i++){
-    const p=players[i]; const hand=p?zeroLocal?.hands?.[p.nickname]:null; const html=p?`<div class="zero-seat ${active===p.nickname?'turn':''}"><img src="${getCharSmall(p.character)}"><div><div class="zero-seat-name">${escapeHtml(p.nickname)}</div><div class="zero-seat-score">${fmtScore(p.score)}점</div></div><div class="zero-hand">${hand===1?'☝️':hand===0?'✊':''}</div></div>`:`<div class="zero-seat"><div class="zero-seat-name">[빈자리]</div></div>`;
+    const seatNo=i+1;
+    const p=players.find(x=>Number(x.seat_no)===seatNo);
+    const hand=p?zeroLocal?.hands?.[p.nickname]:null;
+    const html=p
+      ? `<div class="zero-seat ${active===p.nickname?'turn':''}">
+          <img src="${getCharSmall(p.character)}">
+          <div>
+            <div class="zero-seat-name">${escapeHtml(p.nickname)}</div>
+            <div class="zero-seat-score">${fmtScore(p.score)}점</div>
+          </div>
+          <div class="zero-hand">${hand===1?'☝️':hand===0?'✊':''}</div>
+        </div>`
+      : `<div class="zero-seat" onclick="moveSeat(${seatNo})" style="cursor:pointer;">
+          <div class="zero-seat-name">＋ 빈자리<br><span style="font-size:11px;color:#64748b;">클릭해서 입장</span></div>
+        </div>`;
     (i<4?left:right).innerHTML+=html;
   }
 }
