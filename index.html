@@ -6169,6 +6169,144 @@ if(typeof renderZeroBoard === "function" && !window.__origRenderZeroBoardSmallMs
     return r;
   }
 }
+
+
+/* =========================================================
+   최종 추가 패치 2026-05-16-3
+   - 제로게임 안내문/상단 메시지 글씨 확실히 3px 추가 축소
+   - 단상 캐릭터 5px 더 아래로 내려 단상 뒤에 더 숨김
+   - 단상 점수 글씨 3px 추가 축소
+   - OX 정답 결과 후 다음판 미진행 오류 강제 보강
+========================================================= */
+(function(){
+  const finalStyle=document.createElement('style');
+  finalStyle.textContent=`
+    /* 제로게임: 위 상태 메시지 + 중앙 설명 메시지 더 작게 */
+    #zeroStatus,
+    .zero-status{
+      font-size:18px!important;
+      line-height:1.22!important;
+    }
+    #zeroResult,
+    .zero-result,
+    #zeroResult.zero-small-guide,
+    .zero-result.zero-small-guide{
+      font-size:21px!important;
+      line-height:1.22!important;
+    }
+
+    /* 선수 단상 점수: 글씨 크기 3px 추가 축소 */
+    .game-podium-score{
+      font-size:19px!important;
+      height:20px!important;
+      line-height:20px!important;
+      top:52px!important;
+    }
+
+    /* 캐릭터: 단상 뒤로 더 숨기기 위해 5px 아래로 이동 */
+    .game-seat-char{
+      top:23px!important;
+      z-index:1!important;
+    }
+    .game-podium-wrap{
+      top:58px!important;
+      z-index:8!important;
+    }
+    .game-podium-img{
+      position:relative!important;
+      z-index:9!important;
+    }
+    .game-podium-name,
+    .game-podium-score{
+      position:absolute!important;
+      z-index:10!important;
+    }
+  `;
+  document.head.appendChild(finalStyle);
+
+  function forceZeroTextSmall(){
+    const status=document.getElementById('zeroStatus');
+    const result=document.getElementById('zeroResult');
+    if(status){
+      status.style.fontSize='18px';
+      status.style.lineHeight='1.22';
+    }
+    if(result){
+      result.style.fontSize='21px';
+      result.style.lineHeight='1.22';
+      result.classList.add('zero-small-guide');
+    }
+  }
+
+  if(typeof renderZeroBoard==='function' && !window.__origRenderZeroBoardFinalSmallV3){
+    window.__origRenderZeroBoardFinalSmallV3=renderZeroBoard;
+    renderZeroBoard=function(){
+      const r=window.__origRenderZeroBoardFinalSmallV3.apply(this,arguments);
+      forceZeroTextSmall();
+      return r;
+    };
+  }
+  if(typeof renderZeroWaiting==='function' && !window.__origRenderZeroWaitingFinalSmallV3){
+    window.__origRenderZeroWaitingFinalSmallV3=renderZeroWaiting;
+    renderZeroWaiting=function(){
+      const r=window.__origRenderZeroWaitingFinalSmallV3.apply(this,arguments);
+      forceZeroTextSmall();
+      return r;
+    };
+  }
+  document.addEventListener('DOMContentLoaded',forceZeroTextSmall);
+
+  // OX 정답 결과 후 다음판 이동 보강: closed 상태여도 반드시 다음 라운드/종료 처리
+  window.__oxFinalAdvanceLockV3=window.__oxFinalAdvanceLockV3||{};
+  async function forceOxAdvanceV3(roundNo, st){
+    try{
+      roundNo=Number(roundNo||currentRoom?.round||st?.round||1);
+      const key=(roomId||'')+'|'+roundNo+'|v3';
+      if(window.__oxFinalAdvanceLockV3[key]) return;
+      window.__oxFinalAdvanceLockV3[key]=true;
+      playGameStepSound?.();
+      if(roundNo>=10){
+        try{ if(typeof applyOxFinishBonus==='function') await applyOxFinishBonus(); }catch(e){}
+        await sb.from('typing_game_rooms').update({
+          status:'finished',
+          current_text:JSON.stringify(st||oxLocal||{}),
+          updated_at:new Date().toISOString()
+        }).eq('id',roomId);
+        setTimeout(()=>{ try{ finishAndKickPlayers(); }catch(e){} },900);
+      }else{
+        setTimeout(async()=>{
+          try{
+            const {data:r}=await sb.from('typing_game_rooms').select('status,round').eq('id',roomId).maybeSingle();
+            // 결과 화면이 열린 같은 라운드에 멈춰 있으면 다음 카운트다운으로 강제 진행
+            if(r && r.status==='playing' && Number(r.round)===roundNo){
+              await startCountdownRoom(roundNo+1);
+            }
+          }catch(e){}
+        },1400);
+      }
+    }catch(e){}
+  }
+
+  if(typeof finishOxQuestion==='function' && !window.__origFinishOxQuestionFinalAdvanceV3){
+    window.__origFinishOxQuestionFinalAdvanceV3=finishOxQuestion;
+    finishOxQuestion=async function(roundNo,key){
+      const r=await window.__origFinishOxQuestionFinalAdvanceV3.apply(this,arguments);
+      let st=oxLocal||{};
+      try{
+        const {data:roomNow}=await sb.from('typing_game_rooms').select('current_text,round,status').eq('id',roomId).maybeSingle();
+        if(roomNow?.current_text) st=JSON.parse(roomNow.current_text||'{}');
+        roundNo=Number(roundNo||roomNow?.round||currentRoom?.round||st.round||1);
+        if(roomNow && roomNow.status==='playing' && Number(roomNow.round)===roundNo){
+          await forceOxAdvanceV3(roundNo,st);
+        }
+      }catch(e){
+        await forceOxAdvanceV3(roundNo,st);
+      }
+      return r;
+    };
+  }
+})();
+
 </script>
 
 </body>
