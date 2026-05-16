@@ -5977,6 +5977,198 @@ soundAndZeroSmallStyle.textContent=`
 }
 `;
 document.head.appendChild(soundAndZeroSmallStyle);
+
+
+/* =========================================================
+   추가 패치 2026-05-16-2
+   - OX 카운트 종료 후 다음 라운드로 넘어가지 않는 상황 보강
+   - 선수 입장/퇴장/자리 이동 효과음
+   - 선수 단상 점수 글씨 축소 및 캐릭터 단상 뒤 배치
+   - 베스킨라빈스31 숫자 선택 효과음
+   - 제로 상단/중앙 안내문 3px 추가 축소
+   - OX 선택/이동 클릭 효과음
+========================================================= */
+const SEAT_MOVE_SOUND_URL_V2 = "https://github.com/jangseok895-glitch/asia-ox-sound/raw/refs/heads/main/%EC%9E%90%EB%A6%AC%EC%9D%B4%EB%8F%99%EC%82%AC%EB%9E%8C.mp3";
+const CLICK_SOUND_URL_V2 = "https://github.com/jangseok895-glitch/asia-ox-sound/raw/refs/heads/main/%ED%81%B4%EB%A6%AD%ED%9A%A8%EA%B3%BC%EC%9D%8C.mp3";
+function playSeatMoveSoundV2(){ playSoundSafe(SEAT_MOVE_SOUND_URL_V2,0.78); }
+function playClickSoundV2(){ playSoundSafe(CLICK_SOUND_URL_V2,0.76); }
+
+// 선수 입장/퇴장/자리 이동 감지음: 첫 로딩은 제외하고, 선수 목록/좌석이 바뀔 때만 재생
+window.__lastPlayerSeatSnapshotV2 = window.__lastPlayerSeatSnapshotV2 || {};
+window.__seatSnapshotReadyV2 = window.__seatSnapshotReadyV2 || {};
+if(typeof loadPlayers === "function" && !window.__origLoadPlayersSeatSoundV2){
+  window.__origLoadPlayersSeatSoundV2 = loadPlayers;
+  loadPlayers = async function(){
+    const result = await window.__origLoadPlayersSeatSoundV2.apply(this,arguments);
+    try{
+      const players = result?.players || window.__lastPlayers || [];
+      const snap = players.map(p=>`${p.nickname}:${p.seat_no}:${p.role||'player'}`).sort().join('|');
+      const key = roomId || currentGame || 'room';
+      if(window.__seatSnapshotReadyV2[key] && window.__lastPlayerSeatSnapshotV2[key] !== snap){
+        playSeatMoveSoundV2();
+      }
+      window.__seatSnapshotReadyV2[key] = true;
+      window.__lastPlayerSeatSnapshotV2[key] = snap;
+    }catch(e){}
+    return result;
+  }
+}
+
+// 직접 자리 클릭/관전 이동/선수 안내 버튼에서도 즉시 효과음
+if(typeof moveSeat === "function" && !window.__origMoveSeatSeatSoundV2){
+  window.__origMoveSeatSeatSoundV2 = moveSeat;
+  moveSeat = async function(seatNo){
+    const {data:roomNow}=await sb.from("typing_game_rooms").select("status").eq("id",roomId).maybeSingle();
+    if(roomNow && (roomNow.status==="countdown" || roomNow.status==="playing")) return;
+    const r = await window.__origMoveSeatSeatSoundV2.apply(this,arguments);
+    playSeatMoveSoundV2();
+    return r;
+  }
+}
+if(typeof goSpectator === "function" && !window.__origGoSpectatorSeatSoundV2){
+  window.__origGoSpectatorSeatSoundV2 = goSpectator;
+  goSpectator = async function(){
+    const r = await window.__origGoSpectatorSeatSoundV2.apply(this,arguments);
+    playSeatMoveSoundV2();
+    return r;
+  }
+}
+
+// 베스킨라빈스31 숫자 선택 효과음
+if(typeof chooseBr31 === "function" && !window.__origChooseBr31StepSoundV2){
+  window.__origChooseBr31StepSoundV2 = chooseBr31;
+  chooseBr31 = async function(n){
+    playGameStepSound();
+    return await window.__origChooseBr31StepSoundV2.apply(this,arguments);
+  }
+}
+
+// OX 선택/이동 효과음
+if(typeof chooseOx === "function" && !window.__origChooseOxClickSoundV2){
+  window.__origChooseOxClickSoundV2 = chooseOx;
+  chooseOx = async function(choice){
+    playClickSoundV2();
+    return await window.__origChooseOxClickSoundV2.apply(this,arguments);
+  }
+}
+
+// OX 종료 후 다음 라운드 진행 보강 + 오답자는 관전자로 이동
+window.__oxAdvanceScheduledV2 = window.__oxAdvanceScheduledV2 || {};
+async function scheduleOxNextOrFinishV2(roundNo, st){
+  const key = `${roomId}|${roundNo}`;
+  if(window.__oxAdvanceScheduledV2[key]) return;
+  window.__oxAdvanceScheduledV2[key] = true;
+  if(Number(roundNo)>=10){
+    try{ await applyOxFinishBonus(); }catch(e){}
+    await sb.from('typing_game_rooms').update({status:'finished',current_text:JSON.stringify(st||oxLocal||{}),updated_at:new Date().toISOString()}).eq('id',roomId);
+    setTimeout(finishAndKickPlayers,900);
+  }else{
+    setTimeout(async()=>{
+      const {data:r}=await sb.from('typing_game_rooms').select('status,round').eq('id',roomId).maybeSingle();
+      if(r && r.status==='playing' && Number(r.round)===Number(roundNo)){
+        await startCountdownRoom(Number(roundNo)+1);
+      }
+    },1200);
+  }
+}
+if(typeof finishOxQuestion === "function" && !window.__origFinishOxQuestionFixV2){
+  window.__origFinishOxQuestionFixV2 = finishOxQuestion;
+  finishOxQuestion = async function(roundNo,key){
+    if(currentGame!=='ox'||!currentRoom||currentRoom.status!=='playing') return;
+    const {data:roomNow}=await sb.from('typing_game_rooms').select('current_text,round,status').eq('id',roomId).single();
+    let st=null;try{st=JSON.parse(roomNow?.current_text||'{}')}catch(e){st=oxLocal||{}}
+    roundNo = Number(roundNo || roomNow?.round || currentRoom?.round || st.round || 1);
+    if(st.closed){
+      oxLocal=st; renderOxBoard(false);
+      await scheduleOxNextOrFinishV2(roundNo, st);
+      return;
+    }
+    st.closed=true;
+    st.eliminated=st.eliminated||[];
+    const {data:players}=await sb.from('typing_game_players').select('nickname,score,character,role').eq('room_id',roomId).eq('role','player');
+    for(const p of (players||[])){
+      if(st.eliminated.includes(p.nickname)) continue;
+      const picked=st.choices?.[p.nickname];
+      if(picked===st.answer){
+        await sb.from('typing_game_players').update({score:Number(p.score||0)+8}).eq('room_id',roomId).eq('nickname',p.nickname);
+        await addIntegratedScore(p.nickname,p.character||'dao',8);
+        await insertBubble('정답','first',p.nickname,p.character||'dao');
+      }else{
+        if(!st.eliminated.includes(p.nickname)) st.eliminated.push(p.nickname);
+        await addPlayerScoreDelta(p.nickname,-0.5);
+        await insertBubble('탈락','wrong',p.nickname,p.character||'dao');
+        await sb.from('typing_game_players').update({role:'viewer',ready:false,seat_no:null,current_place:gameName(currentGame),last_seen:new Date().toISOString()}).eq('room_id',roomId).eq('nickname',p.nickname);
+      }
+    }
+    oxLocal=st;
+    await sb.from('typing_game_rooms').update({current_text:JSON.stringify(st),updated_at:new Date().toISOString()}).eq('id',roomId);
+    await loadPlayers();
+    renderOxBoard(false);
+    await scheduleOxNextOrFinishV2(roundNo, st);
+  }
+}
+
+// 제로 안내문 글씨 확실히 축소: 위 상태 문구/중앙 결과 문구 모두 3px 축소
+const zeroAndPodiumStyleV2=document.createElement("style");
+zeroAndPodiumStyleV2.textContent=`
+/* 선수 단상: 점수 글씨 2px 축소 */
+.game-podium-score{
+  font-size:22px!important;
+  height:22px!important;
+  line-height:22px!important;
+  top:50px!important;
+}
+/* 캐릭터가 단상 뒤에 숨어 얼굴/가슴만 보이도록 배치 */
+.game-seat-card{
+  height:142px!important;
+  overflow:visible!important;
+}
+.game-seat-char{
+  top:18px!important;
+  width:76px!important;
+  height:76px!important;
+  z-index:1!important;
+}
+.game-podium-wrap{
+  top:58px!important;
+  z-index:5!important;
+}
+.game-podium-img{
+  position:relative!important;
+  z-index:6!important;
+}
+.game-podium-name,
+.game-podium-score{
+  z-index:7!important;
+}
+/* 제로게임 위/중앙 메시지 글씨 3px 축소 */
+.zero-status,
+#zeroStatus{
+  font-size:21px!important;
+  line-height:1.25!important;
+}
+.zero-result,
+#zeroResult,
+.zero-result.zero-small-guide,
+#zeroResult.zero-small-guide{
+  font-size:24px!important;
+  line-height:1.25!important;
+}
+`;
+document.head.appendChild(zeroAndPodiumStyleV2);
+
+// 제로 보드가 다시 그려질 때도 축소 클래스 강제 적용
+if(typeof renderZeroBoard === "function" && !window.__origRenderZeroBoardSmallMsgV2){
+  window.__origRenderZeroBoardSmallMsgV2 = renderZeroBoard;
+  renderZeroBoard = function(active){
+    const r = window.__origRenderZeroBoardSmallMsgV2.apply(this,arguments);
+    const status=document.getElementById('zeroStatus');
+    const result=document.getElementById('zeroResult');
+    if(status) status.classList.add('zero-status-small-v2');
+    if(result) result.classList.add('zero-small-guide');
+    return r;
+  }
+}
 </script>
 
 </body>
