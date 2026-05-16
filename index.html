@@ -5882,6 +5882,101 @@ miniPatchStyle.textContent=`
 `;
 document.head.appendChild(miniPatchStyle);
 
+
+
+/* =========================================================
+   추가 패치 2026-05-16
+   - 제로 안내문 전체 글씨 3px 축소
+   - 모든 게임 라운드/문제/순서 종료 효과음 통일
+   - 최종 결과 화면 효과음
+   - 오답/탈락/틀림 효과음
+========================================================= */
+const GAME_STEP_SOUND_URL = "https://github.com/jangseok895-glitch/asia-ox-sound/raw/refs/heads/main/%EC%A0%9C%EB%A1%9C%EA%B2%8C%EC%9E%84%ED%9A%A8%EA%B3%BC%EC%9D%8C.mp3";
+const GAME_FINISH_SOUND_URL = "https://github.com/jangseok895-glitch/asia-ox-sound/raw/refs/heads/main/%EA%B2%8C%EC%9E%84%EB%81%9D.mp3";
+const WRONG_SOUND_URL = "https://github.com/jangseok895-glitch/asia-ox-sound/raw/refs/heads/main/%EA%B2%BD%EA%B3%A0.mp3";
+
+function playGameStepSound(){ playSoundSafe(GAME_STEP_SOUND_URL,0.78); }
+function playGameFinishSound(){ playSoundSafe(GAME_FINISH_SOUND_URL,0.82); }
+function playWrongSound(){ playSoundSafe(WRONG_SOUND_URL,0.82); }
+
+// 오답/탈락 말풍선이 뜰 때 경고음 재생
+if(typeof insertBubble === "function" && !window.__origInsertBubbleWrongSound){
+  window.__origInsertBubbleWrongSound = insertBubble;
+  insertBubble = async function(text,result,nickname,character){
+    const t=String(text||"");
+    const r=String(result||"");
+    if(r.includes("wrong") || t.includes("오답") || t.includes("틀렸") || t.includes("탈락") || t.includes("실패")){
+      playWrongSound();
+    }
+    return await window.__origInsertBubbleWrongSound.apply(this,arguments);
+  }
+}
+
+// 모든 게임에서 문제/라운드/순서가 넘어갈 때 같은 효과음 사용
+function wrapStepSoundFunction(fnName){
+  const fn=window[fnName];
+  if(typeof fn!=="function" || window[`__stepWrapped_${fnName}`]) return;
+  window[`__stepWrapped_${fnName}`]=true;
+  window[`__orig_${fnName}_stepSound`]=fn;
+  window[fnName]=async function(){
+    playGameStepSound();
+    return await window[`__orig_${fnName}_stepSound`].apply(this,arguments);
+  }
+}
+[
+  "typingTimeoutNext",
+  "br31TimeoutNext",
+  "burgerTimeoutNext",
+  "memoryTimeoutNext",
+  "finishOxQuestion",
+  "finishColorRound",
+  "quizTimeoutNext",
+  "startCountdownRoom",
+  "zeroNextTurn"
+].forEach(wrapStepSoundFunction);
+
+// 최종 결과 화면이 나올 때 게임 종료 효과음 재생
+if(typeof showFinish === "function" && !window.__origShowFinishGameEndSound){
+  window.__origShowFinishGameEndSound=showFinish;
+  showFinish=async function(){
+    playGameFinishSound();
+    return await window.__origShowFinishGameEndSound.apply(this,arguments);
+  }
+}
+if(typeof finishAndKickPlayers === "function" && !window.__origFinishAndKickStepSound){
+  window.__origFinishAndKickStepSound=finishAndKickPlayers;
+  finishAndKickPlayers=async function(){
+    playGameStepSound();
+    return await window.__origFinishAndKickStepSound.apply(this,arguments);
+  }
+}
+
+// 제로 PUSH가 필요한 순간 효과음은 기존 제로푸쉬 사운드 유지, 순서/문제 종료는 통일 효과음 사용
+if(typeof chooseZeroCall === "function" && !window.__origChooseZeroCallMsgSmallPatch){
+  window.__origChooseZeroCallMsgSmallPatch=chooseZeroCall;
+  chooseZeroCall=async function(num){
+    const r=await window.__origChooseZeroCallMsgSmallPatch.apply(this,arguments);
+    const result=document.getElementById("zeroResult");
+    if(result) result.classList.add("zero-small-guide");
+    return r;
+  }
+}
+
+const soundAndZeroSmallStyle=document.createElement("style");
+soundAndZeroSmallStyle.textContent=`
+/* 제로게임 중앙 안내문 전체 3px 축소 */
+.zero-result,
+#zeroResult{
+  font-size:27px!important;
+  line-height:1.25!important;
+}
+.zero-result.zero-small-guide,
+#zeroResult.zero-small-guide{
+  font-size:27px!important;
+  line-height:1.25!important;
+}
+`;
+document.head.appendChild(soundAndZeroSmallStyle);
 </script>
 
 </body>
